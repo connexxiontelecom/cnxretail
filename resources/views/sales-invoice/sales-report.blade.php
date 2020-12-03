@@ -37,7 +37,7 @@ Sales Report
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
                                 <h6>Invoice</h6>
-                                <h5 class="m-b-30 f-w-700">{{number_format($invoices->sum('total'),2)}}</h5>
+                                <h5 class="m-b-30 f-w-700">{{number_format($invoices->sum('total') - $invoices->sum('paid_amount'),2)}}</h5>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-yellow" style="width:100%"></div>
                                 </div>
@@ -51,7 +51,7 @@ Sales Report
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <h6>Bills</h6>
-                                <h5 class="m-b-30 f-w-700">{{number_format($bills->sum('bill_amount'),2)}}</h5>
+                                <h5 class="m-b-30 f-w-700">{{number_format($bills->sum('bill_amount') - $bills->sum('paid_amount'),2)}}</h5>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-yellow" style="width:100%"></div>
                                 </div>

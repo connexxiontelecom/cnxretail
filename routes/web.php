@@ -77,7 +77,7 @@ Route::post('/tenant/bank', 'Backend\BillPaymentController@addNewBank');
 #Leads route
 Route::get('/leads', 'Backend\LeadController@index')->name('leads');
 Route::get('/view-lead/{slug}', 'Backend\LeadController@viewLead')->name('view-lead');
-Route::post('/lead/score', 'Backend\LeadController@scoreLead')->name('view-lead');
+Route::post('/lead/score', 'Backend\LeadController@scoreLead');
 Route::post('/lead/assign', 'Backend\LeadController@assignLead');
 #Deals route
 Route::get('/deals', 'Backend\DealController@index')->name('deals');

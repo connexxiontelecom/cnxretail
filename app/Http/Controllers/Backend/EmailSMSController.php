@@ -12,6 +12,7 @@ use App\Models\BulkSms;
 use App\Models\BulkSmsRecipient;
 use App\Models\PhoneGroup;
 use App\Models\BulkSmsAccount;
+use App\Mail\EmailMarketing;
 use Auth;
 class EmailSMSController extends Controller
 {
@@ -53,7 +54,11 @@ class EmailSMSController extends Controller
             $recipient->email_id = $emailId;
             $recipient->contact_id = $request->selectedContacts[$i];
             $recipient->save();
+            #contact
+            $contact = Contact::where('tenant_id', Auth::user()->tenant_id)->where('id', $request->selectedContacts[$i])->first();
+            \Mail::to($contact)->send(new EmailMarketing($contact, $email));
         }
+
         return response()->json(['route'=>'mailbox'],201);
 
     }

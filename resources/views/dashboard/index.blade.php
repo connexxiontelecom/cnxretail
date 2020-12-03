@@ -114,8 +114,8 @@
                 <div class="card bg-c-red total-card">
                     <div class="card-block">
                         <div class="text-left">
-                            <h5>{{ number_format($invoices->sum('total'),2) }}</h5>
-                            <p class="m-0">Invoice</p>
+                            <h5>{{ number_format($invoices->sum('total') - $invoices->sum('paid_amount'),2) }}</h5>
+                            <p class="m-0">Unpaid Invoice</p>
                         </div>
                     </div>
                 </div>
@@ -124,8 +124,8 @@
                 <div class="card bg-c-green total-card">
                     <div class="card-block">
                         <div class="text-left">
-                            <h5>{{ number_format($bills->sum('bill_amount'),2) }}</h5>
-                            <p class="m-0">Bills</p>
+                            <h5>{{ number_format($bills->sum('bill_amount') - $bills->sum('paid_amount'),2) }}</h5>
+                            <p class="m-0">Unpaid Bills</p>
                         </div>
                     </div>
                 </div>
