@@ -131,11 +131,11 @@ class ContactController extends Controller
         $invoice->ref_no = $ref_no;
         $invoice->issue_date = $request->issue_date;
         $invoice->due_date = $request->due_date;
-        $invoice->total = $totalAmount + ($totalAmount*$request->vat)/100;
-        $invoice->sub_total = $totalAmount;
+        $invoice->total = $request->currency != Auth::user()->tenant->currency->id ? ($totalAmount * $request->exchange_rate + ($totalAmount*$request->vat)/100 * $request->exchange_rate ) : ($totalAmount + ($totalAmount*$request->vat)/100 ) ;
+        $invoice->sub_total = $request->currency != Auth::user()->tenant->currency->id ? ($totalAmount * $request->exchange_rate) -  (($totalAmount*$request->vat)/100 * $request->exchange_rate ): $totalAmount - ($totalAmount*$request->vat)/100 ;
         $invoice->vat_rate = $request->vat;
-        $invoice->vat_amount = ($request->vat*$totalAmount)/100;
-        $invoice->exchange_rate = 1;
+        $invoice->vat_amount = $request->currency != Auth::user()->tenant->currency->id ?  ($request->vat*$totalAmount)/100 * $request->exchange_rate : ($request->vat*$totalAmount)/100;
+        $invoice->exchange_rate = $request->exchange_rate ?? 1;
         $invoice->slug = substr(sha1(time()),32,40);
         $invoice->save();
         $invoiceId = $invoice->id;

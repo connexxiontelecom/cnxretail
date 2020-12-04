@@ -30,7 +30,7 @@
             <div class="row invoice-contact">
                 <div class="col-md-8">
                     <div class="invoice-box row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <table class="table table-responsive invoice-table table-borderless">
                                 <tbody>
                                     <tr>
@@ -45,6 +45,9 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="col-sm-6">
+                            <h5 class="mt-5">Invoice</h5>
                         </div>
                     </div>
                 </div>
@@ -80,7 +83,7 @@
                         <h6 class="m-b-20 text-uppercase">Invoice Number <span class="text-primary">#{{$invoice->invoice_no ?? ''}}</span></h6>
                         <input type="hidden" name="invoice_no" value="{{$invoice->invoice_no ?? ''}}">
                         <h6 class="text-uppercase text-primary">Total Due :
-                            <span class="total">{{number_format($invoice->total/$invoice->exchange_rate - $invoice->paid_amount/$invoice->exchange_rate,2)}}</span>
+                            <span class="total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->total/$invoice->exchange_rate - $invoice->paid_amount/$invoice->exchange_rate,2)}}</span>
                         </h6>
 
                     </div>
@@ -91,10 +94,10 @@
                             <table class="table  invoice-detail-table">
                                 <thead>
                                     <tr class="thead-default">
-                                        <th>Service/Product</th>
+                                        <th>Product/Service</th>
                                         <th>Quantity</th>
-                                        <th>Amount</th>
-                                        <th>Total</th>
+                                        <th>Amount({{$invoice->getCurrency->symbol ?? 'N'}})</th>
+                                        <th>Total({{$invoice->getCurrency->symbol ?? 'N'}})</th>
                                     </tr>
                                 </thead>
                                 <tbody id="products">
@@ -141,11 +144,11 @@
                                 </tr>
                                 <tr>
                                     <th>VAT Amount :</th>
-                                    <td><span class="vat_amount">{{number_format($invoice->vat_amount,2)}}</span></td>
+                                    <td><span class="vat_amount">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->vat_amount/$invoice->exchange_rate,2)}}</span></td>
                                 </tr>
                                 <tr>
                                     <th>Sub Total :</th>
-                                    <td><span class="sub_total">{{number_format($invoice->sub_total/$invoice->exchange_rate,2)}}</span></td>
+                                    <td><span class="sub_total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->sub_total/$invoice->exchange_rate,2)}}</span></td>
                                 </tr>
                                 <tr class="text-info">
                                     <td>
@@ -154,7 +157,7 @@
                                     </td>
                                     <td>
                                         <hr>
-                                        <h5 class="text-primary"><span class="total">{{number_format($invoice->total/$invoice->exchange_rate,2)}}</span></h5>
+                                        <h5 class="text-primary"><span class="total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->total/$invoice->exchange_rate,2)}}</span></h5>
                                     </td>
                                 </tr>
                             </tbody>

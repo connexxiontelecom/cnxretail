@@ -14,6 +14,7 @@ use App\Models\Lead;
 use App\Models\Deal;
 use App\Models\Service;
 use App\Models\Contact;
+use App\Models\Currency;
 use Auth;
 class SalesInvoiceController extends Controller
 {
@@ -112,10 +113,10 @@ class SalesInvoiceController extends Controller
             }
         }
          #if payment is complete register contact as deal
-         $clientExist = Deal::where('contact_id', $request->contact)->where('tenant_id', Auth::user()->tenant_id)->first();
+         $clientExist = Deal::where('client_id', $request->contact)->where('tenant_id', Auth::user()->tenant_id)->first();
          if(empty($clientExist)){
              $lead = new Deal;
-             $lead->contact_id = $request->contact;
+             $lead->client_id = $request->contact;
              $lead->tenant_id = Auth::user()->tenant_id;
              $lead->converted_by = Auth::user()->id;
              $lead->save();
@@ -149,16 +150,15 @@ class SalesInvoiceController extends Controller
     public function newInvoice(){
         $services = Service::where('tenant_id', Auth::user()->tenant_id)->get();
         $contacts = Contact::where('tenant_id', Auth::user()->tenant_id)->get();
+        $currencies = Currency::all();
         $invoiceNo = null;
         $invoice = InvoiceMaster::where('tenant_id', Auth::user()->tenant_id)->orderBy('id', 'DESC')->first();
         if(!empty($invoice)){
             $invoiceNo = $invoice->invoice_no + 1;
-            return view('sales-invoice.new-invoice', ['services'=>$services,'invoiceNo'=>$invoiceNo, 'contacts'=>$contacts]);
         }else{
-            $invoiceNo = 1000;
-            session()->flash("error", "<strong>Ooops!</strong> No record found.");
-            return back();
+            $invoiceNo = 10000;
         }
+        return view('sales-invoice.new-invoice', ['services'=>$services,'invoiceNo'=>$invoiceNo, 'contacts'=>$contacts, 'currencies'=>$currencies]);
 
     }
 

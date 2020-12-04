@@ -173,13 +173,6 @@
                     <li class="">
                         <a href="{{route('receipts')}}" class="waves-effect waves-dark">
                             <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                            <span class="pcoded-mtext">New Receipt</span>
-                            <span class="pcoded-mcaret"></span>
-                        </a>
-                    </li>
-                    <li class="">
-                        <a href="{{route('receipts')}}" class="waves-effect waves-dark">
-                            <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                             <span class="pcoded-mtext">All Receipts</span>
                             <span class="pcoded-mcaret"></span>
                         </a>

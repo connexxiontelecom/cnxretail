@@ -38,9 +38,9 @@
                     <th>Company Name</th>
                     <th>Issued By</th>
                     <th>Invoice No.</th>
-                    <th>Total</th>
-                    <th>Paid</th>
-                    <th>Balance</th>
+                    <th>Total ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
+                    <th>Paid ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
+                    <th>Balance ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
                     <th>Due Date</th>
                     <th>Action</th>
                 </tr>
@@ -55,9 +55,9 @@
                                     <td>{{$invoice->contact->company_name ?? ''}}</td>
                                     <td>{{$invoice->converter->full_name ?? ''}} </td>
                                     <td>{{$invoice->invoice_no}}</td>
-                                    <td>{{number_format(($invoice->total/$invoice->exchange_rate),2)}}</td>
-                                    <td>{{number_format($invoice->paid_amount/$invoice->exchange_rate,2)}}</td>
-                                    <td>{{number_format(($invoice->total/$invoice->exchange_rate)  - ($invoice->paid_amount/$invoice->exchange_rate),2)}}</td>
+                                    <td>{{number_format(($invoice->total),2)}}</td>
+                                    <td>{{number_format($invoice->paid_amount,2)}}</td>
+                                    <td>{{number_format(($invoice->total)  - ($invoice->paid_amount),2)}}</td>
                                     <td>{{date('d F, Y', strtotime($invoice->due_date))}}</td>
                                     <td>
                                         <div class="btn-group">
