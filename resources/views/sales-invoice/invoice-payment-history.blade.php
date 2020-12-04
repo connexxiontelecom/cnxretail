@@ -46,11 +46,11 @@ Invoice Payment History
                 </thead>
                 <tbody>
                     @php
-					$serial = 1;
+					$n = 1;
                     @endphp
                             @foreach ($invoices->where('trash', '!=',1) as $invo)
                                 <tr>
-                                    <td>{{$serial++}}</td>
+                                    <td>{{$n++}}</td>
                                     <td>{{$invoice->contact->company_name ?? ''}}</td>
                                     <td>{{$invoice->converter->full_name ?? ''}} </td>
                                     <td>{{$invoice->invoice_no}}</td>
