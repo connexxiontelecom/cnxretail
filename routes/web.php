@@ -56,6 +56,7 @@ Route::post('/add-new-service', 'Backend\ServiceController@addNewService');
 
 #Sales-invoice route
 Route::get('/view-invoice/{slug}', 'Backend\SalesInvoiceController@viewInvoice')->name('view-invoice');
+Route::get('/invoice/payment/history/{slug}', 'Backend\SalesInvoiceController@invoicePaymentHistory')->name('invoice-payment-history');
 Route::get('/decline-invoice/{slug}', 'Backend\SalesInvoiceController@declineInvoice')->name('decline-invoice');
 Route::get('/receive-payment/{slug}', 'Backend\SalesInvoiceController@receivePayment')->name('receive-payment');
 Route::post('/invoice/receive-payment', 'Backend\SalesInvoiceController@storeNewReceipt');
@@ -69,9 +70,14 @@ Route::post('/filter-sales-report', 'Backend\SalesInvoiceController@filterSalesR
 Route::get('/bills', 'Backend\BillPaymentController@bills')->name('bills');
 Route::get('/new-bill', 'Backend\BillPaymentController@newBill')->name('new-bill');
 Route::post('/contact/bill', 'Backend\BillPaymentController@storeBill');
+Route::get('/payments', 'Backend\BillPaymentController@payments')->name('vendor-payments');
 Route::get('/make-payment', 'Backend\BillPaymentController@makePayment')->name('make-payment');
+Route::get('/view-payment/{slug}', 'Backend\BillPaymentController@viewPayment')->name('view-payment');
+Route::post('/make-payment', 'Backend\BillPaymentController@postMakePayment');
 Route::post('/get-vendor', 'Backend\BillPaymentController@getVendor');
 Route::post('/tenant/bank', 'Backend\BillPaymentController@addNewBank');
+Route::get('/view-bill/{slug}', 'Backend\BillPaymentController@viewBill')->name('view-bill');
+Route::get('/decline-bill/{slug}', 'Backend\BillPaymentController@declineBill')->name('decline-bill');
 
 
 #Leads route

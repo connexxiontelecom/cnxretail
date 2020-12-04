@@ -38,7 +38,7 @@ Receipts
                     <th>Company Name</th>
                     <th>Issued By</th>
                     <th>Ref. No.</th>
-                    <th>Total</th>
+                    <th>Total({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
                     <th>Date</th>
                     <th>Action</th>
                 </tr>

@@ -1,31 +1,31 @@
 @extends('layouts.master-layout')
 
 @section('title')
-   Receive payment from {{$invoice->contact->company_name ?? ''}}
+    {{$pay->contact->company_name ?? ''}}
 @endsection
 @section('extra-styles')
 <link rel="stylesheet" type="text/css" href="/assets/css/datatable.min.css">
 <link rel="stylesheet" type="text/css" href="/assets/css/select2.min.css">
 @endsection
 @section('page-name')
-Receive payment from {{$invoice->contact->company_name ?? ''}}
+{{$pay->contact->company_name ?? ''}}
 @endsection
 @section('page-description')
-Receive payment from {{$invoice->contact->company_name ?? ''}}
+    Details of  {{$pay->contact->company_name ?? ''}} pay
 @endsection
 
 @section('page-link')
-<li class="breadcrumb-item"><a href="{{url()->current()}}">{{$invoice->contact->company_name ?? ''}}</a>
+<li class="breadcrumb-item"><a href="{{url()->current()}}">{{$pay->contact->company_name ?? ''}}</a>
 </li>
 @endsection
 
 @section('page-heading')
-Receive payment
+Pay {{$pay->pay_no ?? ''}}
 @endsection
 @section('content')
 <div>
     <div class="card">
-        <form id="receiptForm" class="form-material">
+        <form id="invoiceForm">
 
             <div class="row invoice-contact">
                 <div class="col-md-8">
@@ -49,52 +49,38 @@ Receive payment
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <h5 class="mt-5">Vendor Payment</h5>
                 </div>
             </div>
             <div class="card-block">
                 <div class="row invoive-info">
                     <div class="col-md-4 col-xs-12 invoice-client-info">
-                        <h6 class="text-uppercase">Client Information :</h6>
-                        <h6 class="m-0">{{$invoice->contact->company_name ?? ''}}</h6>
-                        <p class="m-0 m-t-10">{{$invoice->contact->address ?? ''}}</p>
-                        <p class="m-0">{{$invoice->contact->company_phone ?? ''}}</p>
-                        <p class="m-0">{{$invoice->contact->email ?? ''}}</p>
-                        <p>{{$invoice->contact->website ?? ''}}</p>
-                        <input type="hidden" value="{{$invoice->contact_id}}" name="contact">
+                        <h6 class="text-uppercase">Vendor Information :</h6>
+                        <h6 class="m-0">{{$pay->contact->company_name ?? ''}}</h6>
+                        <p class="m-0 m-t-10">{{$pay->contact->address ?? ''}}</p>
+                        <p class="m-0">{{$pay->contact->company_phone ?? ''}}</p>
+                        <p class="m-0">{{$pay->contact->email ?? ''}}</p>
+                        <p>{{$pay->contact->website ?? ''}}</p>
+                        <input type="hidden" value="{{$pay->vendor_id}}" name="contact">
                     </div>
                     <div class="col-md-4 col-xs-12 ">
+
+                        <h6 class="text-uppercase">Order Information :</h6>
                         <table class="table table-responsive invoice-table invoice-order table-borderless">
                             <tbody>
                                 <div class="form-group col-md-8 col-sm-8">
-                                    <div class="form-group form-primary form-static-label">
-                                        <input type="date" name="payment_date" class="form-control">
-                                        <span class="form-bar"></span>
-                                        <label class="float-label">Payment Date</label>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-8 col-sm-8">
-                                    <div class="form-group form-primary form-static-label">
-                                        <input type="text"  name="reference_no" class="form-control">
-                                        <span class="form-bar"></span>
-                                        <label class="float-label">Reference No.</label>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-8 col-sm-8">
-                                    <div class="form-group form-primary form-static-label">
-                                        <select id="payment_method" name="payment_method" class="form-control form-control-inverse fill">
-                                            <option selected disabled>Select payment method</option>
-                                            <option value="1">Cash</option>
-                                            <option value="2">Bank Transfer</option>
-                                            <option value="3">Cheque</option>
-                                        </select>
-                                    </div>
+                                    <p><strong>Date: </strong> {{date('d F, Y', strtotime($pay->date_inputed))}}</p>
                                 </div>
                             </tbody>
                         </table>
                     </div>
                     <div class="col-md-4 col-xs-12">
-                        <h6 class="m-b-20 text-uppercase">Receipt Number <span class="text-primary">#{{$invoice->invoice_no ?? ''}}</span></h6>
-                        <input type="hidden" name="invoice_no" value="{{$invoice->invoice_no ?? ''}}">
+                        <h6 class="m-b-20 text-uppercase">Ref. Number <span class="text-primary">#{{$pay->ref_no ?? ''}}</span></h6>
+                        <input type="hidden" name="invoice_no" value="{{$pay->ref_no ?? ''}}">
+                        <h6 class="text-uppercase text-primary">Total Due :
+                            <span class="total">{{$pay->getCurrency->symbol ?? 'N'}}{{number_format($pay->amount/$pay->exchange_rate - $pay->paid_amount/$pay->exchange_rate,2)}}</span>
+                        </h6>
+
                     </div>
                 </div>
                 <div class="row">
@@ -104,39 +90,19 @@ Receive payment
                                 <thead>
                                     <tr class="thead-default">
                                         <th>Product/Service</th>
-                                        <th>Due Date</th>
-                                        <th>Total</th>
-                                        <th>Balance</th>
-                                        <th>Payment</th>
+                                        <th>Payment({{$pay->getCurrency->symbol ?? 'N'}})</th>
                                     </tr>
                                 </thead>
                                 <tbody id="products">
-                                    @foreach ($invoices as $item)
-                                            <tr class="item">
-                                                <td>
-                                                    <p><a href="{{route('view-invoice', $item->slug)}}" target="_blank">Receiving payment on invoice #{{$item->invoice_no ?? ''}}</a></p>
-                                                </td>
-                                                <td>
-                                                    <p>{{date('d F, Y h:ia', strtotime($item->due_date)) ?? ''}}</p>
-                                                </td>
-                                                <td>
-                                                    <p>{{$item->getCurrency->symbol ?? 'N'}}{{number_format($item->total/$item->exchange_rate,2) ?? ''}}</p>
-                                                </td>
-                                                <td>
-                                                <p>{{number_format($item->total/$item->exchange_rate - $item->paid_amount/$item->exchange_rate,2)}}</p>
-                                                <input type="hidden" name="totalAmount" id="totalAmount" value="{{$total += $item->total/$item->exchange_rate - $item->paid_amount/$item->exchange_rate}}">
-                                                <input type="hidden" name="exchange_rate[]" value="{{$item->exchange_rate}}">
-                                                <input type="hidden" name="currency[]" value="{{$item->currency_id}}">
-                                                <input type="hidden" name="invoice[]" value="{{$item->id}}">
-                                                </td>
-                                                <td>
-                                                    <div class="form-group form-primary form-static-label">
-                                                        <input type="number" step="0.01" name="payment[]" class="form-control total_amount">
-                                                        <span class="form-bar"></span>
-                                                        <label class="float-label">Payment</label>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                    @foreach ($payments as $item)
+                                        <tr class="item">
+                                            <td>
+                                                <p>Payment issued for bill # {{$pay->ref_no ?? ''}}</p>
+                                            </td>
+                                            <td>
+                                            <p>{{$pay->getCurrency->symbol ?? 'N'}}{{number_format(($item->pay_amount/$pay->exchange_rate),2)}}</p>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -156,24 +122,15 @@ Receive payment
                                 </div>
                             </tbody>
                             <tbody class="float-right">
+                                <input type="number" name="mainTotal" hidden id="mainTotal">
                                 <tr class="text-info">
                                     <td>
                                         <hr>
-                                        <strong class="text-primary">Total Due:</strong>
+                                        <h5 class="text-primary">Total :</h5>
                                     </td>
                                     <td>
                                         <hr>
-                                        <strong class="text-primary">{{$item->getCurrency->symbol ?? 'N'}}<span class="totalDue"></span></strong>
-                                    </td>
-                                </tr>
-                                <tr class="text-info">
-                                    <td>
-                                        <hr>
-                                        <strong class="text-primary">Total Payment:</strong>
-                                    </td>
-                                    <td>
-                                        <hr>
-                                        <strong class="text-primary">{{$item->getCurrency->symbol ?? 'N'}}<span class="totalPayment">0.00</span></strong>
+                                        <h5 class="text-primary"><span class="total">{{$pay->getCurrency->symbol ?? 'N'}}{{number_format($pay->amount/$pay->exchange_rate,2)}}</span></h5>
                                     </td>
                                 </tr>
                             </tbody>
@@ -185,7 +142,8 @@ Receive payment
                 <div class="col-sm-12 invoice-btn-group text-center">
                     <div class="btn-group d-flex justify-content-center">
                         <a href="{{url()->previous()}}" class="btn btn-secondary btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Cancel</a>
-                        <button type="submit" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light"><i class="ti-check mr-2"></i> Submit</button>
+                        <button type="submit" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light"><i class="ti-check mr-2"></i> Print</button>
+
                     </div>
                 </div>
             </div>
@@ -201,7 +159,6 @@ Receive payment
 <script src="/assets/js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
-        $('.totalDue').text(Number($('#totalAmount').val()).toLocaleString());
         $('.js-example-basic-single').select2({
             placeholder: "Select product/service"
         });
@@ -209,12 +166,58 @@ Receive payment
             height: '430px',
         });
         var grand_total = 0;
-    receiptForm.onsubmit = async (e) => {
+        $('.invoice-detail-table').on('mouseup keyup', 'input[type=number]', ()=> calculateTotals());
+        $(document).on('click', '.add-line', function(e){
+            e.preventDefault();
+            var new_selection = $('.item').first().clone();
+            $('#products').append(new_selection);
+
+            $(".select-product").select2({
+                placeholder: "Select product or service"
+            });
+            $(".select-product").last().next().next().remove();
+            setTotal();
+        });
+         //calculate totals
+         function calculateTotals(){
+            const subTotals = $('.item').map((idx, val)=> calculateSubTotal(val)).get();
+            const total = subTotals.reduce((a, v)=> a + Number(v), 0);
+            grand_total = total;
+            $('.sub_total').text(grand_total.toLocaleString());
+            $('#subTotal').val(total);
+            $('#mainTotal').val(grand_total);
+            $('.total').text(total.toLocaleString());
+            $('.balance').text(total.toLocaleString());
+        }
+        function calculateSubTotal(row){
+            const $row = $(row);
+            const inputs = $row.find('input');
+            const subtotal = inputs[0].value * inputs[1].value;
+            $row.find('td:nth-last-child(2) input[type=text]').val(subtotal);
+            return subtotal;
+        }
+        $(document).on('change', '#vat', function(e){
+            e.preventDefault();
+            var vat = 0;
+            var total = $('#mainTotal').val();
+            var vat_amount = total*$(this).val()/100;
+            $('.vat_amount').val(vat_amount.toLocaleString());
+            var grandTotal = vat_amount + + total;
+            $('.total').text(grandTotal.toLocaleString());
+
+        });
+    //Remove line
+    $(document).on('click', '.remove-line', function(e){
+        e.preventDefault();
+        $(this).closest('tr').remove();
+        setTotal();
+    });
+    invoiceForm.onsubmit = async (e) => {
                 e.preventDefault();
-                axios.post('/invoice/receive-payment',new FormData(receiptForm))
+                axios.post('/contact/invoice',new FormData(invoiceForm))
                 .then(response=>{
                     Toastify({
-                        text: "Success! Receipt issued.",
+                        text: "Success! Invoice raised.",
                         duration: 3000,
                         newWindow: true,
                         close: true,
@@ -224,7 +227,7 @@ Receive payment
                         stopOnFocus: true,
                         onClick: function(){}
                     }).showToast();
-                    window.location.replace(response.data.route);
+                    location.reload();
                 })
                 .catch(error=>{
                         $('#validation-errors').html('');
@@ -243,17 +246,16 @@ Receive payment
                         $('#validation-errors').append("<li><i class='ti-hand-point-right text-danger mr-2'></i><small class='text-danger'>"+value+"</small></li>");
                     });
                 });
+                //let result = await response.json();
+                //alert(result.message);
             };
 
    });
-   $(document).on("change", ".total_amount", function() {
-        setTotal();
-    });
    function setTotal(){
         var sum = 0;
         $(".total_amount").each(function(){
 						sum += +$(this).val().replace(/,/g, '');
-            $(".totalPayment").text(sum.toLocaleString());
+            $(".total").text(sum.toLocaleString());
         });
 		}
 </script>

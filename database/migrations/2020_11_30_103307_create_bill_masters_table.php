@@ -27,7 +27,10 @@ class CreateBillMastersTable extends Migration
             $table->double('vat_charge');
             $table->unsignedBigInteger('billed_to');
             $table->double('paid_amount')->default(0);
-			$table->tinyInteger('paid')->default(0)->comment('0=unpaid, 1=paid');
+            $table->tinyInteger('paid')->default(0)->comment('0=unpaid, 1=paid');
+            $table->tinyInteger('posted')->default(1);
+            $table->unsignedBigInteger('posted_by')->nullable();
+            $table->dateTime('post_date')->nullable();
 			$table->tinyInteger('trash')->nullable();
 			$table->unsignedBigInteger('trashed_by')->nullable();
 			$table->dateTime('trash_date')->nullable();

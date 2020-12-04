@@ -167,6 +167,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h6>Terms And Condition :</h6>
+                        <a href="{{route('invoice-payment-history', $invoice->slug)}}">Invoice Payment History</a>
                         <p>lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
                             nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor </p>
                     </div>

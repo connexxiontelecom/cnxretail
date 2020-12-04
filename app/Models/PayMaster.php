@@ -13,6 +13,9 @@ class PayMaster extends Model
     public function vendor(){
         return $this->belongsTo(Contact::class, 'vendor_id');
     }
+    public function contact(){
+        return $this->belongsTo(Contact::class, 'vendor_id');
+    }
 
      public function paidBy(){
         return $this->belongsTo(User::class, 'issued_by');
@@ -20,5 +23,9 @@ class PayMaster extends Model
 
      public function getBank(){
         return $this->belongsTo(Bank::class, 'bank_id');
+    }
+
+    public function getCurrency(){
+        return $this->belongsTo(Currency::class, 'currency_id');
     }
 }

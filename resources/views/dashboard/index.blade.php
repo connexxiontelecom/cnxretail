@@ -97,7 +97,7 @@
                 <div class="card text-center order-visitor-card">
                     <div class="card-block">
                         <h6 class="m-b-0">Revenue</h6>
-                        <h4 class="m-t-15 m-b-15"><i class="fa fa-arrow-down m-r-15 text-c-green"></i>{{ number_format($receipts->sum('amount'),2) }}</h4>
+                        <h6 class="m-t-15 m-b-15"><i class="fa fa-arrow-down m-r-15 text-c-green"></i>{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{ number_format($receipts->sum('amount'),2) }}</h6>
 
                     </div>
                 </div>
@@ -106,7 +106,7 @@
                 <div class="card text-center order-visitor-card">
                     <div class="card-block">
                         <h6 class="m-b-0">Expenses</h6>
-                        <h4 class="m-t-15 m-b-15"><i class="fa fa-arrow-up m-r-15 text-c-red"></i>{{ number_format($payments->sum('amount'),2) }}</h4>
+                        <h6 class="m-t-15 m-b-15"><i class="fa fa-arrow-up m-r-15 text-c-red"></i>{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{ number_format($payments->sum('amount'),2) }}</h6>
                     </div>
                 </div>
             </div>
@@ -114,7 +114,7 @@
                 <div class="card bg-c-red total-card">
                     <div class="card-block">
                         <div class="text-left">
-                            <h5>{{ number_format($invoices->sum('total') - $invoices->sum('paid_amount'),2) }}</h5>
+                            <h6>{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{ number_format($invoices->sum('total') - $invoices->sum('paid_amount'),2) }}</h6>
                             <p class="m-0">Unpaid Invoice</p>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                 <div class="card bg-c-green total-card">
                     <div class="card-block">
                         <div class="text-left">
-                            <h5>{{ number_format($bills->sum('bill_amount') - $bills->sum('paid_amount'),2) }}</h5>
+                            <h6>{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{ number_format($bills->sum('bill_amount') - $bills->sum('paid_amount'),2) }}</h6>
                             <p class="m-0">Unpaid Bills</p>
                         </div>
                     </div>

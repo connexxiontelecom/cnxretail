@@ -21,6 +21,8 @@ class CreateReceiptMastersTable extends Migration
             $table->string('ref_no');
             $table->dateTime('issue_date');
             $table->double('amount');
+            $table->double('exchange_rate')->default(1)->nullable();
+            $table->unsignedBigInteger('currency_id')->default(1)->nullable();
             $table->tinyInteger('payment_type')->default(1);
             $table->string('slug')->nullable();
             $table->string('memo')->nullable();

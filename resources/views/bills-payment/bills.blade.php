@@ -39,9 +39,9 @@ Bills
                     <th>Vendor</th>
                     <th>Issued By</th>
                     <th>Bill No.</th>
-                    <th>Total</th>
-                    <th>Paid</th>
-                    <th>Balance</th>
+                    <th>Total({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
+                    <th>Paid({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
+                    <th>Balance({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
                     <th>Date</th>
                     <th>Action</th>
                 </tr>
@@ -56,14 +56,14 @@ Bills
                             <td>{{$bill->getVendor->company_name ?? ''}}</td>
                             <td>{{$bill->issuedBy->full_name ?? ''}}</td>
                             <td>{{$bill->bill_no ?? ''}}</td>
-                            <td>{{number_format($bill->bill_amount/$bill->exchange_rate,2) ?? ''}}</td>
-                            <td>{{number_format($bill->paid_amount/$bill->exchange_rate,2) ?? ''}}</td>
-                            <td>{{number_format($bill->bill_amount/$bill->exchange_rate - $bill->paid_amount/$bill->exchange_rate,2) ?? ''}}</td>
+                            <td>{{number_format($bill->bill_amount,2) ?? ''}}</td>
+                            <td>{{number_format($bill->paid_amount,2) ?? ''}}</td>
+                            <td>{{number_format($bill->bill_amount - $bill->paid_amount,2) ?? ''}}</td>
                             <td>{{date('d F, Y', strtotime($bill->bill_date))}}</td>
                             <td>
                                 <div class="btn-group">
-                                    <a href="{{route('view-invoice', $bill->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Print Bill"><i class="ti-printer text-warning mr-2"></i></a>
-                                    <a href="{{route('view-invoice', $bill->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="View Bill"><i class="ti-eye text-success mr-2"></i></a>
+                                    <a href="{{route('view-bill', $bill->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Print Bill"><i class="ti-printer text-warning mr-2"></i></a>
+                                    <a href="{{route('view-bill', $bill->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="View Bill"><i class="ti-eye text-success mr-2"></i></a>
                                 </div>
                             </td>
                         </tr>
