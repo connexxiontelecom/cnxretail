@@ -84,7 +84,9 @@ class SalesInvoiceController extends Controller
         $receipt->issued_by = Auth::user()->id;
         $receipt->ref_no = $request->reference_no;
         $receipt->issue_date = $request->payment_date;
-        $receipt->amount = $totalAmount;
+        $receipt->amount = $totalAmount * $request->exchange_rate[0];
+        $receipt->exchange_rate = $request->exchange_rate[0];
+        $receipt->currency_id = $request->currency[0];
         $receipt->payment_type = $request->payment_method;
         $receipt->slug = substr(sha1(time()),34,40);
         $receipt->save();
@@ -101,7 +103,7 @@ class SalesInvoiceController extends Controller
             #update invoice
             $updateInvoice = InvoiceMaster::where('tenant_id', Auth::user()->tenant_id)->where('id', $request->invoice[$n])->first();
             if(!empty($updateInvoice)){
-                $updateInvoice->paid_amount += $request->payment[$n];
+                $updateInvoice->paid_amount += $request->payment[$n] * $request->exchange_rate[$n];
                 if($updateInvoice->paid_amount >= $updateInvoice->total){
                     $updateInvoice->status = 1; //marked as complete
                     $updateInvoice->posted = 1;
@@ -121,12 +123,12 @@ class SalesInvoiceController extends Controller
              $lead->converted_by = Auth::user()->id;
              $lead->save();
          }
-        return response()->json(['route'=>'invoices']);
+        return redirect()->route('receipts');
 
     }
 
     public function receipts(){
-        $receipts = ReceiptMaster::where('tenant_id', Auth::user()->tenant_id)->get();
+        $receipts = ReceiptMaster::where('tenant_id', Auth::user()->tenant_id)->orderBy('id', 'DESC')->get();
         if(count($receipts) > 0){
             return view('sales-invoice.receipts', ['receipts'=>$receipts]);
         }else{
@@ -200,6 +202,17 @@ class SalesInvoiceController extends Controller
             'to'=>$request->to
             ]);
 
+    }
+
+
+
+    public function invoicePaymentHistory($slug){
+        $invoice = InvoiceMaster::where('tenant_id', Auth::user()->tenant_id)->where('slug', $slug)->first();
+        if(!empty($invoice)){
+            $invoices = ReceiptDetail::where('tenant_id', Auth::user()->tenant_id)->where('invoice_id', $invoice->id)->get();
+
+            return view('sales-invoice.invoice-payment-history', ['invoices'=>$invoices,'invoice'=>$invoice]);
+        }
     }
 
 }

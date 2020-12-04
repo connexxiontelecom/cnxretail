@@ -30,7 +30,7 @@
             <div class="row invoice-contact">
                 <div class="col-md-8">
                     <div class="invoice-box row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <table class="table table-responsive invoice-table table-borderless">
                                 <tbody>
                                     <tr>
@@ -45,6 +45,9 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="col-sm-6">
+                            <h5 class="mt-5">Receipt</h5>
                         </div>
                     </div>
                 </div>
@@ -75,9 +78,7 @@
                     </div>
                     <div class="col-md-4 col-xs-12">
                         <h6 class="m-b-20 text-uppercase">Ref. Number <span class="text-primary">#{{$receipt->ref_no ?? ''}}</span></h6>
-                        <h6 class="text-uppercase text-primary">Total Due :
-                            <span class="total">{{number_format($receipt->amount,2)}}</span>
-                        </h6>
+
 
                     </div>
                 </div>
@@ -100,13 +101,13 @@
                                                     <p>Receipt issued for invoice # {{$item->getInvoice->invoice_no}}</p>
                                                 </td>
                                                 <td>
-                                                    <p>{{number_format($item->getInvoice->total/$item->getInvoice->exchange_rate,2)}}</p>
+                                                    <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($item->getInvoice->total/$item->getInvoice->exchange_rate,2)}}</p>
                                                 </td>
                                                 <td>
-                                                    <p>{{number_format($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate,2) ?? ''}}</p>
+                                                    <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate,2) ?? ''}}</p>
                                                 </td>
                                                 <td>
-                                                <p>{{number_format(($item->getInvoice->total/$item->getInvoice->exchange_rate) - ($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate),2)}}</p>
+                                                <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format(($item->getInvoice->total/$item->getInvoice->exchange_rate) - ($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate),2)}}</p>
                                                 </td>
                                             </tr>
                                     @endforeach
@@ -122,11 +123,11 @@
                                 <tr class="text-info">
                                     <td>
                                         <hr>
-                                        <h6 class="text-primary">Total :</h6>
+                                        <h6 class="text-primary">Amount Paid :</h6>
                                     </td>
                                     <td>
                                         <hr>
-                                        <h6 class="text-primary"><span class="total">{{number_format($receipts->sum('payment'),2)}}</span></h6>
+                                        <h6 class="text-primary"><span class="total">{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($receipts->sum('payment'),2)}}</span></h6>
                                     </td>
                                 </tr>
                             </tbody>

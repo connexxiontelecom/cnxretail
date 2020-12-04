@@ -159,17 +159,7 @@
                             </tbody>
                             <tbody class="float-right">
 
-                                <tr>
-                                    <th>Currency:</th>
-                                    <td>
-                                        <select name="currency" id="currency" class="form-control js-example-basic-single">
-                                            <option selected disabled>Select currency</option>
-                                            @foreach ($currencies as $currency)
-                                                <option value="{{$currency->id}}">{{$currency->name ?? ''}}({{$currency->symbol ?? ''}})</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                </tr>
+
                                 <input type="number" name="mainTotal" hidden id="mainTotal">
                                 <tr>
                                     <th>VAT(%):</th>
@@ -184,6 +174,26 @@
                                 <tr>
                                     <th>Sub Total :</th>
                                     <td><span class="sub_total"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Currency:</th>
+                                    <td>
+                                        <select name="currency" id="currency" value="{{old('currency')}}" class="js-example-basic-single">
+                                            <option value="{{Auth::user()->tenant->currency->id}}" selected>{{Auth::user()->tenant->currency->name ?? ''}} ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</option>
+                                            @foreach($currencies->where('id', '!=', Auth::user()->tenant->currency->id) as $currency)
+                                                    <option value="{{$currency->id}}" data-abbr="{{$currency->abbr}}">{{$currency->name ?? ''}} ({{$currency->symbol ?? ''}})</option>
+                                            @endforeach
+                                    </select>
+                                    @error('currency')
+                                            <i class="text-danger mt-3 d-flex ">{{$message}}</i>
+                                    @enderror
+                                    </td>
+                                </tr>
+                                <tr class="exchange-rate">
+                                    <th>Exchange Rate :</th>
+                                    <td>
+                                        <input type="text" placeholder="Exchange rate" value="1" class="form-control" id="exchange_rate" name="exchange_rate">
+                                    </td>
                                 </tr>
                                 <tr class="text-info">
                                     <td>
@@ -228,6 +238,8 @@
 <script src="/assets/js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
+        var defaultCurrency = "{{Auth::user()->tenant->currency->id}}";
+        $('.exchange-rate').hide();
         $('.js-example-basic-single').select2({
             placeholder: "Select product/service"
         });
@@ -265,12 +277,30 @@
             $row.find('td:nth-last-child(2) input[type=text]').val(subtotal);
             return subtotal;
         }
+
+        $(document).on('change', '#currency', function(e){
+					e.preventDefault();
+					if(defaultCurrency != $(this).val()){
+                            var abbr = $(this).find(':selected').data('abbr');
+                            console.log(abbr);
+							string = abbr+"_"+"{{Auth::user()->tenant->currency->abbr}}";
+							var url = "https://free.currconv.com/api/v7/convert?q="+string+"&compact=ultra&apiKey=c6616c96883701c84660";
+							axios.get(url)
+							.then(response=>{
+								$('#exchange_rate').val(response.data[string]);
+							});
+							$('.exchange-rate').show();
+						}else{
+							$('.exchange-rate').hide();
+						}
+                });
+
         $(document).on('change', '#vat', function(e){
             e.preventDefault();
             var vat = 0;
             var total = $('#mainTotal').val();
             var vat_amount = total*$(this).val()/100;
-            $('.vat_amount').val(vat_amount.toLocaleString());
+            $('.vat_amount').text(vat_amount.toLocaleString());
             var grandTotal = vat_amount + + total;
             $('.total').text(grandTotal.toLocaleString());
 

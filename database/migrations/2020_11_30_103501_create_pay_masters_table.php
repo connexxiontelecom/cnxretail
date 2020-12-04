@@ -28,6 +28,7 @@ class CreatePayMastersTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->dateTime('date_now')->nullable();
             $table->tinyInteger('posted')->default(0);
+            $table->tinyInteger('payment_type')->default(1);
             $table->dateTime('posted_date')->nullable();
             $table->tinyInteger('trash')->default(0);
             $table->string('slug')->nullable();

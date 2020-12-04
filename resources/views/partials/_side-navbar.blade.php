@@ -211,7 +211,7 @@
                         </a>
                     </li>
                     <li class=" ">
-                        <a href="{{route('invoices')}}" class="waves-effect waves-dark">
+                        <a href="{{route('vendor-payments')}}" class="waves-effect waves-dark">
                             <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
                             <span class="pcoded-mtext">Payment</span>
                             <span class="pcoded-mcaret"></span>

@@ -115,8 +115,8 @@ Make Payment
                         </table>
                     </div>
                     <div class="col-md-4 col-xs-12">
-                        <h6 class="m-b-20 text-uppercase">Payment Number <span class="text-primary">#{{$pay_no ?? ''}}</span></h6>
-                        <input type="hidden" name="pay_no" value="{{$pay_no ?? ''}}">
+                        <h6 class="m-b-20 text-uppercase">Payment Number <span class="text-primary">#{{$paymentNo ?? ''}}</span></h6>
+                        <input type="hidden" name="pay_no" value="{{$paymentNo ?? ''}}">
                     </div>
                 </div>
                 <div class="row">
@@ -243,7 +243,7 @@ Make Payment
 <script src="/assets/js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
-        //$('.totalDue').text($('#totalAmount').val().toLocaleString());
+
         $('.js-example-basic-single').select2({
             placeholder: "Select product/service"
         });
@@ -257,14 +257,15 @@ Make Payment
              axios.post('/get-vendor',{vendor:$(this).val()})
             .then(response=>{
                 $('#products').html(response.data);
+                $('.totalDue').text(Number($('#totalAmount').val()).toLocaleString());
             });
         });
     receiptForm.onsubmit = async (e) => {
                 e.preventDefault();
-                axios.post('/invoice/receive-payment',new FormData(receiptForm))
+                axios.post('/make-payment',new FormData(receiptForm))
                 .then(response=>{
                     Toastify({
-                        text: "Success! Receipt issued.",
+                        text: "Success! Payment done.",
                         duration: 3000,
                         newWindow: true,
                         close: true,
@@ -331,11 +332,15 @@ Make Payment
             };
 
    });
+   $(document).on("change", ".total_amount", function() {
+        setTotal();
+    });
+
    function setTotal(){
         var sum = 0;
         $(".total_amount").each(function(){
 						sum += +$(this).val().replace(/,/g, '');
-            $(".total").text(sum.toLocaleString());
+            $(".totalPayment").text(sum.toLocaleString());
         });
 		}
 </script>

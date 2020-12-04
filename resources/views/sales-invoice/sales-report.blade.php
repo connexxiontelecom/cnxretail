@@ -37,28 +37,28 @@ Sales Report
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
                                 <h6>Invoice</h6>
-                                <h5 class="m-b-30 f-w-700">{{number_format($invoices->sum('total') - $invoices->sum('paid_amount'),2)}}</h5>
+                                <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($invoices->sum('total') - $invoices->sum('paid_amount'),2)}}</h6>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-yellow" style="width:100%"></div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <h6>Receipt</h6>
-                                <h5 class="m-b-30 f-w-700">{{number_format($receipts->sum('amount',2))}}</h5>
+                                <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($receipts->sum('amount',2))}}</h6>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-green" style="width:100%"></div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <h6>Bills</h6>
-                                <h5 class="m-b-30 f-w-700">{{number_format($bills->sum('bill_amount') - $bills->sum('paid_amount'),2)}}</h5>
+                                <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($bills->sum('bill_amount') - $bills->sum('paid_amount'),2)}}</h6>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-yellow" style="width:100%"></div>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <h6>Payment</h6>
-                                <h5 class="m-b-30 f-w-700">{{number_format($payments->sum('amount'),2)}}</h5>
+                                <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($payments->sum('amount'),2)}}</h6>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-red" style="width:100%"></div>
                                 </div>
@@ -109,7 +109,7 @@ Sales Report
                     <th>#</th>
                     <th>Contact</th>
                     <th>Ref. No.</th>
-                    <th>Amount</th>
+                    <th>Amount({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
                     <th>Payment Method</th>
                     <th>Date</th>
                     <th>Action</th>
@@ -156,7 +156,7 @@ Sales Report
                     <th>#</th>
                     <th>Vendor</th>
                     <th>Ref. No.</th>
-                    <th>Amount</th>
+                    <th>Amount({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
                     <th>Bank</th>
                     <th>Date</th>
                     <th>Action</th>

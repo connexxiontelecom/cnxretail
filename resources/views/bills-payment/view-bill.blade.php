@@ -1,26 +1,26 @@
 @extends('layouts.master-layout')
 
 @section('title')
-    {{$invoice->contact->company_name ?? ''}}
+    {{$bill->contact->company_name ?? ''}}
 @endsection
 @section('extra-styles')
 <link rel="stylesheet" type="text/css" href="/assets/css/datatable.min.css">
 <link rel="stylesheet" type="text/css" href="/assets/css/select2.min.css">
 @endsection
 @section('page-name')
-{{$invoice->contact->company_name ?? ''}}
+{{$bill->contact->company_name ?? ''}}
 @endsection
 @section('page-description')
-    Details of  {{$invoice->contact->company_name ?? ''}} invoice
+    Details of  {{$bill->contact->company_name ?? ''}} bill
 @endsection
 
 @section('page-link')
-<li class="breadcrumb-item"><a href="{{url()->current()}}">{{$invoice->contact->company_name ?? ''}}</a>
+<li class="breadcrumb-item"><a href="{{url()->current()}}">{{$bill->contact->company_name ?? ''}}</a>
 </li>
 @endsection
 
 @section('page-heading')
-    Invoice {{$invoice->invoice_no ?? ''}}
+    Bill {{$bill->bill_no ?? ''}}
 @endsection
 @section('content')
 <div>
@@ -49,18 +49,19 @@
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <h5 class="mt-5">Vendor Bill</h5>
                 </div>
             </div>
             <div class="card-block">
                 <div class="row invoive-info">
                     <div class="col-md-4 col-xs-12 invoice-client-info">
                         <h6 class="text-uppercase">Client Information :</h6>
-                        <h6 class="m-0">{{$invoice->contact->company_name ?? ''}}</h6>
-                        <p class="m-0 m-t-10">{{$invoice->contact->address ?? ''}}</p>
-                        <p class="m-0">{{$invoice->contact->company_phone ?? ''}}</p>
-                        <p class="m-0">{{$invoice->contact->email ?? ''}}</p>
-                        <p>{{$invoice->contact->website ?? ''}}</p>
-                        <input type="hidden" value="{{$invoice->contact_id}}" name="contact">
+                        <h6 class="m-0">{{$bill->contact->company_name ?? ''}}</h6>
+                        <p class="m-0 m-t-10">{{$bill->contact->address ?? ''}}</p>
+                        <p class="m-0">{{$bill->contact->company_phone ?? ''}}</p>
+                        <p class="m-0">{{$bill->contact->email ?? ''}}</p>
+                        <p>{{$bill->contact->website ?? ''}}</p>
+                        <input type="hidden" value="{{$bill->vendor_id}}" name="contact">
                     </div>
                     <div class="col-md-4 col-xs-12 ">
 
@@ -68,19 +69,16 @@
                         <table class="table table-responsive invoice-table invoice-order table-borderless">
                             <tbody>
                                 <div class="form-group col-md-8 col-sm-8">
-                                    <p><strong>Issue Date: </strong> {{date('d F, Y', strtotime($invoice->issue_date))}}</p>
-                                </div>
-                                <div class="form-group col-md-8 col-sm-8">
-                                    <p><strong>Due Date: </strong> {{date('d F, Y', strtotime($invoice->due_date))}}</p>
+                                    <p><strong>Issue Date: </strong> {{date('d F, Y', strtotime($bill->bill_date))}}</p>
                                 </div>
                             </tbody>
                         </table>
                     </div>
                     <div class="col-md-4 col-xs-12">
-                        <h6 class="m-b-20 text-uppercase">Invoice Number <span class="text-primary">#{{$invoice->invoice_no ?? ''}}</span></h6>
-                        <input type="hidden" name="invoice_no" value="{{$invoice->invoice_no ?? ''}}">
+                        <h6 class="m-b-20 text-uppercase">Bill Number <span class="text-primary">#{{$bill->bill_no ?? ''}}</span></h6>
+                        <input type="hidden" name="invoice_no" value="{{$bill->bill_no ?? ''}}">
                         <h6 class="text-uppercase text-primary">Total Due :
-                            <span class="total">{{number_format($invoice->total/$invoice->exchange_rate - $invoice->paid_amount/$invoice->exchange_rate,2)}}</span>
+                            <span class="total">{{$bill->getCurrency->symbol ?? 'N'}}{{number_format($bill->bill_amount/$bill->exchange_rate - $bill->paid_amount/$bill->exchange_rate,2)}}</span>
                         </h6>
 
                     </div>
@@ -91,26 +89,26 @@
                             <table class="table  invoice-detail-table">
                                 <thead>
                                     <tr class="thead-default">
-                                        <th>Service/Product</th>
+                                        <th>Product/Service</th>
                                         <th>Quantity</th>
-                                        <th>Amount</th>
-                                        <th>Total</th>
+                                        <th>Amount({{$bill->getCurrency->symbol ?? 'N'}})</th>
+                                        <th>Total({{$bill->getCurrency->symbol ?? 'N'}})</th>
                                     </tr>
                                 </thead>
                                 <tbody id="products">
-                                    @foreach ($invoices as $item)
+                                    @foreach ($bills as $item)
                                             <tr class="item">
                                                 <td>
-                                                    <p>{{$item->getInvoiceService->service}}</p>
+                                                    <p>{{$item->getBillService->service ?? ''}}</p>
                                                 </td>
                                                 <td>
                                                     <p>{{$item->quantity ?? ''}}</p>
                                                 </td>
                                                 <td>
-                                                    <p>{{number_format($item->unit_cost,2) ?? ''}}</p>
+                                                    <p>{{number_format($item->rate,2) ?? ''}}</p>
                                                 </td>
                                                 <td>
-                                                <p>{{number_format($item->quantity * $item->unit_cost,2)}}</p>
+                                                <p>{{number_format(($item->quantity * $item->rate)/$bill->exchange_rate ?? 1,2)}}</p>
                                                 </td>
                                             </tr>
                                     @endforeach
@@ -136,16 +134,16 @@
                                 <tr>
                                     <th>VAT(%):</th>
                                     <td>
-                                        <p>({{$invoice->vat_rate ?? ''}}%)</p>
+                                        <p>({{$bill->vat_charge ?? ''}}%)</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>VAT Amount :</th>
-                                    <td><span class="vat_amount">{{number_format($invoice->vat_amount,2)}}</span></td>
+                                    <td><span class="vat_amount">{{$bill->getCurrency->symbol ?? 'N'}}{{number_format($bill->vat_amount,2)}}</span></td>
                                 </tr>
                                 <tr>
                                     <th>Sub Total :</th>
-                                    <td><span class="sub_total">{{number_format($invoice->sub_total/$invoice->exchange_rate,2)}}</span></td>
+                                    <td><span class="sub_total">{{$bill->getCurrency->symbol ?? 'N'}}{{number_format(($bill->bill_amount/$bill->exchange_rate) - ($bill->vat_amount/$bill->exchange_rate) ,2)}}</span></td>
                                 </tr>
                                 <tr class="text-info">
                                     <td>
@@ -154,18 +152,11 @@
                                     </td>
                                     <td>
                                         <hr>
-                                        <h5 class="text-primary"><span class="total">{{number_format($invoice->total/$invoice->exchange_rate,2)}}</span></h5>
+                                        <h5 class="text-primary"><span class="total">{{$bill->getCurrency->symbol ?? 'N'}}{{number_format($bill->bill_amount/$bill->exchange_rate,2)}}</span></h5>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h6>Terms And Condition :</h6>
-                        <p>lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor </p>
                     </div>
                 </div>
             </div>
@@ -174,7 +165,7 @@
                     <div class="btn-group d-flex justify-content-center">
                         <a href="{{url()->previous()}}" class="btn btn-secondary btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Cancel</a>
                         <button type="submit" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light"><i class="ti-check mr-2"></i> Print</button>
-                        <a href="{{route('decline-invoice', $invoice->slug)}}" class="btn btn-danger btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Decline Invoice</a>
+                        <a href="{{route('decline-bill', $bill->slug)}}" class="btn btn-danger btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Decline Bill</a>
                     </div>
                 </div>
             </div>
