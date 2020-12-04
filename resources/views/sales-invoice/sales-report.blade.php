@@ -66,7 +66,7 @@ Sales Report
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> <!-- Section filter-->
             <div class="col-md-12 col-sm-12">
                 <div class="card-header mb-3">
                     <h5 class="text-uppercase">Filter

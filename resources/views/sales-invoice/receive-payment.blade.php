@@ -131,7 +131,7 @@ Receive payment
                                                 </td>
                                                 <td>
                                                     <div class="form-group form-primary form-static-label">
-                                                        <input type="number" step="0.01" name="payment[]" class="form-control">
+                                                        <input type="number" step="0.01" name="payment[]" class="form-control total_amount">
                                                         <span class="form-bar"></span>
                                                         <label class="float-label">Payment</label>
                                                     </div>
@@ -201,7 +201,7 @@ Receive payment
 <script src="/assets/js/select2.min.js"></script>
 <script>
     $(document).ready(function(){
-        $('.totalDue').text($('#totalAmount').val().toLocaleString());
+        $('.totalDue').text(Number($('#totalAmount').val()).toLocaleString());
         $('.js-example-basic-single').select2({
             placeholder: "Select product/service"
         });
@@ -243,16 +243,17 @@ Receive payment
                         $('#validation-errors').append("<li><i class='ti-hand-point-right text-danger mr-2'></i><small class='text-danger'>"+value+"</small></li>");
                     });
                 });
-                //let result = await response.json();
-                //alert(result.message);
             };
 
    });
+   $(document).on("change", ".total_amount", function() {
+        setTotal();
+    });
    function setTotal(){
         var sum = 0;
         $(".total_amount").each(function(){
 						sum += +$(this).val().replace(/,/g, '');
-            $(".total").text(sum.toLocaleString());
+            $(".totalPayment").text(sum.toLocaleString());
         });
 		}
 </script>
