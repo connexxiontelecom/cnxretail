@@ -25,7 +25,8 @@ Compose SMS
 <div class="row">
     <div class="col-md-12 col-sm-12">
 
-        <form class="form-material" id="composeSmsForm" autocomplete="off">
+        <form class="form-material" id="composeSmsForm" autocomplete="off" action="{{route('compose-sms')}}" method="post">
+            @csrf
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 d-flex justify-content-center mb-2 error-wrapper">
                     <ul id="validation-errors">
@@ -165,7 +166,7 @@ Compose SMS
                  charCount++;
 
             });
-            composeSmsForm.onsubmit = async (e) => {
+           /*  composeSmsForm.onsubmit = async (e) => {
                 e.preventDefault();
                 axios.post('/compose-sms',new FormData(composeSmsForm))
                 .then(response=>{
@@ -199,7 +200,7 @@ Compose SMS
                         $('#validation-errors').append("<li><i class='ti-hand-point-right text-danger mr-2'></i><small class='text-danger'>"+value+"</small></li>");
                     });
                 });
-            };
+            }; */
             $(document).on('click', '.close-errors', function(e){
                 e.preventDefault();
                 $('.error-wrapper').hide();

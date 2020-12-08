@@ -87,10 +87,26 @@ class EmailSMSController extends Controller
 
 
     public function storeSMS(Request $request){
+
        /*  $this->validate($request,[
             'recipient'=>'required',
             'compose_sms'=>'required'
         ]); */
+        $cost = 0;
+        if(strlen($request->compose_sms) <= 160 ){
+            $cost = 1 * count($request->selectedContacts);
+         }else if(strlen($request->compose_sms) <= 313){
+            $cost = 2 * count($request->selectedContacts);
+         }else if(strlen($request->compose_sms) <= 466){
+            $cost = 3 * count($request->selectedContacts);
+         }
+         $account = BulkSmsAccount::where('tenant_id', Auth::user()->tenant_id)->get();
+         return view('email-sms.compose-sms-preview',
+         ['cost'=>$cost,
+         'senderId'=>$request->sender_id,
+         'message'=>$request->compose_sms,
+         'account'=>$account
+         ]);
         $contacts = null;
         $new_numbers = null;
         if(!empty($request->phone_groups)){

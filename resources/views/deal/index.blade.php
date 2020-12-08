@@ -49,9 +49,9 @@ All Deals
                             <td>{{$contact->getContact->contact_full_name ?? ''}}</td>
                             <td>{{$contact->getContact->email ?? ''}},{{$contact->getContact->contact_email ?? ''}}</td>
                             <td>{{$contact->getContact->company_phone ?? ''}}, {{$contact->getContact->contact_mobile ?? ''}}</td>
-                            <td>{{!is_null($contact->getContact->created_at) ? date('d F, Y', strtotime($contact->getContact->created_at)) : ''}}</td>
+                            <td>-</td>
                             <td>
-                                <a href="{{route('view-contact', $contact->getContact->slug)}}" class="btn btn-warning btn-mini">View</a>
+                                -
                             </td>
                         </tr>
                     @endforeach
