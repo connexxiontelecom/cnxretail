@@ -66,6 +66,9 @@ Route::get('/new-invoice', 'Backend\SalesInvoiceController@newInvoice')->name('n
 Route::get('/sales-report', 'Backend\SalesInvoiceController@salesReport')->name('sales-report');
 Route::post('/filter-sales-report', 'Backend\SalesInvoiceController@filterSalesReport')->name('filter-sales-report');
 
+#Quotation routes
+Route::get('/quotations', 'Backend\QuotationController@quotations')->name('quotations');
+Route::get('/quotation/add-new-quotation', 'Backend\QuotationController@addNewQuotation')->name('add-new-quotation');
 #Bill & payment routes
 Route::get('/bills', 'Backend\BillPaymentController@bills')->name('bills');
 Route::get('/new-bill', 'Backend\BillPaymentController@newBill')->name('new-bill');

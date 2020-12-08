@@ -1,26 +1,26 @@
 @extends('layouts.master-layout')
 
 @section('title')
-    Issue Invoice
+    Add New Quotation
 @endsection
 @section('extra-styles')
 <link rel="stylesheet" type="text/css" href="/assets/css/datatable.min.css">
 <link rel="stylesheet" type="text/css" href="/assets/css/select2.min.css">
 @endsection
 @section('page-name')
-{{$contact->company_name ?? ''}}
+Add New Quotation
 @endsection
 @section('page-description')
-    Issue new invoice
+Add New Quotation
 @endsection
 
 @section('page-link')
-<li class="breadcrumb-item"><a href="{{url()->current()}}">New Invoice</a>
+<li class="breadcrumb-item"><a href="{{url()->current()}}">Add New Quotation</a>
 </li>
 @endsection
 
 @section('page-heading')
-    New Invoice
+Add New Quotation
 @endsection
 @section('content')
 <div>
