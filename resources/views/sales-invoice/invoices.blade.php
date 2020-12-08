@@ -64,6 +64,7 @@
                                             <a href="{{route('view-invoice', $invoice->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Print Invoice"><i class="ti-printer text-warning mr-2"></i></a>
                                             <a href="{{route('receive-payment', $invoice->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Receive Payment"><i class="ti-wallet text-primary mr-2"></i></a>
                                             <a href="{{route('view-invoice', $invoice->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="View Invoice"><i class="ti-eye text-success mr-2"></i></a>
+                                            <a href="{{route('invoice-payment-history', $invoice->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Invoice Payment History"><i class="ti-pulse text-danger mr-2"></i></a>
                                         </div>
                                      </td>
                             </tr>

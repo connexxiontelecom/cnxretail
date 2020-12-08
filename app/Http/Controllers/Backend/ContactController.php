@@ -65,8 +65,9 @@ class ContactController extends Controller
 
     public function viewContact($slug){
         $contact = Contact::where('tenant_id', Auth::user()->tenant_id)->where('slug', $slug)->first();
+        $balance = 0;
         if(!empty($contact) ){
-            return view('contact.view-contact', ['contact'=>$contact]);
+            return view('contact.view-contact', ['contact'=>$contact, 'balance'=>$balance]);
         }else{
             session()->flash("error", "<strong>Ooops!</strong> No record found.");
             return back();

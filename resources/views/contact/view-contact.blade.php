@@ -144,7 +144,7 @@
                                 <div class="slide"></div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#settings3" role="tab">Report</a>
+                                <a class="nav-link" data-toggle="tab" href="#settings3" role="tab">Payment History</a>
                                 <div class="slide"></div>
                             </li>
                         </ul>
@@ -273,12 +273,41 @@
                             </div>
                             </div>
                             <div class="tab-pane" id="settings3" role="tabpanel">
-                                <p>Reports</p>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="dt-responsive table-responsive">
+                                        <table  class="table table-striped table-bordered nowrap simpletable">
+                                            <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Description</th>
+                                                <th>DR</th>
+                                                <th>CR</th>
+                                                <th>Balance</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach ($contact->getContactInvoices as $invoice)
+                                                @foreach ($contact->getContactReceipts as $receipt)
+                                                    <tr>
+                                                        <td>{{$invoice->invoice_no}}</td>
+                                                        <td>Customer invoice {{$invoice->invoice_no}} & receipt ref. no {{$receipt->ref_no}}</td>
+                                                        <td>{{number_format($invoice->total/$invoice->exchange_rate,2)}}</td>
+                                                        <td>{{number_format($receipt->amount/$receipt->exchange_rate,2)}}</td>
+
+                                                        <td>{{number_format(($balance + $invoice->total/$invoice->exchange_rate) - ($receipt->amount/$receipt->exchange_rate))}}</td>
+                                                    </tr>
+                                                @endforeach
+                                            @endforeach
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
