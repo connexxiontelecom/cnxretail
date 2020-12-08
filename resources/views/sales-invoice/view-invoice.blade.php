@@ -64,6 +64,7 @@
                         <p class="m-0">{{$invoice->contact->email ?? ''}}</p>
                         <p>{{$invoice->contact->website ?? ''}}</p>
                         <input type="hidden" value="{{$invoice->contact_id}}" name="contact">
+                        <input type="hidden" value="{{$invoice->id}}" name="invoiceId" id="invoiceId">
                     </div>
                     <div class="col-md-4 col-xs-12 ">
 
@@ -179,6 +180,7 @@
                         <a href="{{url()->previous()}}" class="btn btn-secondary btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Cancel</a>
                         <button type="submit" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light"><i class="ti-check mr-2"></i> Print</button>
                         <a href="{{route('decline-invoice', $invoice->slug)}}" class="btn btn-danger btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Decline Invoice</a>
+                        <button type="button" class="btn btn-secondary btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20 sendAsEmail"><i class="ti-email mr-2"></i>Email</button>
                     </div>
                 </div>
             </div>
@@ -240,6 +242,39 @@
             var grandTotal = vat_amount + + total;
             $('.total').text(grandTotal.toLocaleString());
 
+        });
+
+        //send invoice as email
+        $(document).on('click', '.sendAsEmail', function(e){
+            e.preventDefault();
+            $(this).text('Sending email...');
+            axios.post('/send-invoice/mail',{invoiceId:$('#invoiceId').val() })
+            .then(response=>{
+                Toastify({
+                        text: "Success! Invoice sent as email",
+                        duration: 3000,
+                        newWindow: true,
+                        close: true,
+                        gravity: "top",
+                        position: 'right',
+                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        stopOnFocus: true,
+                        onClick: function(){}
+                    }).showToast();
+            })
+            .catch(error=>[
+                Toastify({
+                        text: "Ooops! Could not send mail.",
+                        duration: 3000,
+                        newWindow: true,
+                        close: true,
+                        gravity: "top",
+                        position: 'right',
+                        backgroundColor: "linear-gradient(to right, #FF0000, #DD0000)",
+                        stopOnFocus: true,
+                        onClick: function(){}
+                    }).showToast();
+            ]);
         });
     //Remove line
     $(document).on('click', '.remove-line', function(e){

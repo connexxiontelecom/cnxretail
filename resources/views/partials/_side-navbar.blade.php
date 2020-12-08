@@ -213,6 +213,39 @@
                 </ul>
             </li>
         </ul>
+        <div class="pcoded-navigation-label">Reports</div>
+        <ul class="pcoded-item pcoded-left-item">
+            <li class="pcoded-hasmenu">
+                <a href="javascript:void(0)" class="waves-effect waves-dark">
+                    <span class="pcoded-micon"><i class="ti-layout-grid2-alt"></i><b>BC</b></span>
+                    <span class="pcoded-mtext">Reports</span>
+                    <span class="pcoded-mcaret"></span>
+                </a>
+                <ul class="pcoded-submenu">
+                    <li class=" ">
+                        <a href="{{route('sales-report')}}" class="waves-effect waves-dark">
+                            <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                            <span class="pcoded-mtext">Sales Report</span>
+                            <span class="pcoded-mcaret"></span>
+                        </a>
+                    </li>
+                    <li class=" ">
+                        <a href="{{route('payment-report')}}" class="waves-effect waves-dark">
+                            <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                            <span class="pcoded-mtext">Payment History</span>
+                            <span class="pcoded-mcaret"></span>
+                        </a>
+                    </li>
+                    <li class=" ">
+                        <a href="{{route('customer-sales-report-statement')}}" class="waves-effect waves-dark">
+                            <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                            <span class="pcoded-mtext">Customer Sales Report Statement</span>
+                            <span class="pcoded-mcaret"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
         <div class="pcoded-navigation-label">Bills & Payment</div>
         <ul class="pcoded-item pcoded-left-item">
             <li class="pcoded-hasmenu">

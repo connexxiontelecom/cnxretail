@@ -63,9 +63,16 @@ Route::post('/invoice/receive-payment', 'Backend\SalesInvoiceController@storeNew
 Route::get('/receipts', 'Backend\SalesInvoiceController@receipts')->name('receipts');
 Route::get('/view-receipt/{slug}', 'Backend\SalesInvoiceController@viewReceipt')->name('view-receipt');
 Route::get('/new-invoice', 'Backend\SalesInvoiceController@newInvoice')->name('new-invoice');
-Route::get('/sales-report', 'Backend\SalesInvoiceController@salesReport')->name('sales-report');
-Route::post('/filter-sales-report', 'Backend\SalesInvoiceController@filterSalesReport')->name('filter-sales-report');
+Route::post('/send-invoice/mail', 'Backend\SalesInvoiceController@sendInvoiceAsEmail');
 
+#Report routes
+Route::get('/sales-report', 'Backend\ReportController@salesReport')->name('sales-report');
+Route::post('/filter-sales-report', 'Backend\ReportController@filterSalesReport')->name('filter-sales-report');
+Route::get('/payment-report', 'Backend\ReportController@paymentReport')->name('payment-report');
+Route::post('/filter-payment-report', 'Backend\ReportController@filterPaymentReport')->name('filter-payment-report');
+Route::get('/customer-sales-report-statement', 'Backend\ReportController@customerSalesReportStatement')
+        ->name('customer-sales-report-statement');
+Route::post('/customer-sales-report-statement', 'Backend\ReportController@filterCustomerSalesReportStatement');
 #Quotation routes
 Route::get('/quotations', 'Backend\QuotationController@quotations')->name('quotations');
 Route::get('/quotation/add-new-quotation', 'Backend\QuotationController@newQuotation')->name('add-new-quotation');

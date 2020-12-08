@@ -278,25 +278,28 @@
                                         <table  class="table table-striped table-bordered nowrap simpletable">
                                             <thead>
                                             <tr>
-                                                <th>ID</th>
-                                                <th>Description</th>
+                                                <th>S/No.</th>
+                                                <th>Date</th>
+                                                <th>Narration</th>
                                                 <th>DR</th>
                                                 <th>CR</th>
                                                 <th>Balance</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach ($contact->getContactInvoices as $invoice)
-                                                @foreach ($contact->getContactReceipts as $receipt)
+                                                @php
+                                                    $n = 1;
+                                                @endphp
+                                            @foreach ($contact->getPaymentHistory as $pay)
                                                     <tr>
-                                                        <td>{{$invoice->invoice_no}}</td>
-                                                        <td>Customer invoice {{$invoice->invoice_no}} & receipt ref. no {{$receipt->ref_no}}</td>
-                                                        <td>{{number_format($invoice->total/$invoice->exchange_rate,2)}}</td>
-                                                        <td>{{number_format($receipt->amount/$receipt->exchange_rate,2)}}</td>
-
-                                                        <td>{{number_format(($balance + $invoice->total/$invoice->exchange_rate) - ($receipt->amount/$receipt->exchange_rate))}}</td>
+                                                        <td>{{$n++}}</td>
+                                                        <td>{{date('d M, Y', strtotime($pay->transaction_date)) ?? ''}}</td>
+                                                        <td>{{$pay->narration ?? ''}}</td>
+                                                        <td>{{number_format($pay->type == 2 ? $pay->amount : 0,2)}}</td>
+                                                        <td>{{number_format($pay->type == 1 ? $pay->amount : 0,2)}}</td>
+                                                        <input type="hidden" value="{{$balance += ($balance + $pay->type == 2 ? $pay->amount : 0) - ($pay->type == 1 ? $pay->amount : 0)}}">
+                                                        <td>{{number_format( $balance,2)}}</td>
                                                     </tr>
-                                                @endforeach
                                             @endforeach
                                             </tfoot>
                                         </table>
