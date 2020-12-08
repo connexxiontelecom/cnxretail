@@ -30,7 +30,7 @@ Quotations
                 {!! session()->get('error') !!}
             </div>
         @endif
-        <a href="" class="btn btn-primary btn-mini mb-3"><i class="ti-plus mr-2"></i>Add New Quotation</a>
+        <a href="{{route('add-new-quotation')}}" class="btn btn-primary btn-mini mb-3"><i class="ti-plus mr-2"></i>Add New Quotation</a>
         <div class="dt-responsive table-responsive">
             <table  class="table table-striped table-bordered nowrap simpletable">
                 <thead>
@@ -40,16 +40,31 @@ Quotations
                     <th>Issued By</th>
                     <th>Quotation No.</th>
                     <th>Total ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
-                    <th>Paid ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
-                    <th>Balance ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
-                    <th>Due Date</th>
+                    <th>Date</th>
                     <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
+
                     @php
 					$serial = 1;
                     @endphp
+                            @foreach ($quotations->where('trash', '!=',1) as $quotation)
+                                <tr>
+                                    <td>{{$serial++}}</td>
+                                    <td>{{$quotation->contact->company_name ?? ''}}</td>
+                                    <td>{{$quotation->converter->full_name ?? ''}} </td>
+                                    <td>{{$quotation->quotation_no}}</td>
+                                    <td>{{number_format(($quotation->total),2)}}</td>
+                                    <td>{{date('d F, Y', strtotime($quotation->created_at))}}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{{route('view-quotation', $quotation->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Print Quotation"><i class="ti-printer text-warning mr-2"></i></a>
+                                            <a href="{{route('view-quotation', $quotation->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="View Quotation"><i class="ti-eye text-success mr-2"></i></a>
+                                        </div>
+                                     </td>
+                            </tr>
+                        @endforeach
 
                 </tfoot>
             </table>

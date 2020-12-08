@@ -81,8 +81,8 @@ Add New Quotation
                         </table>
                     </div>
                     <div class="col-md-4 col-xs-12">
-                        <h6 class="m-b-20 text-uppercase">Invoice Number <span class="text-primary">#{{$invoiceNo}}</span></h6>
-                        <input type="hidden" name="invoice_no" value="{{$invoiceNo}}">
+                        <h6 class="m-b-20 text-uppercase">Quotation Number <span class="text-primary">#{{$quotationNo}}</span></h6>
+                        <input type="hidden" name="invoice_no" value="{{$quotationNo}}">
                         <h6 class="text-uppercase text-primary">Total Due :
                             <span class="total"></span>
                         </h6>
@@ -378,7 +378,7 @@ Add New Quotation
     });
     invoiceForm.onsubmit = async (e) => {
                 e.preventDefault();
-                axios.post('/contact/invoice',new FormData(invoiceForm))
+                axios.post('/quotation/store',new FormData(invoiceForm))
                 .then(response=>{
                     Toastify({
                         text: "Success! Invoice raised.",
