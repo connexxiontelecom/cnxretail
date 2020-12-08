@@ -19,10 +19,25 @@ Invoice Payment History
 @endsection
 
 @section('page-heading')
-Invoice Payment History
+Invoice Summary
 @endsection
 
 @section('content')
+<div class="row">
+    <div class="col-sm-6 col-md-6">
+        <table class="table table-stripped">
+            <tr>
+                <td><strong style="font-weight: 700;">Company Name: </strong> {{$invoice->contact->company_name ?? ''}}</td>
+            </tr>
+            <tr>
+                <td><strong style="font-weight: 700;">Issued By: </strong> {{$invoice->converter->full_name ?? ''}}</td>
+            </tr>
+            <tr>
+                <td><strong style="font-weight: 700;">Invoice No.: </strong> {{$invoice->invoice_no}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
 <div class="row">
     <div class="col-sm-12 col-md-12">
         @if (session()->has('error'))
@@ -35,9 +50,6 @@ Invoice Payment History
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Company Name</th>
-                    <th>Issued By</th>
-                    <th>Invoice No.</th>
                     <th>Total ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
                     <th>Paid ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
                     <th>Balance ({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
@@ -48,23 +60,20 @@ Invoice Payment History
                     @php
 					$n = 1;
                     @endphp
-                            @foreach ($invoices->where('trash', '!=',1) as $invo)
-                                <tr>
-                                    <td>{{$n++}}</td>
-                                    <td>{{$invoice->contact->company_name ?? ''}}</td>
-                                    <td>{{$invoice->converter->full_name ?? ''}} </td>
-                                    <td>{{$invoice->invoice_no}}</td>
-                                    <td>{{number_format(($invoice->total),2)}}</td>
-                                    <td>{{number_format($invo->payment * $invoice->exchange_rate ?? 1,2)}}</td>
-                                    <td>{{number_format(($invoice->total)  - ($invo->payment * $invoice->exchange_rate ?? 1),2)}}</td>
-                                    <td>{{date('d F, Y', strtotime($invoice->due_date))}}</td>
-                                </tr>
-                                @endforeach
-                            </tfoot>
-                        </table>
-                    </div>
-                    <a href="{{route('view-invoice', $invoice->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Print Invoice"><i class="ti-printer text-warning mr-2"></i></a>
-    </div>
+                    @foreach ($invoices->where('trash', '!=',1) as $invo)
+                        <tr>
+                            <td>{{$n++}}</td>
+                            <td>{{number_format(($invoice->total),2)}}</td>
+                            <td>{{number_format($invo->payment * $invoice->exchange_rate ?? 1,2)}}</td>
+                            <td>{{number_format(($invoice->total)  - ($invo->payment * $invoice->exchange_rate ?? 1),2)}}</td>
+                            <td>{{date('d F, Y', strtotime($invoice->due_date))}}</td>
+                        </tr>
+                        @endforeach
+                    </tfoot>
+            </table>
+        </div>
+            <a href="{{route('view-invoice', $invoice->slug)}}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Print Invoice"><i class="ti-printer text-warning mr-2"></i></a>
+        </div>
 </div>
 @endsection
 
