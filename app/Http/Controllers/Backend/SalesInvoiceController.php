@@ -16,6 +16,7 @@ use App\Models\Deal;
 use App\Models\Service;
 use App\Models\Contact;
 use App\Models\Currency;
+use App\Models\Bank;
 use App\Models\PaymentHistory;
 use Auth;
 class SalesInvoiceController extends Controller
@@ -60,8 +61,9 @@ class SalesInvoiceController extends Controller
                                     ->where('status', 0)
                                     ->where('currency_id', $invoice->currency_id)
                                     ->get();
+            $banks = Bank::where('tenant_id', Auth::user()->tenant_id)->orderBy('account_name', 'ASC')->get();
             $total = 0;
-            return view('sales-invoice.receive-payment',['invoice'=>$invoice,'invoices'=>$invoices, 'total'=>$total]);
+            return view('sales-invoice.receive-payment',['invoice'=>$invoice,'invoices'=>$invoices, 'total'=>$total,'banks'=>$banks]);
         }else{
             session()->flash("error", "<strong>Ooops!</strong> No record found.");
             return back();
@@ -90,6 +92,7 @@ class SalesInvoiceController extends Controller
         $receipt->exchange_rate = $request->exchange_rate[0];
         $receipt->currency_id = $request->currency[0];
         $receipt->payment_type = $request->payment_method;
+        $receipt->bank_id = $request->bank;
         $receipt->slug = substr(sha1(time()),34,40);
         $receipt->save();
         $receiptId = $receipt->id;

@@ -107,7 +107,12 @@ class ReportController extends Controller
 
 
     public function customerSalesReportStatement(){
-        $contacts = Contact::where('tenant_id', Auth::user()->tenant_id)->orderBy('company_name', 'ASC')->get();
+        $contactIds = PaymentHistory::where('tenant_id', Auth::user()->tenant_id)->get();
+        $ids = [];
+        foreach($contactIds as $id){
+            array_push($ids, $id->contact_id);
+        }
+        $contacts = Contact::where('tenant_id', Auth::user()->tenant_id)->whereIn('id', $ids)->orderBy('company_name', 'ASC')->get();
         return view('reports.customer-sales-report-statement',[
         'contacts'=>$contacts]);
     }

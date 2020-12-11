@@ -30,6 +30,11 @@ BulkSMS
                 {!! session()->get('error') !!}
             </div>
         @endif
+        @if (session()->has('success'))
+            <div class="alert alert-success background-success">
+                {!! session()->get('success') !!}
+            </div>
+        @endif
         <div class="row mb-3">
             <div class="col-md-12 col-sm-12 ">
                 <a  href="{{route('compose-sms')}}" class="btn btn-mini btn-primary"><i class="ti-plus mr-2"></i>Compose SMS</a>

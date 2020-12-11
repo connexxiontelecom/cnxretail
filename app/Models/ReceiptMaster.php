@@ -21,4 +21,8 @@ class ReceiptMaster extends Model
         return $this->belongsTo(Currency::class, 'currency_id');
     }
 
+    public function getBank(){
+        return $this->belongsTo(Bank::class, 'bank_id');
+    }
+
 }

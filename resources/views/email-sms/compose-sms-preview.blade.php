@@ -25,7 +25,7 @@ SMS Preview
 <div class="row">
     <div class="col-md-12 col-sm-12">
 
-        <form class="form-material" id="composeSmsForm" autocomplete="off" action="{{route('compose-sms')}}" method="post">
+        <form class="form-material" id="composeSmsForm" autocomplete="off" action="{{route('send-sms')}}" method="post">
             @csrf
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 d-flex justify-content-center mb-2 error-wrapper">
@@ -41,35 +41,33 @@ SMS Preview
                     <div class="container">
                         <div class="row">
                             <div class="col-md-4 col-sm-4 text-center">
-                                <h3>N2.19</h3>
-                                <p>SMS COST (1.10 units)</p>
+                                <h3>N{{number_format($cost,2)}}</h3>
+                                <p>SMS COST</p>
                             </div>
                             <div class="col-md-4 col-sm-4 text-center">
-                                <h3>1</h3>
+                                <h3>{{count($phone_numbers)}}</h3>
                                 <p>RECIPIENTS</p>
                             </div>
                             <div class="col-md-4 col-sm-4 text-center">
-                                <h3>1</h3>
+                                <h3>{{strlen($message)/160 < 0 ? '1' : ceil(strlen($message)/160)}}</h3>
                                 <p>PAGE</p>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-sm-12 col-md-12">
-                                <form action="">
                                     <div class="form-group">
                                         <label for="">Sender ID</label>
-                                        <input type="text" value="{{$senderId}}" readonly class="form-control">
+                                        <input type="text" name="senderId" value="{{$senderId}}" readonly class="form-control">
                                     </div>
                                     <div class="form-group">
                                         <label for="">Phone Numbers</label>
-                                        <input type="text" value="{{$senderId}}" readonly class="form-control">
+                                        <input type="text" name="phoneNumbers" value="{{implode(',',$phone_numbers)}}" readonly class="form-control">
                                     </div>
                                     <div class="form-group">
                                         <label for="">Text Message</label>
-                                        <textarea name="" class="form-control" id="" cols="30" rows="10">{{$message}}</textarea>
+                                        <textarea name="textMessage" class="form-control" id="" cols="30" rows="10">{{$message}}</textarea>
                                     </div>
-                                </form>
 
                             </div>
                         </div>
@@ -81,12 +79,13 @@ SMS Preview
             <hr>
             <div class="row">
                 <div class="col-sm-12 col-lg-12 col-md-12">
+                    <p><strong style="font-weight: 700;" class="text-primary">Account Balance: </strong> {{number_format($account->sum('debit') - $account->sum('credit'),2)}}</p>
                     @if ($account->sum('debit') - $account->sum('credit') < $cost)
                         <p><strong style="font-weight: 700;" class="text-danger">Ooops!</strong> Insufficient balance.</p>
                     @endif
                     <div class="btn-group d-flex justify-content-center">
                         <a href="" class="btn btn-danger btn-mini"> <i class="ti-close mr-2"></i> Cancel</a>
-                        <button {{ $account->sum('debit') - $account->sum('credit') < $cost ? 'disabled' : ''}} type="submit"  class="btn btn-primary btn-mini save-contact"> <i class="ti-check mr-2"></i> Proceed to Send</button>
+                        <button  type="submit"  class="btn btn-primary btn-mini save-contact"> <i class="ti-check mr-2"></i> Proceed to Send</button>
                     </div>
                 </div>
             </div>

@@ -35,28 +35,14 @@ Payment Report
                 <div class="card proj-progress-card">
                     <div class="card-block">
                         <div class="row">
-                            <div class="col-xl-3 col-md-6">
-                                <h6>Invoice</h6>
-                                <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($invoices->sum('total') - $invoices->sum('paid_amount'),2)}}</h6>
-                                <div class="progress">
-                                    <div class="progress-bar bg-c-yellow" style="width:100%"></div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <h6>Receipt</h6>
-                                <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($receipts->sum('amount',2))}}</h6>
-                                <div class="progress">
-                                    <div class="progress-bar bg-c-green" style="width:100%"></div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
+                            <div class="col-xl-6 col-md-6">
                                 <h6>Bills</h6>
                                 <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($bills->sum('bill_amount') - $bills->sum('paid_amount'),2)}}</h6>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-yellow" style="width:100%"></div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-md-6">
+                            <div class="col-xl-6 col-md-6">
                                 <h6>Payment</h6>
                                 <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($payments->sum('amount'),2)}}</h6>
                                 <div class="progress">
@@ -97,7 +83,7 @@ Payment Report
             </div>
         </div>
         <div class="card-header mb-3">
-            <h5 class="text-uppercase">Outflow <label for="" class="label label-primary">From: {{date('d F, Y', strtotime($from))}}</label> <label for="" class="label label-primary">To: {{date('d F, Y', strtotime($to))}}</label>
+            <h5 class="text-uppercase">Payment Report <small>(Outflow)</small> <label for="" class="label label-primary">From: {{date('d F, Y', strtotime($from))}}</label> <label for="" class="label label-primary">To: {{date('d F, Y', strtotime($to))}}</label>
             </h5>
             <div class="card-header-right">
             </div>
@@ -107,12 +93,11 @@ Payment Report
                 <thead>
                 <tr>
                     <th>#</th>
+                    <th>Date</th>
                     <th>Vendor</th>
                     <th>Ref. No.</th>
                     <th>Amount({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
                     <th>Bank</th>
-                    <th>Date</th>
-                    <th>Action</th>
                 </tr>
                 </thead>
                 @php
@@ -122,14 +107,11 @@ Payment Report
                     @foreach ($payments as $pay)
                         <tr>
                             <td>{{$i++}}</td>
+                            <td>{{date('d-m-Y', strtotime($pay->issue_date))}}</td>
                             <td>{{$pay->contact->company_name ?? ''}}</td>
                             <td>{{$pay->ref_no ?? ''}}</td>
-                            <td>{{ number_format($pay->amount,2) }}</td>
+                            <td class="text-right">{{ number_format($pay->amount,2) }}</td>
                             <td>{{$pay->getBank->account_name ?? ''}} - {{$pay->getBank->account_no ?? ''}}</td>
-                            <td>{{date('d-m-Y', strtotime($pay->issue_date))}}</td>
-                            <td>
-                                <a href="" class="btn btn-mini btn-warning">View</a>
-                            </td>
                         </tr>
                     @endforeach
                 </tfoot>

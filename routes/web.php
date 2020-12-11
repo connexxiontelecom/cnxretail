@@ -122,7 +122,13 @@ Route::get('/bulksms/buy-units', 'Backend\EmailSMSController@buyUnits')->name('b
 Route::post('/bulksms/transaction', 'Backend\EmailSMSController@buyUnitsTransaction');
 //Route::post('/sms/balance', 'Backend\BBNSMSCallsController@getBalance');
 Route::post('/sms/balance', 'Backend\BBNSMSCallsController@sendMessage');
+Route::post('/send-sms', 'Backend\EmailSMSController@sendSMS')->name('send-sms');
 
+#Imprest routes
+Route::get('/my-imprest', 'Backend\ImprestController@myImprest')->name('my-imprest');
+Route::post('/post-imprest', 'Backend\ImprestController@postImprest')->name('post-imprest');
+Route::post('/approve-imprest', 'Backend\ImprestController@approveImprest');
+Route::get('/all-imprest', 'Backend\ImprestController@allImprest')->name('all-imprest');
 #Reminder routes
 Route::get('/reminders', 'Backend\ExtraController@reminders')->name('reminders');
 Route::post('/new-reminder', 'Backend\ExtraController@storeReminder');

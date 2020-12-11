@@ -35,32 +35,18 @@ Sales Report
                 <div class="card proj-progress-card">
                     <div class="card-block">
                         <div class="row">
-                            <div class="col-xl-3 col-md-6">
+                            <div class="col-xl-6 col-md-6">
                                 <h6>Invoice</h6>
                                 <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($invoices->sum('total') - $invoices->sum('paid_amount'),2)}}</h6>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-yellow" style="width:100%"></div>
                                 </div>
                             </div>
-                            <div class="col-xl-3 col-md-6">
+                            <div class="col-xl-6 col-md-6">
                                 <h6>Receipt</h6>
                                 <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($receipts->sum('amount',2))}}</h6>
                                 <div class="progress">
                                     <div class="progress-bar bg-c-green" style="width:100%"></div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <h6>Bills</h6>
-                                <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($bills->sum('bill_amount') - $bills->sum('paid_amount'),2)}}</h6>
-                                <div class="progress">
-                                    <div class="progress-bar bg-c-yellow" style="width:100%"></div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-md-6">
-                                <h6>Payment</h6>
-                                <h6 class="m-b-30 f-w-700">{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{number_format($payments->sum('amount'),2)}}</h6>
-                                <div class="progress">
-                                    <div class="progress-bar bg-c-red" style="width:100%"></div>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +83,7 @@ Sales Report
             </div>
         </div>
         <div class="card-header mb-3">
-            <h5 class="text-uppercase">Inflow <label for="" class="label label-primary">From: {{date('d F, Y', strtotime($from))}}</label> <label for="" class="label label-primary">To: {{date('d F, Y', strtotime($to))}}</label>
+            <h5 class="text-uppercase">Sales Report <small>(Inflow)</small>  <label for="" class="label label-primary">From: {{date('d F, Y', strtotime($from))}}</label> <label for="" class="label label-primary">To: {{date('d F, Y', strtotime($to))}}</label>
             </h5>
             <div class="card-header-right">
             </div>
@@ -107,12 +93,12 @@ Sales Report
                 <thead>
                 <tr>
                     <th>#</th>
+                    <th>Date</th>
                     <th>Contact</th>
                     <th>Ref. No.</th>
                     <th>Amount({{Auth::user()->tenant->currency->symbol ?? 'N'}})</th>
+                    <th>Bank</th>
                     <th>Payment Method</th>
-                    <th>Date</th>
-                    <th>Action</th>
                 </tr>
                 </thead>
                 @php
@@ -122,21 +108,19 @@ Sales Report
                     @foreach ($receipts as $receipt)
                         <tr>
                             <td>{{$n++}}</td>
+                            <td>{{date('d-m-Y', strtotime($receipt->issue_date))}}</td>
                             <td>{{$receipt->contact->company_name ?? ''}}</td>
                             <td>{{$receipt->ref_no ?? ''}}</td>
-                            <td>{{ number_format($receipt->amount,2) }}</td>
+                            <td class="text-right">{{ number_format($receipt->amount,2) }}</td>
+                            <td>{{$receipt->getBank->bank ?? ''}} - {{$receipt->getBank->account_no ?? ''}}</td>
                             <td>
                                 @if ($receipt->payment_type == 1)
-                                    <label class="label label-secondary">Cash</label>
+                                    <label class="label label-primary">Cash</label>
                                 @elseif($receipt->payment_type == 2)
-                                    <label class="label label-secondary">Bank Transfer</label>
+                                    <label class="label label-primary">Bank Transfer</label>
                                 @else
-                                    <label class="label label-secondary">Cheque</label>
+                                    <label class="label label-primary">Cheque</label>
                                 @endif
-                            </td>
-                            <td>{{date('d-m-Y', strtotime($receipt->issue_date))}}</td>
-                            <td>
-                                <a href="" class="btn btn-mini btn-warning">View</a>
                             </td>
                         </tr>
                     @endforeach
