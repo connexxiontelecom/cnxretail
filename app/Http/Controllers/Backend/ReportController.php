@@ -105,6 +105,30 @@ class ReportController extends Controller
 
     }
 
+    public function imprestReport(){
+        $payments = PayMaster::where('tenant_id', Auth::user()->tenant_id)->where('type', 2)->get();
+        return view('reports.imprest-report', [
+            'payments'=>$payments,
+            'from'=>now(),
+            'to'=>now()
+            ]);
+    }
+
+    public function filterImprestReport(Request $request){
+        $this->validate($request,[
+            'from'=>'required',
+            'to'=>'required'
+        ]);
+        $payments = PayMaster::where('tenant_id', Auth::user()->tenant_id)->where('type', 2)
+                                    ->whereBetween('date_inputed', [$request->from, $request->to])->get();
+        return view('reports.imprest-report', [
+            'payments'=>$payments,
+            'from'=>$request->from,
+            'to'=>$request->to
+            ]);
+
+    }
+
 
     public function customerSalesReportStatement(){
         $contactIds = PaymentHistory::where('tenant_id', Auth::user()->tenant_id)->get();

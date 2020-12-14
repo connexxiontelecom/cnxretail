@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Imprest;
 use App\Models\PayMaster;
 use App\Models\Bank;
+use App\Models\User;
 use Auth;
 
 class ImprestController extends Controller
@@ -19,9 +20,10 @@ class ImprestController extends Controller
 
     public function myImprest(){
         $banks = Bank::where('tenant_id', Auth::user()->tenant_id)->get();
+        $users = User::where('tenant_id', Auth::user()->tenant_id)->orderBy('full_name', 'ASC')->get();
         $imprests = Imprest::where('user_id', Auth::user()->id)
                     ->where('tenant_id', Auth::user()->tenant_id)->orderBy('id', 'DESC')->get();
-        return view('imprest.my-imprest', ['banks'=>$banks, 'imprests'=>$imprests]);
+        return view('imprest.my-imprest', ['banks'=>$banks, 'imprests'=>$imprests,'users'=>$users]);
     }
     public function allImprest(){
         $imprests = Imprest::where('user_id', Auth::user()->id)->where('status', 0)
@@ -32,7 +34,8 @@ class ImprestController extends Controller
     public function postImprest(Request $request){
         $this->validate($request,[
             'date'=>'required|date',
-            'amount'=>'required'
+            'amount'=>'required',
+            'responsible_officer'=>'required'
         ]);
         $imprest = new Imprest;
         $imprest->amount = $request->amount;
@@ -40,6 +43,7 @@ class ImprestController extends Controller
         $imprest->description = $request->description;
         $imprest->user_id = Auth::user()->id;
         $imprest->tenant_id = Auth::user()->tenant_id;
+        $imprest->responsible_officer = $request->responsible_officer;
         $imprest->bank_id = $request->bank ?? '';
         $imprest->save();
         session()->flash("success", "<strong>Success!</strong> Imprest submitted.");

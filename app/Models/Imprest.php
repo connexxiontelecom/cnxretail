@@ -16,4 +16,8 @@ class Imprest extends Model
     public function getUser(){
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function getResponsibleOfficer(){
+        return $this->belongsTo(User::class, 'responsible_officer');
+    }
 }

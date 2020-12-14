@@ -31,7 +31,7 @@ All My Imprest
             </div>
         @endif
         <div class="row">
-            <div class="col-md-6 col-sm-6">
+            <div class="col-md-4 col-sm-4">
                 <div class="card">
                     <div class="card-block">
                         <h5 class="sub-title">Add New Imprest</h5>
@@ -65,7 +65,15 @@ All My Imprest
                             </div>
                             <div class="form-group">
                                 <label for="">Responsible Officer</label>
-                                <input type="text" name="responsible_officer" value="{{Auth::user()->full_name ?? ''}}" readonly class="form-control">
+                                <select name="responsible_officer" class="form-control">
+                                    <option disabled selected>Select responsible person</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{$user->id}}">{{$user->full_name ?? ''}}</option>
+                                    @endforeach
+                                </select>
+                                @error('responsible_officer')
+                                    <i class="text-danger">{{$message}}</i>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 <label for="">Description/Purpose</label>
@@ -84,7 +92,7 @@ All My Imprest
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-6">
+            <div class="col-md-8 col-sm-8">
                 <div class="card">
                     <div class="card-block">
                         <h5 class="sub-title">All My Imprest</h5>
@@ -151,7 +159,7 @@ All My Imprest
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="">Responsible Officer</label>
-                                                                    <input type="text" value="{{$imprest->getUser->full_name ?? ''}}" readonly class="form-control">
+                                                                    <input type="text" value="{{$imprest->getResponsibleOfficer->full_name ?? ''}}" readonly class="form-control">
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="">Status</label>

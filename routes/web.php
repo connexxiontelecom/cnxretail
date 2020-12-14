@@ -71,8 +71,11 @@ Route::post('/filter-sales-report', 'Backend\ReportController@filterSalesReport'
 Route::get('/payment-report', 'Backend\ReportController@paymentReport')->name('payment-report');
 Route::post('/filter-payment-report', 'Backend\ReportController@filterPaymentReport')->name('filter-payment-report');
 Route::get('/customer-sales-report-statement', 'Backend\ReportController@customerSalesReportStatement')
-        ->name('customer-sales-report-statement');
+->name('customer-sales-report-statement');
 Route::post('/customer-sales-report-statement', 'Backend\ReportController@filterCustomerSalesReportStatement');
+#Imprest report route
+Route::post('/filter-imprest-report', 'Backend\ReportController@filterImprestReport')->name('filter-imprest-report');
+Route::get('/imprest-report', 'Backend\ReportController@imprestReport')->name('imprest-report');
 #Quotation routes
 Route::get('/quotations', 'Backend\QuotationController@quotations')->name('quotations');
 Route::get('/quotation/add-new-quotation', 'Backend\QuotationController@newQuotation')->name('add-new-quotation');

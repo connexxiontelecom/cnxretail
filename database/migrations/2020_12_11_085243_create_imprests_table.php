@@ -17,6 +17,7 @@ class CreateImprestsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('responsible_officer');
             $table->dateTime('transaction_date');
             $table->double('amount')->default(0);
             $table->integer('bank_id')->nullable();

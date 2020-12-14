@@ -96,7 +96,7 @@
             <div class="col-md-6">
                 <div class="card text-center order-visitor-card">
                     <div class="card-block">
-                        <h6 class="m-b-0">Revenue</h6>
+                        <h6 class="m-b-0">Revenue <small>(Inflow)</small> </h6>
                         <h6 class="m-t-15 m-b-15"><i class="fa fa-arrow-down m-r-15 text-c-green"></i>{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{ number_format($receipts->sum('amount'),2) }}</h6>
 
                     </div>
@@ -105,7 +105,7 @@
             <div class="col-md-6">
                 <div class="card text-center order-visitor-card">
                     <div class="card-block">
-                        <h6 class="m-b-0">Expenses</h6>
+                        <h6 class="m-b-0">Expenses <small>(Outflow)</small></h6>
                         <h6 class="m-t-15 m-b-15"><i class="fa fa-arrow-up m-r-15 text-c-red"></i>{{Auth::user()->tenant->currency->symbol ?? 'N'}}{{ number_format($payments->sum('amount'),2) }}</h6>
                     </div>
                 </div>
