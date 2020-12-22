@@ -1,6 +1,6 @@
 ---
 deployment:
   tasks:
-    # - export DEPLOYPATH=/home/connexx1/public_html/
-    - export DEPLOYPATH=/home/connexx1/public_html/cnxretail/
+    # - export DEPLOYPATH=/home/connexxtel/public_html/
+    - export DEPLOYPATH=/home/connexxtel/public_html/cnxretail/
     - /bin/cp -R * $DEPLOYPATH
