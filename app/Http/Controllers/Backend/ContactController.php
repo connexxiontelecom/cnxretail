@@ -46,7 +46,7 @@ class ContactController extends Controller
             'preferred_time'=>'required'
         ]);
         $contact = new Contact;
-        $contact->added_by = 1;
+        $contact->added_by = Auth::user()->id;
         $contact->company_name = $request->company_name;
         $contact->address = $request->company_address;
         $contact->email = $request->company_email;
