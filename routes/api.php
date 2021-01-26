@@ -67,8 +67,11 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
 
     Route::post('createpayment', 'API\billsPaymentController@createPayment');
 
+    Route::post('addservice', 'API\serviceController@addservice');
 
+    Route::post('setreminder', 'API\serviceController@addservice');
 
+    Route::post('setreminder', 'API\reminderController@setReminder');
 
 
 

@@ -40,7 +40,7 @@ class contactController extends Controller
         $contact->contact_mobile = $request->mobile_no;
         $contact->contact_position = $request->position;
         $contact->communication_channel = $request->communication_channel;
-        $contact->preferred_time =  date('h:i:s', strtotime($request->preferred_time));
+        $contact->preferred_time =  date('H:i:s', strtotime($request->preferred_time));
         $contact->slug = substr(sha1(time()),30,40);
         $contact->tenant_id = $request->tenant_id;
         $contact->save();
