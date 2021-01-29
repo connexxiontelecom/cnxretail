@@ -57,6 +57,14 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
 
     Route::get('currencies', 'API\dashboardController@fetchCurrencies');
 
+
+    Route::get('folders', 'API\driveController@getFolders');
+
+    Route::get('files', 'API\driveController@getFiles');
+
+    Route::get('contents', 'API\driveController@getContents');
+
+
     Route::post('addcontact', 'API\contactController@addContact' );
 
     Route::post('createinvoice', 'API\invoiceController@createInvoice' );
@@ -72,6 +80,21 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
     Route::post('setreminder', 'API\serviceController@addservice');
 
     Route::post('setreminder', 'API\reminderController@setReminder');
+
+    Route::post('storeconversation', 'API\leadController@storeConversation');
+
+    Route::post('createfolder', 'API\driveController@createFolder');
+
+    Route::post('savefile', 'API\driveController@uploadFile');
+
+
+
+
+
+
+
+
+
 
 
 
