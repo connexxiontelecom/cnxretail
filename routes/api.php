@@ -64,6 +64,11 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
 
     Route::get('contents', 'API\driveController@getContents');
 
+    Route::get('phonegroups', 'API\smsController@fetchPhoneGroups');
+
+
+    Route::get('sms', 'API\smsController@fetchSms');
+
 
     Route::post('addcontact', 'API\contactController@addContact' );
 
@@ -86,6 +91,12 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
     Route::post('createfolder', 'API\driveController@createFolder');
 
     Route::post('savefile', 'API\driveController@uploadFile');
+
+    Route::post('createphonegroup', 'API\smsController@createPhoneGroup');
+
+    Route::post('sendsms', 'API\smsController@sendSMS');
+
+
 
 
 
