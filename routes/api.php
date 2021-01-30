@@ -57,6 +57,19 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
 
     Route::get('currencies', 'API\dashboardController@fetchCurrencies');
 
+
+    Route::get('folders', 'API\driveController@getFolders');
+
+    Route::get('files', 'API\driveController@getFiles');
+
+    Route::get('contents', 'API\driveController@getContents');
+
+    Route::get('phonegroups', 'API\smsController@fetchPhoneGroups');
+
+
+    Route::get('sms', 'API\smsController@fetchSms');
+
+
     Route::post('addcontact', 'API\contactController@addContact' );
 
     Route::post('createinvoice', 'API\invoiceController@createInvoice' );
@@ -66,6 +79,30 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
     Route::post('createreceipt', 'API\receiptController@createReceipt');
 
     Route::post('createpayment', 'API\billsPaymentController@createPayment');
+
+    Route::post('addservice', 'API\serviceController@addservice');
+
+    Route::post('setreminder', 'API\serviceController@addservice');
+
+    Route::post('setreminder', 'API\reminderController@setReminder');
+
+    Route::post('storeconversation', 'API\leadController@storeConversation');
+
+    Route::post('createfolder', 'API\driveController@createFolder');
+
+    Route::post('savefile', 'API\driveController@uploadFile');
+
+    Route::post('createphonegroup', 'API\smsController@createPhoneGroup');
+
+    Route::post('sendsms', 'API\smsController@sendSMS');
+
+
+
+
+
+
+
+
 
 
 

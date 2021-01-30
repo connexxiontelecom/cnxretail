@@ -9,11 +9,10 @@ use App\Models\ReceiptMaster;
 use App\Models\Deal;
 use App\Models\PaymentHistory;
 
+
 class receiptController extends Controller
 {
     public function createReceipt(Request $request){
-
-
 
         $receipt = new ReceiptMaster;
         $receipt->contact_id = $request->contact;
