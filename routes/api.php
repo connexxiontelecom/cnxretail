@@ -66,8 +66,10 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
 
     Route::get('phonegroups', 'API\smsController@fetchPhoneGroups');
 
-
     Route::get('sms', 'API\smsController@fetchSms');
+
+    Route::get('emails', 'API\smsController@getmails');
+
 
 
     Route::post('addcontact', 'API\contactController@addContact' );
@@ -95,6 +97,13 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
     Route::post('createphonegroup', 'API\smsController@createPhoneGroup');
 
     Route::post('sendsms', 'API\smsController@sendSMS');
+
+    Route::post('updatephonegroup', 'API\smsController@editPhoneGroup');
+
+    Route::post('removecontact', 'API\smsController@removePhoneContact');
+
+
+
 
 
 
