@@ -3,7 +3,7 @@
     <div class="pcoded-inner-navbar main-menu">
         <div class="">
             <div class="main-menu-header">
-                <img class="img-80 img-radius" src="/assets/images/joseph.jpeg" alt="{{Auth::user()->full_name ?? ''}}">
+                <img class="img-80 img-radius" src="/assets/images/avatars/thumbnails/{{Auth::user()->avatar ?? 'joseph.jpeg'}}" alt="{{Auth::user()->full_name ?? ''}}">
                 <div class="user-details">
                     <span id="more-details">{{Auth::check() ? Auth::user()->full_name : '-'}}<i class="fa fa-caret-down"></i></span>
                 </div>

@@ -13,13 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('layouts.master-layout');
-});
-
+Route::get('/','HomeController@index');
+Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 Auth::routes();
 Auth::routes(['register' => false]);
-Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 #Dashboard routes
 Route::get('/dashboard', [App\Http\Controllers\Backend\DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -39,6 +36,10 @@ Route::post('/get-contact', 'Backend\ContactController@getContact');
 Route::get('/users', 'Backend\UserController@allUsers')->name('users');
 Route::get('/add-new-user', 'Backend\UserController@showAddUserForm')->name('show-user-form');
 Route::post('/add-new-user', 'Backend\UserController@storeNewUser');
+Route::get('/my-profile', 'Backend\UserController@myProfile')->name('my-profile');
+Route::get('/edit-profile', 'Backend\UserController@editProfile')->name('edit-profile');
+Route::post('/edit-profile', 'Backend\UserController@saveProfileChanges');
+Route::post('/upload/avatar', 'Backend\UserController@uploadAvatar');
 #Role routes
 Route::get('/roles', 'Backend\UserController@roles')->name('roles');
 Route::post('/add-new-role', 'Backend\UserController@storeRole');

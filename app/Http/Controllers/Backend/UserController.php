@@ -8,6 +8,7 @@ use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use App\Models\ActivityLog;
+use Image;
 use Auth;
 
 class UserController extends Controller
@@ -116,4 +117,54 @@ public function activityLog(){
     return view('users.activity-log',['logs'=>$logs]);
 }
 
+public function myProfile(){
+    return view('users.my-profile');
+}
+
+public function editProfile(){
+    return view('users.edit-profile');
+}
+
+public function saveProfileChanges(Request $request){
+    $request->validate([
+        'email'=>'required',
+        'full_name'=>'required',
+        'gender'=>'required',
+        'mobile_no'=>'required',
+        'marital_status'=>'required',
+        'address'=>'required'
+    ]);
+
+    $user = User::find(Auth::user()->id);
+    $user->full_name = $request->full_name;
+    $user->email = $request->email;
+    $user->gender = $request->gender;
+    $user->mobile_no = $request->mobile_no;
+    $user->marital_status = $request->marital_status;
+    $user->address = $request->address;
+    $user->save();
+    session()->flash("success", "<strong>Success!</strong> Changes to profile saved.");
+    return redirect()->route('my-profile');
+}
+
+
+    /*
+    * Upload avatar
+    */
+    public function uploadAvatar(Request $request){
+        $this->validate($request,[
+            'avatar'=>'required'
+        ]);
+        if($request->avatar){
+    	    $file_name = time().'.'.explode('/', explode(':', substr($request->avatar, 0, strpos($request->avatar, ';')))[1])[1];
+    	    \Image::make($request->avatar)->resize(300, 300)->save(public_path('assets/images/avatars/medium/').$file_name);
+    	    \Image::make($request->avatar)->resize(150, 150)->save(public_path('assets/images/avatars/thumbnails/').$file_name);
+
+
+    	}
+        $user = User::find(Auth::user()->id);
+        $user->avatar = $file_name;
+        $user->save();
+        return response()->json(['message'=>'Success! Profile picture set.']);
+    }
 }

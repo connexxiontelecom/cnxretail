@@ -46,29 +46,9 @@
                         </li>
                         <li class="waves-effect waves-light">
                             <div class="media">
-                                <img class="d-flex align-self-center img-radius" src="/assets/images/avatar-2.jpg" alt="Generic placeholder image">
+                                <img class="d-flex align-self-center img-radius" src="/assets/images/avatars/thumbnails/{{Auth::user()->avatar ?? 'joseph.jpeg'}}" alt="Generic placeholder image">
                                 <div class="media-body">
                                     <h5 class="notification-user">{{Auth::check() ? Auth::user()->full_name : '-'}}</h5>
-                                    <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                    <span class="notification-time">30 minutes ago</span>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="waves-effect waves-light">
-                            <div class="media">
-                                <img class="d-flex align-self-center img-radius" src="/assets/images/avatar-4.jpg" alt="Generic placeholder image">
-                                <div class="media-body">
-                                    <h5 class="notification-user">Joseph William</h5>
-                                    <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                    <span class="notification-time">30 minutes ago</span>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="waves-effect waves-light">
-                            <div class="media">
-                                <img class="d-flex align-self-center img-radius" src="/assets/images/avatar-3.jpg" alt="Generic placeholder image">
-                                <div class="media-body">
-                                    <h5 class="notification-user">Sara Soudein</h5>
                                     <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
                                     <span class="notification-time">30 minutes ago</span>
                                 </div>
@@ -78,29 +58,19 @@
                 </li>
                 <li class="user-profile header-notification">
                     <a href="#!" class="waves-effect waves-light">
-                        <img src="/assets/images/joseph.jpeg" class="img-radius" alt="User-Profile-Image">
+                        <img src="/assets/images/avatars/thumbnails/{{Auth::user()->avatar ?? 'joseph.jpeg'}}" class="img-radius" alt="User-Profile-Image">
                         <span>{{Auth::check() ? Auth::user()->full_name : '-'}}</span>
                         <i class="ti-angle-down"></i>
                     </a>
                     <ul class="show-notification profile-notification">
                         <li class="waves-effect waves-light">
-                            <a href="#!">
+                            <a href="{{route('edit-profile')}}">
                                 <i class="ti-settings"></i> Settings
                             </a>
                         </li>
                         <li class="waves-effect waves-light">
-                            <a href="user-profile.html">
+                            <a href="{{route('my-profile')}}">
                                 <i class="ti-user"></i> Profile
-                            </a>
-                        </li>
-                        <li class="waves-effect waves-light">
-                            <a href="email-inbox.html">
-                                <i class="ti-email"></i> My Messages
-                            </a>
-                        </li>
-                        <li class="waves-effect waves-light">
-                            <a href="auth-lock-screen.html">
-                                <i class="ti-lock"></i> Lock Screen
                             </a>
                         </li>
                         <li class="waves-effect waves-light">
