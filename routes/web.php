@@ -63,9 +63,24 @@ Route::post('/invoice/receive-payment', 'Backend\SalesInvoiceController@storeNew
 Route::get('/receipts', 'Backend\SalesInvoiceController@receipts')->name('receipts');
 Route::get('/view-receipt/{slug}', 'Backend\SalesInvoiceController@viewReceipt')->name('view-receipt');
 Route::get('/new-invoice', 'Backend\SalesInvoiceController@newInvoice')->name('new-invoice');
-Route::get('/sales-report', 'Backend\SalesInvoiceController@salesReport')->name('sales-report');
-Route::post('/filter-sales-report', 'Backend\SalesInvoiceController@filterSalesReport')->name('filter-sales-report');
+Route::post('/send-invoice/mail', 'Backend\SalesInvoiceController@sendInvoiceAsEmail');
 
+#Report routes
+Route::get('/sales-report', 'Backend\ReportController@salesReport')->name('sales-report');
+Route::post('/filter-sales-report', 'Backend\ReportController@filterSalesReport')->name('filter-sales-report');
+Route::get('/payment-report', 'Backend\ReportController@paymentReport')->name('payment-report');
+Route::post('/filter-payment-report', 'Backend\ReportController@filterPaymentReport')->name('filter-payment-report');
+Route::get('/customer-sales-report-statement', 'Backend\ReportController@customerSalesReportStatement')
+->name('customer-sales-report-statement');
+Route::post('/customer-sales-report-statement', 'Backend\ReportController@filterCustomerSalesReportStatement');
+#Imprest report route
+Route::post('/filter-imprest-report', 'Backend\ReportController@filterImprestReport')->name('filter-imprest-report');
+Route::get('/imprest-report', 'Backend\ReportController@imprestReport')->name('imprest-report');
+#Quotation routes
+Route::get('/quotations', 'Backend\QuotationController@quotations')->name('quotations');
+Route::get('/quotation/add-new-quotation', 'Backend\QuotationController@newQuotation')->name('add-new-quotation');
+Route::post('/quotation/store', 'Backend\QuotationController@storeQuotation');
+Route::get('/view-quotation/{slug}', 'Backend\QuotationController@viewQuotation')->name('view-quotation');
 #Bill & payment routes
 Route::get('/bills', 'Backend\BillPaymentController@bills')->name('bills');
 Route::get('/new-bill', 'Backend\BillPaymentController@newBill')->name('new-bill');
@@ -110,7 +125,13 @@ Route::get('/bulksms/buy-units', 'Backend\EmailSMSController@buyUnits')->name('b
 Route::post('/bulksms/transaction', 'Backend\EmailSMSController@buyUnitsTransaction');
 //Route::post('/sms/balance', 'Backend\BBNSMSCallsController@getBalance');
 Route::post('/sms/balance', 'Backend\BBNSMSCallsController@sendMessage');
+Route::post('/send-sms', 'Backend\EmailSMSController@sendSMS')->name('send-sms');
 
+#Imprest routes
+Route::get('/my-imprest', 'Backend\ImprestController@myImprest')->name('my-imprest');
+Route::post('/post-imprest', 'Backend\ImprestController@postImprest')->name('post-imprest');
+Route::post('/approve-imprest', 'Backend\ImprestController@approveImprest');
+Route::get('/all-imprest', 'Backend\ImprestController@allImprest')->name('all-imprest');
 #Reminder routes
 Route::get('/reminders', 'Backend\ExtraController@reminders')->name('reminders');
 Route::post('/new-reminder', 'Backend\ExtraController@storeReminder');

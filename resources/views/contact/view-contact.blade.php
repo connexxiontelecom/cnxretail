@@ -144,7 +144,7 @@
                                 <div class="slide"></div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#settings3" role="tab">Report</a>
+                                <a class="nav-link" data-toggle="tab" href="#settings3" role="tab">Payment History</a>
                                 <div class="slide"></div>
                             </li>
                         </ul>
@@ -273,12 +273,44 @@
                             </div>
                             </div>
                             <div class="tab-pane" id="settings3" role="tabpanel">
-                                <p>Reports</p>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="dt-responsive table-responsive">
+                                        <table  class="table table-striped table-bordered nowrap simpletable">
+                                            <thead>
+                                            <tr>
+                                                <th>S/No.</th>
+                                                <th>Date</th>
+                                                <th>Narration</th>
+                                                <th>DR</th>
+                                                <th>CR</th>
+                                                <th>Balance</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php
+                                                    $n = 1;
+                                                @endphp
+                                            @foreach ($contact->getPaymentHistory as $pay)
+                                                    <tr>
+                                                        <td>{{$n++}}</td>
+                                                        <td>{{date('d M, Y', strtotime($pay->transaction_date)) ?? ''}}</td>
+                                                        <td>{{$pay->narration ?? ''}}</td>
+                                                        <td>{{number_format($pay->type == 2 ? $pay->amount : 0,2)}}</td>
+                                                        <td>{{number_format($pay->type == 1 ? $pay->amount : 0,2)}}</td>
+                                                        <input type="hidden" value="{{$balance += ($balance + $pay->type == 2 ? $pay->amount : 0) - ($pay->type == 1 ? $pay->amount : 0)}}">
+                                                        <td>{{number_format( $balance,2)}}</td>
+                                                    </tr>
+                                            @endforeach
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

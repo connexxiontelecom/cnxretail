@@ -144,7 +144,7 @@ class BillPaymentController extends Controller
         $paymentNo = null;
         $pay = PayMaster::where('tenant_id', Auth::user()->tenant_id)->orderBy('id', 'DESC')->first();
         if(!empty($pay)){
-            $paymentNo = $pay->ref_no + 1;
+            $paymentNo = intval($pay->ref_no) + 1;
         }else{
             $paymentNo = 1000;
         }

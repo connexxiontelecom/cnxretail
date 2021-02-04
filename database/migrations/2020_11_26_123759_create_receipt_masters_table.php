@@ -18,6 +18,7 @@ class CreateReceiptMastersTable extends Migration
             $table->unsignedBigInteger('contact_id');
             $table->unsignedBigInteger('tenant_id');
             $table->unsignedBigInteger('issued_by')->nullable();
+            $table->unsignedBigInteger('bank_id')->nullable();
             $table->string('ref_no');
             $table->dateTime('issue_date');
             $table->double('amount');

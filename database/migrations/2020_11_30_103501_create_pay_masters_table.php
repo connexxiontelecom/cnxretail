@@ -26,6 +26,7 @@ class CreatePayMastersTable extends Migration
             $table->string('ref_no')->nullable();
             $table->string('memo')->nullable();
             $table->unsignedBigInteger('user_id');
+            $table->tinyInteger('type')->default(1)->comment('1=bill, 2=imprest');
             $table->dateTime('date_now')->nullable();
             $table->tinyInteger('posted')->default(0);
             $table->tinyInteger('payment_type')->default(1);

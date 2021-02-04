@@ -9,6 +9,6 @@ class Deal extends Model
 {
     use HasFactory;
     public function getContact(){
-        return $this->belongsTo(Contact::class, 'contact_id');
+        return $this->belongsTo(Contact::class, 'client_id');
     }
 }

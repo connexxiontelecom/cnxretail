@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Mail\SendInvoiceMail;
 use App\Models\InvoiceMaster;
 use App\Models\InvoiceDetail;
 use App\Models\ReceiptMaster;
@@ -15,6 +16,8 @@ use App\Models\Deal;
 use App\Models\Service;
 use App\Models\Contact;
 use App\Models\Currency;
+use App\Models\Bank;
+use App\Models\PaymentHistory;
 use Auth;
 class SalesInvoiceController extends Controller
 {
@@ -58,8 +61,9 @@ class SalesInvoiceController extends Controller
                                     ->where('status', 0)
                                     ->where('currency_id', $invoice->currency_id)
                                     ->get();
+            $banks = Bank::where('tenant_id', Auth::user()->tenant_id)->orderBy('account_name', 'ASC')->get();
             $total = 0;
-            return view('sales-invoice.receive-payment',['invoice'=>$invoice,'invoices'=>$invoices, 'total'=>$total]);
+            return view('sales-invoice.receive-payment',['invoice'=>$invoice,'invoices'=>$invoices, 'total'=>$total,'banks'=>$banks]);
         }else{
             session()->flash("error", "<strong>Ooops!</strong> No record found.");
             return back();
@@ -69,7 +73,7 @@ class SalesInvoiceController extends Controller
 
     public function storeNewReceipt(Request $request){
         $this->validate($request,[
-            'payment.*'=>'required',
+            'payment'=>'required',
             'payment_date'=>'required|date',
             'payment_method'=>'required',
             'reference_no'=>'required',
@@ -88,6 +92,7 @@ class SalesInvoiceController extends Controller
         $receipt->exchange_rate = $request->exchange_rate[0];
         $receipt->currency_id = $request->currency[0];
         $receipt->payment_type = $request->payment_method;
+        $receipt->bank_id = $request->bank;
         $receipt->slug = substr(sha1(time()),34,40);
         $receipt->save();
         $receiptId = $receipt->id;
@@ -114,6 +119,15 @@ class SalesInvoiceController extends Controller
                 $updateInvoice->save();
             }
         }
+        #Payment history
+        $history = new PaymentHistory;
+        $history->contact_id = $request->contact;
+        $history->amount = $totalAmount * $request->exchange_rate[0];
+        $history->type = 1;//Receipt
+        $history->transaction_date = now();
+        $history->narration = $totalAmount * $request->exchange_rate[0]." received with reference no. ".$request->reference_no;
+        $history->tenant_id = Auth::user()->tenant_id;
+        $history->save();
          #if payment is complete register contact as deal
          $clientExist = Deal::where('client_id', $request->contact)->where('tenant_id', Auth::user()->tenant_id)->first();
          if(empty($clientExist)){
@@ -165,22 +179,9 @@ class SalesInvoiceController extends Controller
     }
 
 
-    public function salesReport(){
-        $receipts = ReceiptMaster::where('tenant_id', Auth::user()->tenant_id)->get();
-        $payments = PayMaster::where('tenant_id', Auth::user()->tenant_id)->get();
-        $invoices = InvoiceMaster::where('tenant_id', Auth::user()->tenant_id)->get();
-        $bills = BillMaster::where('tenant_id', Auth::user()->tenant_id)->get();
-        return view('sales-invoice.sales-report', [
-            'receipts'=>$receipts,
-            'payments'=>$payments,
-            'bills'=>$bills,
-            'invoices'=>$invoices,
-            'from'=>now(),
-            'to'=>now()
-            ]);
-    }
 
-    public function filterSalesReport(Request $request){
+
+    /* public function filterSalesReport(Request $request){
         $this->validate($request,[
             'from'=>'required',
             'to'=>'required'
@@ -203,7 +204,7 @@ class SalesInvoiceController extends Controller
             ]);
 
     }
-
+ */
 
 
     public function invoicePaymentHistory($slug){
@@ -212,6 +213,20 @@ class SalesInvoiceController extends Controller
             $invoices = ReceiptDetail::where('tenant_id', Auth::user()->tenant_id)->where('invoice_id', $invoice->id)->get();
 
             return view('sales-invoice.invoice-payment-history', ['invoices'=>$invoices,'invoice'=>$invoice]);
+        }
+    }
+
+
+    public function sendInvoiceAsEmail(Request $request){
+        $invoice = InvoiceMaster::where('id', $request->invoiceId)->where('tenant_id', Auth::user()->tenant_id)->first();
+        if(!empty($invoice)){
+            $invoices = InvoiceDetail::where('invoice_id',$invoice->id)->where('tenant_id', Auth::user()->tenant_id)->get();
+            \Mail::to(new SendInvoiceMail($invoice, $invoices, Contact::find($invoice->contact_id)));
+            session()->flash("success", "<strong>Success!</strong> Invoice sent via email");
+            return redirect()->route('invoices');
+        }else{
+            session()->flash("error", "<strong>Ooops!</strong> No record found.");
+            return back();
         }
     }
 

@@ -74,7 +74,8 @@ class EmailSMSController extends Controller
     }
 
     public function bulksms(){
-        $bulksms = BulkSms::where('tenant_id', Auth::user()->tenant_id)->orderBy('id', 'DESC')->get();
+        $bulksms = BulkSms::where('tenant_id', Auth::user()->tenant_id)
+                            ->orderBy('id', 'DESC')->get();
         return view('email-sms.bulksms', ['bulksms'=>$bulksms]);
     }
 
@@ -87,11 +88,14 @@ class EmailSMSController extends Controller
 
 
     public function storeSMS(Request $request){
+
        /*  $this->validate($request,[
             'recipient'=>'required',
             'compose_sms'=>'required'
         ]); */
-        $contacts = null;
+
+         $account = BulkSmsAccount::where('tenant_id', Auth::user()->tenant_id)->get();
+         $contacts = null;
         $new_numbers = null;
         if(!empty($request->phone_groups)){
             for($c = 0; $c<count($request->phone_groups); $c++){
@@ -102,16 +106,41 @@ class EmailSMSController extends Controller
         $unique = array_unique($request->selectedContacts);
         $phone_numbers = implode(",",$unique);
         $recipients = explode(',', $contacts.''.$phone_numbers);
+        $cost = 0;
+        if(strlen($request->compose_sms) <= 160 ){
+            $cost = 1 * count($recipients);
+         }else if(strlen($request->compose_sms) <= 313){
+            $cost = 2 * count($recipients);
+         }else if(strlen($request->compose_sms) <= 466){
+            $cost = 3 * count($recipients);
+         }
+         return view('email-sms.compose-sms-preview',
+         ['cost'=>$cost,
+         'senderId'=>$request->sender_id,
+         'message'=>$request->compose_sms,
+         'account'=>$account,
+         'phone_numbers'=>$recipients
+         ]);
+
+
+    }
+
+    public function sendSMS(Request $request){
+        //return dd($request->all());
+
         $sms = new BulkSms;
-        $sms->message = $request->compose_sms;
+        $sms->message = $request->textMessage;
         $sms->tenant_id = Auth::user()->tenant_id;
         $sms->sent_by = Auth::user()->id;
-        $sms->sender_id = $request->sender_id ?? 'CNX Retail';
+        $sms->sender_id = $request->senderId ?? 'CNX Retail';
         $sms->slug = substr(sha1(time()),23,40);
         $sms->save();
         $smsId = $sms->id;
 
         #recipient
+        $unique = array_unique(explode(',',$request->phoneNumbers));
+        $phone_numbers = implode(",",$unique);
+        $recipients = explode(',',$phone_numbers);
         //$recipients = explode(',', $contacts.''.$phone_numbers);
         for($i = 0; $i<count($recipients); $i++){
             $recipient = new BulkSmsRecipient;
@@ -123,23 +152,20 @@ class EmailSMSController extends Controller
         #bulk SMS
         $mobile = implode(",", $recipients);
         $name = "Joseph";
-        $message = $request->compose_sms;
+        $message = $request->textMessage;
         $createdURL = "";
         $ozSURL = "http://www.bbnsms.com/bulksms/bulksms.php";
         $ozUser = "talktojoegee@gmail.com";
-<<<<<<< Updated upstream
-        $ozPassw = "Lordofmylife123";
         $ozMessageType = $request->sender_id ?? 'CNX Retail';
-=======
         $ozPassw = "password123";
         $ozMessageType = $request->senderId ?? 'CNX Retail';
->>>>>>> Stashed changes
         $ozRecipient = $mobile;
         $ozMessageData = $message;
         $createdURL = $ozSURL."?username=".trim($ozUser)."&password=".trim($ozPassw)."&sender=".trim($ozMessageType)."&mobile=".trim($ozRecipient)."&message=".$ozMessageData;
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', $createdURL);
-        return response()->json(['route'=>'bulksms'],201);
+        session()->flash("success", "<strong>Success! </strong> Text message sent.");
+        return redirect()->route('bulksms');
 
     }
 

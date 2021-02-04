@@ -13,6 +13,7 @@ use App\Models\Prospecting;
 use App\Models\Lead;
 use App\Models\Deal;
 use App\Models\Reminder;
+use App\Models\PaymentHistory;
 use Auth;
 use DB;
 
@@ -45,7 +46,7 @@ class ContactController extends Controller
             'preferred_time'=>'required'
         ]);
         $contact = new Contact;
-        $contact->added_by = 1;
+        $contact->added_by = Auth::user()->id;
         $contact->company_name = $request->company_name;
         $contact->address = $request->company_address;
         $contact->email = $request->company_email;
@@ -65,8 +66,9 @@ class ContactController extends Controller
 
     public function viewContact($slug){
         $contact = Contact::where('tenant_id', Auth::user()->tenant_id)->where('slug', $slug)->first();
+        $balance = 0;
         if(!empty($contact) ){
-            return view('contact.view-contact', ['contact'=>$contact]);
+            return view('contact.view-contact', ['contact'=>$contact, 'balance'=>$balance]);
         }else{
             session()->flash("error", "<strong>Ooops!</strong> No record found.");
             return back();
@@ -151,6 +153,16 @@ class ContactController extends Controller
             $detail->total = $request->unit_cost[$n] * $request->quantity[$n];
             $detail->save();
         }
+        #Payment history
+        $history = new PaymentHistory;
+        $history->contact_id = $request->contact;
+        $history->amount = $request->currency != Auth::user()->tenant->currency->id ? ($totalAmount * $request->exchange_rate + ($totalAmount*$request->vat)/100 * $request->exchange_rate ) : ($totalAmount + ($totalAmount*$request->vat)/100 ) ;
+        $history->type = 2;//Receipt
+        $history->transaction_date = now();
+        $history->narration = "Invoice generated. Invoice No. ".$request->invoice_no;
+        $history->tenant_id = Auth::user()->tenant_id;
+        $history->save();
+
         $clientExist = Lead::where('contact_id', $request->contact)->where('tenant_id', Auth::user()->tenant_id)->first();
         if(empty($clientExist)){
             $lead = new Lead;

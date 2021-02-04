@@ -15,6 +15,9 @@ class Contact extends Model
     public function getContactInvoices(){
         return $this->hasMany(InvoiceMaster::class, 'contact_id');
     }
+    public function getPaymentHistory(){
+        return $this->hasMany(PaymentHistory::class, 'contact_id');
+    }
     public function getContactReceipts(){
         return $this->hasMany(ReceiptMaster::class, 'contact_id');
     }

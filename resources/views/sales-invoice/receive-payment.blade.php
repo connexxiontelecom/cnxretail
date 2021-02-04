@@ -95,6 +95,15 @@ Receive payment
                     <div class="col-md-4 col-xs-12">
                         <h6 class="m-b-20 text-uppercase">Receipt Number <span class="text-primary">#{{$invoice->invoice_no ?? ''}}</span></h6>
                         <input type="hidden" name="invoice_no" value="{{$invoice->invoice_no ?? ''}}">
+                        <div class="form-group">
+                            <label for="">Bank</label>
+                            <select name="bank" id="bank" class="form-control">
+                                <option disabled selected>Select bank</option>
+                                @foreach ($banks as $bank)
+                                    <option value="{{$bank->id}}">{{$bank->bank ?? ''}} - {{$bank->account_no ?? ''}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
