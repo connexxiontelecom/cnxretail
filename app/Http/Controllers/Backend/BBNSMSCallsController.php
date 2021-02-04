@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\BBNSMSGatewayTraits;
 use App\Models\ActivityLog;
 use Redirect;
+use Auth;
 class BBNSMSCallsController extends Controller
 {
     use BBNSMSGatewayTraits;

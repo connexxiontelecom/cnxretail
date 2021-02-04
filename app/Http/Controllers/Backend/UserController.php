@@ -116,4 +116,34 @@ public function activityLog(){
     return view('users.activity-log',['logs'=>$logs]);
 }
 
+public function myProfile(){
+    return view('users.my-profile');
+}
+
+public function editProfile(){
+    return view('users.edit-profile');
+}
+
+public function saveProfileChanges(Request $request){
+    $request->validate([
+        'email'=>'required',
+        'full_name'=>'required',
+        'gender'=>'required',
+        'mobile_no'=>'required',
+        'marital_status'=>'required',
+        'address'=>'required'
+    ]);
+
+    $user = User::find(Auth::user()->id);
+    $user->full_name = $request->full_name;
+    $user->email = $request->email;
+    $user->gender = $request->gender;
+    $user->mobile_no = $request->mobile_no;
+    $user->marital_status = $request->marital_status;
+    $user->address = $request->address;
+    $user->save();
+    session()->flash("success", "<strong>Success!</strong> Changes to profile saved.");
+    return redirect()->route('my-profile');
+}
+
 }
