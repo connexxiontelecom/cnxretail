@@ -34,7 +34,7 @@ Edit {{Auth::user()->full_name ?? ''}}'s Profile
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-8">
         <form action="{{route('edit-profile')}}" method="post">
             @csrf
             <div class="card-block">
@@ -43,7 +43,7 @@ Edit {{Auth::user()->full_name ?? ''}}'s Profile
                          <div class="col-lg-12">
                              <div class="general-info">
                                  <div class="row">
-                                     <div class="col-lg-12 col-xl-6">
+                                     <div class="col-lg-12 col-xl-12">
                                          <div class="table-responsive">
                                              <table class="table m-0">
                                                  <tbody>
@@ -97,7 +97,7 @@ Edit {{Auth::user()->full_name ?? ''}}'s Profile
                                              </table>
                                          </div>
                                      </div>
-                                     <div class="col-lg-12 col-xl-6">
+                                     <div class="col-lg-12 col-xl-12">
                                          <div class="table-responsive">
                                              <table class="table">
                                                  <tbody>
@@ -140,14 +140,67 @@ Edit {{Auth::user()->full_name ?? ''}}'s Profile
 
         </form>
     </div>
+    <div class="col-lg-4">
+        <p>
+            <img class="img-80 img-radius mCS_img_loaded" id="avatar-preview" src="/assets/images/avatars/thumbnails/{{Auth::user()->avatar ?? 'joseph.jpeg'}}" alt="Gbudu Joseph">
+        </p>
+        <p>
+            <button type="button" class="btn btn-primary btn-mini" id="avatarHandler"><i class="ti-user mr-2"></i>Change Avatar
+            </button>
+            <input type="file" id="avatar" hidden="">
+        </p>
+    </div>
 </div>
 @endsection
 
 @section('extra-scripts')
 
 <script>
-    $(document).ready(function(){
-        //$('.simpletable').DataTable();
-    });
+$(document).ready(function(){
+         $(document).on('click', '#avatarHandler', function(e){
+             e.preventDefault();
+             $('#avatar').click();
+             $('#avatar').change(function(ev){
+                 let file = ev.target.files[0];
+                let reader = new FileReader();
+                var avatar='';
+                reader.onloadend = (file) =>{
+                    avatar = reader.result;
+                    $('#avatar-preview').attr('src', avatar);
+                    axios.post('/upload/avatar',{avatar:avatar})
+                    .then(response=>{
+                        Toastify({
+                            text: "Success! Profile avatar changed.",
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                            stopOnFocus: true,
+                            onClick: function(){}
+                            }).showToast();
+                            location.reload();
+                    })
+                    .catch(error=>{
+                        var errs = Object.values(error.response.data.errors);
+                        Toastify({
+                            text: "Ooops! Something went wrong.",
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            backgroundColor: "linear-gradient(to right, #FF0000, #FF0000)",
+                            stopOnFocus: true,
+                            onClick: function(){}
+                            }).showToast();
+                        });
+                    }
+                    reader.readAsDataURL(file);
+
+                });
+         });
+     });
 </script>
 @endsection

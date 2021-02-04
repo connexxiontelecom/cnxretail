@@ -8,6 +8,7 @@ use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use App\Models\ActivityLog;
+use Image;
 use Auth;
 
 class UserController extends Controller
@@ -146,4 +147,24 @@ public function saveProfileChanges(Request $request){
     return redirect()->route('my-profile');
 }
 
+
+    /*
+    * Upload avatar
+    */
+    public function uploadAvatar(Request $request){
+        $this->validate($request,[
+            'avatar'=>'required'
+        ]);
+        if($request->avatar){
+    	    $file_name = time().'.'.explode('/', explode(':', substr($request->avatar, 0, strpos($request->avatar, ';')))[1])[1];
+    	    \Image::make($request->avatar)->resize(300, 300)->save(public_path('assets/images/avatars/medium/').$file_name);
+    	    \Image::make($request->avatar)->resize(150, 150)->save(public_path('assets/images/avatars/thumbnails/').$file_name);
+
+
+    	}
+        $user = User::find(Auth::user()->id);
+        $user->avatar = $file_name;
+        $user->save();
+        return response()->json(['message'=>'Success! Profile picture set.']);
+    }
 }

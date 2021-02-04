@@ -39,6 +39,7 @@ Route::post('/add-new-user', 'Backend\UserController@storeNewUser');
 Route::get('/my-profile', 'Backend\UserController@myProfile')->name('my-profile');
 Route::get('/edit-profile', 'Backend\UserController@editProfile')->name('edit-profile');
 Route::post('/edit-profile', 'Backend\UserController@saveProfileChanges');
+Route::post('/upload/avatar', 'Backend\UserController@uploadAvatar');
 #Role routes
 Route::get('/roles', 'Backend\UserController@roles')->name('roles');
 Route::post('/add-new-role', 'Backend\UserController@storeRole');
