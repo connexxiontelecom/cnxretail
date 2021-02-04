@@ -156,7 +156,8 @@ class EmailSMSController extends Controller
         $createdURL = "";
         $ozSURL = "http://www.bbnsms.com/bulksms/bulksms.php";
         $ozUser = "talktojoegee@gmail.com";
-        $ozPassw = "Lordofmylife123";
+        $ozMessageType = $request->sender_id ?? 'CNX Retail';
+        $ozPassw = "password123";
         $ozMessageType = $request->senderId ?? 'CNX Retail';
         $ozRecipient = $mobile;
         $ozMessageData = $message;
