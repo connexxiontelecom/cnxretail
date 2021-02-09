@@ -140,7 +140,7 @@ class smsController extends Controller
 
     public function getmails(Request $request){
 
-        $emails = EmailCampaign::where('tenant_id', $request->tenant_id)->get();//orderBy('id', 'DESC')->get();
+        $emails = EmailCampaign::where('tenant_id', $request->tenant_id)->orderBy('id', 'DESC')->get();
 
         foreach($emails as $mail){
 
@@ -193,7 +193,7 @@ class smsController extends Controller
 
 
     public function bulksmsBalance(Request $request){
-        $account = BulkSmsAccount::where('tenant_id', $request->tenant_id)->get();
+        $account = BulkSmsAccount::where('tenant_id', $request->tenant_id)->orderBy('id', 'DESC')->get();
         return response()->json(['data'=>$account], 201);
     }
 
