@@ -198,6 +198,56 @@ class smsController extends Controller
     }
 
 
+    public function saveTransaction(Request $request){
+        $this->validate($request,[
+            'sms_quantity'=>'required',
+            'totalAmount'=>'required',
+            'transaction'=>'required'
+        ]);
+
+        $unit = new BulkSmsAccount;
+        $unit->ref_no = $request->transaction;
+        $unit->credit = $request->sms_quantity;
+        $unit->narration = "Account credited with ".$request->sms_quantity." units.";
+        $unit->tenant_id = $request->tenant_id;
+        $unit->amount = $request->totalAmount;
+        $unit->save();
+        return response()->json(['response'=>'success'], 201);
+    }
+
+
+    public function verifyTransactionReference(Request $request){
+
+        $reference =  $request->reference;
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://api.paystack.co/transaction/verify/:"."$reference",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET",
+          CURLOPT_HTTPHEADER => array(
+            "Authorization: Bearer sk_test_cf6ad1fbbf398673fcb9b35b8cdbc0f91cbbb995",
+            "Cache-Control: no-cache",
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+        return response()->json(['error'=>$err], 200);
+         // echo "cURL Error #:" . $err;
+        } else {
+            response()->json(['data'=>$response], 200);
+         // echo $response;
+        }
+    }
+
 
 
 
