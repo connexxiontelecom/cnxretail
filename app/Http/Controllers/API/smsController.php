@@ -13,6 +13,7 @@ use App\Models\EmailRecipient;
 use App\Models\Contact;
 use App\Models\EmailTemplate;
 use App\Mail\EmailMarketing;
+use App\Models\BulkSmsAccount;
 
 class smsController extends Controller
 {
@@ -139,7 +140,7 @@ class smsController extends Controller
 
     public function getmails(Request $request){
 
-        $emails = EmailCampaign::where('tenant_id', $request->tenant_id)->get();//orderBy('id', 'DESC')->get();
+        $emails = EmailCampaign::where('tenant_id', $request->tenant_id)->orderBy('id', 'DESC')->get();
 
         foreach($emails as $mail){
 
@@ -156,18 +157,19 @@ class smsController extends Controller
 
 
 
-    public function storeEmail(Request $request){
+    public function sendEmail(Request $request){
         $this->validate($request,[
             'subject'=>'required',
             'selectedContacts'=>'required',
-            'compose_email'=>'required',
-            'template'=>'required'
+            'email'=>'required',
+            //'template'=>'required'
         ]);
-        $template = EmailTemplate::where('directory', $request->template)->first();
+        //$template = EmailTemplate::where('directory', $request->template)->first();
+        $template = EmailTemplate::where('id', 1)->first();
         $email = new EmailCampaign;
         $email->subject = $request->subject;
-        $email->content = $request->compose_email;
-        $email->tenant_id = $request->tenant_id;
+        $email->content = $request->email;
+        $email->tenant_id = $request->tenant;
         $email->sent_by = $request->id;
         $email->slug = substr(sha1(time()),23,40);
         $email->template_id = $template->id ?? 1;
@@ -177,20 +179,74 @@ class smsController extends Controller
         for($i = 0; $i<count($request->selectedContacts); $i++){
             $recipient = new EmailRecipient;
             $recipient->email_id = $emailId;
-            $recipient->contact_id = $request->selectedContacts[$i];
+            $recipient->contact_id = $request->selectedContacts[$i]['id'];
             $recipient->save();
             #contact
-            $contact = Contact::where('tenant_id', $request->tenant)->where('id', $request->selectedContacts[$i])->first();
+            $contact = Contact::where('tenant_id', $request->tenant)->where('id', $request->selectedContacts[$i]['id'])->first();
             \Mail::to($contact)->send(new EmailMarketing($contact, $email));
         }
 
-        return response()->json(['route'=>'mailbox'],201);
+        return response()->json(['response'=>'success'], 201);
 
     }
 
 
 
+    public function bulksmsBalance(Request $request){
+        $account = BulkSmsAccount::where('tenant_id', $request->tenant_id)->orderBy('id', 'DESC')->get();
+        return response()->json(['data'=>$account], 201);
+    }
 
+
+    public function saveTransaction(Request $request){
+        $this->validate($request,[
+            'sms_quantity'=>'required',
+            'totalAmount'=>'required',
+            'transaction'=>'required'
+        ]);
+
+        $unit = new BulkSmsAccount;
+        $unit->ref_no = $request->transaction;
+        $unit->credit = $request->sms_quantity;
+        $unit->narration = "Account credited with ".$request->sms_quantity." units.";
+        $unit->tenant_id = $request->tenant_id;
+        $unit->amount = $request->totalAmount;
+        $unit->save();
+        return response()->json(['response'=>'success'], 201);
+    }
+
+
+    public function verifyTransactionReference(Request $request){
+
+        $reference =  $request->reference;
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://api.paystack.co/transaction/verify/:"."$reference",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 30,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET",
+          CURLOPT_HTTPHEADER => array(
+            "Authorization: Bearer sk_test_cf6ad1fbbf398673fcb9b35b8cdbc0f91cbbb995",
+            "Cache-Control: no-cache",
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+        curl_close($curl);
+
+        if ($err) {
+        return response()->json(['error'=>$err], 200);
+         // echo "cURL Error #:" . $err;
+        } else {
+            response()->json(['data'=>$response], 200);
+         // echo $response;
+        }
+    }
 
 
 

@@ -98,9 +98,11 @@ class authController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout() {
+    public function logout(Request $request) {
+        $token  =  $request->token;
+        JWTAuth::manager()->invalidate(new \Tymon\JWTAuth\Token($token), $forceForever = false);
         auth()->logout();
-        return response()->json(['message' => 'User successfully signed out']);
+        return response()->json(['response' => 'User successfully signed out']);
     }
 
     /**
@@ -109,15 +111,14 @@ class authController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function refresh() {
-        //return $this->createNewToken(auth()->refresh());
-
-       $data = [
-            'status' => true,
-            'code' => 200,
-            'data' =>auth()->refresh()
-        ];
-
-        return response()->json($data, 200);
+        try
+        {
+          $token = JWTAuth::refresh(JWTAuth::getToken());
+         JWTAuth::setToken($token)->toUser();
+         return response()->json(compact('token'));
+        }catch (JWTException $e){
+            return response()->json(['response' => 'Token cannot be refreshed, please Login again'], 400);
+        }
     }
 
     /**

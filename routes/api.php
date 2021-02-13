@@ -70,6 +70,10 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
 
     Route::get('emails', 'API\smsController@getmails');
 
+    Route::get('smsaccount', 'API\smsController@bulksmsBalance');
+
+    Route::get('verify', 'API\smsController@verifyTransactionReference');
+
 
 
     Route::post('addcontact', 'API\contactController@addContact' );
@@ -101,6 +105,12 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
     Route::post('updatephonegroup', 'API\smsController@editPhoneGroup');
 
     Route::post('removecontact', 'API\smsController@removePhoneContact');
+
+    Route::post('sendemail', 'API\smsController@sendEmail');
+
+
+    Route::post('savetransaction', 'API\smsController@saveTransaction');
+
 
 
 
