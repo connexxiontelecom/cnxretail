@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/','HomeController@index');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 Auth::routes();
+Route::get('/process/payment', 'Auth\RegisterController@processPayment')->name('process-payment');
 Auth::routes(['register' => false]);
 #Dashboard routes
 Route::get('/dashboard', [App\Http\Controllers\Backend\DashboardController::class, 'dashboard'])->name('dashboard');

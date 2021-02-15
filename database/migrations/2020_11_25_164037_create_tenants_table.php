@@ -43,6 +43,7 @@ class CreateTenantsTable extends Migration
             $table->string('active_sub_key')->nullable();
             $table->string('tagline')->nullable();
             $table->text('description')->nullable();
+            $table->string('nature_of_business')->nullable();
             $table->text('slug')->nullable();
             $table->text('invoice_terms')->nullable();
             $table->text('receipt_terms')->nullable();
