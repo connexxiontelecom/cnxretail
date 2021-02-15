@@ -37,16 +37,21 @@
                             <h5>New Business Registration</h5>
                         </div>
                         <div class="card-block">
-                            <div class="text-center">
+                            <div class="text-center mb-4">
                                 <img src="/assets/images/logo.png" height="33" width="90" alt="logo.png">
                             </div>
+                            @if (session()->has('success'))
+                                <div class="alert alert-success background-success">{!! session()->get('success') !!}</div>
+                            @endif
+                            @if (session()->has('error'))
+                                <div class="alert alert-success background-success">{!! session()->get('error') !!}</div>
+                            @endif
                             <form class="form-material" action="{{route('register')}}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6">
-
                                     <div class="form-group form-default">
-                                        <input type="text" name="company_name" id="company_name" class="form-control">
+                                        <input type="text" id="company_name" name="company_name" id="company_name" class="form-control">
                                         <span class="form-bar"></span>
                                         <label class="float-label">Company Name</label>
                                         @error('company_name')
@@ -54,15 +59,15 @@
                                         @enderror
                                     </div>
                                     <div class="form-group form-default">
-                                        <input type="text" name="email_address" class="form-control">
+                                        <input type="text" name="email" id="email" class="form-control">
                                         <span class="form-bar"></span>
                                         <label class="float-label">Email Address</label>
-                                         @error('email_address')
+                                         @error('email')
                                             <i class="text-danger mt-2">{{$message}}</i>
                                         @enderror
                                     </div>
                                     <div class="form-group form-default">
-                                        <input type="text" name="phone_no" class="form-control">
+                                        <input type="text" id="phone_no" name="phone_no" class="form-control">
                                         <span class="form-bar"></span>
                                         <label class="float-label">Phone No.</label>
                                         @error('phone_no')
@@ -70,7 +75,7 @@
                                         @enderror
                                     </div>
                                     <div class="form-group form-default">
-                                        <input type="text" name="address" class="form-control">
+                                        <input type="text" id="address" name="address" class="form-control">
                                         <span class="form-bar"></span>
                                         <label class="float-label">Address</label>
                                         @error('address')
@@ -82,15 +87,23 @@
                                     <div class="col-md-6">
 
                                     <div class="form-group form-default">
-                                        <input type="text" name="first_name" class="form-control">
+                                        <input type="text" id="full_name" name="full_name" class="form-control">
                                         <span class="form-bar"></span>
-                                        <label class="float-label">First Name</label>
-                                        @error('first_name')
+                                        <label class="float-label">Full Name</label>
+                                        @error('full_name')
                                             <i class="text-danger mr-2">{{$message}}</i>
                                         @enderror
                                     </div>
                                     <div class="form-group form-default">
-                                        <input type="password" name="password" class="form-control">
+                                        <input type="text" id="nature_of_business" name="nature_of_business" class="form-control">
+                                        <span class="form-bar"></span>
+                                        <label class="float-label">Nature of Business</label>
+                                        @error('nature_of_business')
+                                            <i class="text-danger mr-2">{{$message}}</i>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group form-default">
+                                        <input type="password" id="password" name="password" class="form-control">
                                         <span class="form-bar"></span>
                                         <label class="float-label">Password</label>
                                         @error('password')
@@ -102,7 +115,11 @@
                                         <span class="form-bar"></span>
                                         <label class="float-label">Re-type Password</label>
                                     </div>
-
+                                    <input type="hidden" name="amount" value="180000">
+                                    <input type="hidden" name="currency" value="NGN">
+                                    <input type="hidden" name="metadata[]" id="metadata" >
+                                    <input type="hidden" name="reference" value="{{ Paystack::genTranxRef() }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 </div>
                                 </div>
                                 <hr>
@@ -110,7 +127,7 @@
                                     <div class="col-md-12 d-flex justify-content-center">
                                         <div class="btn-group">
                                             <a href="" class="btn btn-mini btn-danger"><i class="ti-close mr-2"></i>Cancel</a>
-                                            <button class="btn btn-mini btn-primary"><i class="ti-check mr-2"></i>Submit</button>
+                                            <button id="proceedToPay" type="submit" class="btn btn-mini btn-primary"><i class="ti-check mr-2"></i>Submit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -177,6 +194,31 @@
 <script src="assets/pages/waves/js/waves.min.js"></script>
 <script type="text/javascript" src="/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
 <script type="text/javascript" src="/assets/js/common-pages.js"></script>
+<script>
+		$(document).ready(function(){
+			$(document).on('click', '#proceedToPay', function(){
+				var metadata = $('#metadata').val();
+				var company_name = $('#company_name').val();
+				var nature_of_business = $('#nature_of_business').val();
+				var phone_no = $('#phone_no').val();
+				var email = $('#email').val();
+				var password = $('#password').val();
+				var full_name = $('#full_name').val();
+				var address = $('#address').val();
+				var fid = {
+                    'company_name':company_name,
+                    'nature_of_business':nature_of_business,
+                    'phone_no': phone_no,
+					'nature_of_business':nature_of_business,
+					'email':email, 'password':password,
+					'full_name':full_name,
+                    'address':address
+				};
+				$('#metadata').val(JSON.stringify(fid));
+                console.log($('#metadata').val());
+			});
+		});
+	</script>
 </body>
 
 </html>

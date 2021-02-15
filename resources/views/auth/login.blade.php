@@ -35,6 +35,9 @@
                     <!-- Authentication card start -->
 
                         <form class="md-float-material form-material" action="{{route('login')}}" method="post">
+                             @if (session()->has('success'))
+                                <div class="alert alert-success background-success">{!! session()->get('success') !!}</div>
+                            @endif
                             @csrf
                             <div class="text-center">
                                 <img src="/assets/images/logo.png" height="33" width="90" alt="logo.png">
