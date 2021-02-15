@@ -122,6 +122,11 @@
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <p><strong style="font-weight: 900">Price:</strong> #1,800</p>
+                                    </div>
+                                </div>
                                 <hr>
                                 <div class="row">
                                     <div class="col-md-12 d-flex justify-content-center">
