@@ -33,6 +33,7 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
     Route::get('users', 'API\usersController@fetchAllUsers');
     Route::get('reminders', 'API\dashboardController@fetchReminders');
 
+    Route::get('tenant', 'API\authController@getTenant');
 
     Route::get('invoices', 'API\dashboardController@fetchInvoices');
     Route::get('invoicesdetails', 'API\dashboardController@fetchInvoiceDetails');
