@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Models\Tenant;
 
 class authController extends Controller
 {
@@ -59,10 +60,25 @@ class authController extends Controller
 
             }
 
+            $user['avatarx'] = 	url("/assets/images/avatars/medium/" . $user['avatar']);
 			$user['avatar'] = 	url("/assets/images/avatars/thumbnails/" . $user['avatar']);
 
             return response()->json(compact('user'));
     }
+
+
+
+    public function getTenant(Request $request)
+    {
+        $tenant =  Tenant::where("tenant_id",  $request->tenant_id)->first();
+
+        return response()->json(compact('tenant'));
+
+    }
+
+
+
+
 
     /**
      * Register a User.
