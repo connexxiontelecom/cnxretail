@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Tenant;
 use App\Models\Membership;
+use App\Models\InvoiceMaster;
 use Carbon\Carbon;
 use Paystack;
 
@@ -146,5 +147,14 @@ class RegisterController extends Controller
         $member->save();
         session()->flash("success", "<strong>Success!</strong> Registration done. Proceed to login.");
         return redirect()->route('login');
+    }
+
+
+    public function payInvoiceOnline($slug){
+        $total = 0;
+        $invoice = InvoiceMaster::where('slug', $slug)->first();
+        if(!empty($invoice)){
+            return view('sales-invoice.pay-invoice-online',['invoice'=>$invoice, 'total'=>$total]);
+        }
     }
 }

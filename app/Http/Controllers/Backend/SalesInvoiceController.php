@@ -220,8 +220,8 @@ class SalesInvoiceController extends Controller
     public function sendInvoiceAsEmail(Request $request){
         $invoice = InvoiceMaster::where('id', $request->invoiceId)->where('tenant_id', Auth::user()->tenant_id)->first();
         if(!empty($invoice)){
-            $invoices = InvoiceDetail::where('invoice_id',$invoice->id)->where('tenant_id', Auth::user()->tenant_id)->get();
-            \Mail::to(new SendInvoiceMail($invoice, $invoices, Contact::find($invoice->contact_id)));
+            $contact = Contact::find($invoice->contact_id);
+            \Mail::to($contact)->send(new SendInvoiceMail($invoice));
             session()->flash("success", "<strong>Success!</strong> Invoice sent via email");
             return redirect()->route('invoices');
         }else{
@@ -229,5 +229,7 @@ class SalesInvoiceController extends Controller
             return back();
         }
     }
+
+
 
 }
