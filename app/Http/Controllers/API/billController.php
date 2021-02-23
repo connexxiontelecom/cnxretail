@@ -21,7 +21,7 @@ class billController extends Controller
         $bill->tenant_id = $request->tenant;
         $bill->user_id = $request->issuedby;
         $bill->ref_no = $ref_no;
-        $bill->bill_amount = $request->grandtotal;
+        $bill->bill_amount = $request->grandtotal; //already calculated with exchange rate from front-end
         //$bill->sub_total = $request->subtotal;
         $bill->vat_charge = $request->vat;
         $bill->vat_amount = $request->vatamount;
@@ -38,7 +38,7 @@ class billController extends Controller
             $detail->service_id = $item['id'];
             $detail->quantity = $item['qty'];
             $detail->rate = $item['unitPrice'];
-            $detail->amount =  (double)$item['qty'] * (double)$item['unitPrice'];
+            $detail->amount =  (double)$item['qty'] * (double)$item['unitPrice'] * $request->exchangerate ?? 1;
             $detail->save();
 
         }
