@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ReceiptDetail;
 use App\Models\ReceiptMaster;
 use App\Models\Deal;
+use App\Models\InvoiceMaster;
 use App\Models\PaymentHistory;
 
 
@@ -20,8 +21,8 @@ class receiptController extends Controller
         $receipt->issued_by = $request->issuedby;
         $receipt->ref_no = $request->reference;
         $receipt->issue_date = $request->date;
-        $receipt->amount = $request->total;
-        $receipt->exchange_rate = $request->exchangerate;
+        $receipt->amount = $request->total; // * $request->exchangerate ;
+        $receipt->exchange_rate = $request->exchangerate ;
         $receipt->currency_id = $request->currency;
         $receipt->payment_type = $request->paymentmethod;
         $receipt->bank_id = $request->bank;
@@ -30,25 +31,39 @@ class receiptController extends Controller
         $receiptId = $receipt->id;
 
 
+        $i = 0;
         #ReceiptDetail
         foreach ($request->items as $item) {
             $detail = new ReceiptDetail;
             $detail->invoice_id = $item['invoice']['id'];
             $detail->receipt_id = $receiptId;
             $detail->tenant_id = $request->tenant;
-            $detail->payment = $item['payment'];
+            $detail->payment = $item['payment'] * $request->exchangerate;
             $detail->exchange_rate = $item['invoice']['exchange_rate'];
             $detail->currency_id = $item['invoice']['currency_id'];
             $detail->save();
+
+
+            $invoice = InvoiceMaster::find($item['invoice']['details'][$i]['invoice_id']);
+            $invoice->paid_amount = doubleval($invoice->paid_amount) + doubleval($item['payment']) * $request->exchangerate ;
+
+            if($invoice->paid_amount == $invoice->total)
+            {
+                $invoice->status = 1;
+            }
+
+            $invoice->save();
+
+            $i =  $i+1;
         }
 
         #Payment history
         $history = new PaymentHistory;
         $history->contact_id = $request->contact;
-        $history->amount = $request->total;
+        $history->amount = $request->total * $request->exchangerate ;
         $history->type = 2;//Receipt
         $history->transaction_date = now();
-        $history->narration = $request->total. " received with reference no. ".$request->reference_no;
+        $history->narration = $request->total * $request->exchangerate . " received with reference no. ".$request->reference_no;
         $history->tenant_id = $request->tenant;
         $history->save();
 

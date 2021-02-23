@@ -39,7 +39,7 @@ class invoiceController extends Controller
             $detail->service_id = $item['id'];
             $detail->quantity = $item['qty'];
             $detail->unit_cost = $item['unitPrice'];
-            $detail->total =  (double)$item['qty'] * (double)$item['unitPrice'];
+            $detail->total =  (double)$item['qty'] * (double)$item['unitPrice'] * $request->exchangerate ?? 1;
             $detail->save();
         }
 

@@ -73,6 +73,8 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
 
     Route::get('smsaccount', 'API\smsController@bulksmsBalance');
 
+    Route::get('report', 'API\reportsController@getSalesReport');
+
     Route::get('verify', 'API\smsController@verifyTransactionReference');
 
 

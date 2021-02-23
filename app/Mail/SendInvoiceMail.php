@@ -7,8 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\InvoiceMaster;
-use App\Models\InvoiceDetail;
-use App\Models\User;
+use App\Models\Contact;
 
 class SendInvoiceMail extends Mailable
 {
@@ -20,10 +19,9 @@ class SendInvoiceMail extends Mailable
      *
      * @return void
      */
-    public function __construct(InvoiceMaster $invoice, InvoiceDetail $items, User $user)
+    public function __construct(InvoiceMaster $invoice)
     {
-        $this->user = $user;
-        $this->items = $items;
+        //$this->user = $user;
         $this->invoice = $invoice;
     }
 
@@ -34,6 +32,9 @@ class SendInvoiceMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mails.customer.invoice');
+        return $this->from('info@me.com')
+       // return $this->from(Auth::user()->tenant->email, Auth::user()->tenant->company_name)
+        ->subject('Invoice')
+        ->markdown('mails.customer.invoice');
     }
 }

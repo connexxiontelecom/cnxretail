@@ -66,6 +66,7 @@ Route::get('/receipts', 'Backend\SalesInvoiceController@receipts')->name('receip
 Route::get('/view-receipt/{slug}', 'Backend\SalesInvoiceController@viewReceipt')->name('view-receipt');
 Route::get('/new-invoice', 'Backend\SalesInvoiceController@newInvoice')->name('new-invoice');
 Route::post('/send-invoice/mail', 'Backend\SalesInvoiceController@sendInvoiceAsEmail');
+Route::get('/pay-invoice-online/{slug}', 'Auth\RegisterController@payInvoiceOnline')->name('pay-invoice-online');
 
 #Report routes
 Route::get('/sales-report', 'Backend\ReportController@salesReport')->name('sales-report');
