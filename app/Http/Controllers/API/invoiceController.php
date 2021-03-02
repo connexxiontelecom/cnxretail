@@ -8,6 +8,8 @@ use App\Models\InvoiceMaster;
 use App\Models\InvoiceDetail;
 use App\Models\PaymentHistory;
 use App\Models\Lead;
+use App\Models\Contact;
+use App\Mail\SendInvoiceMail;
 class invoiceController extends Controller
 {
     public function createInvoice(Request $request){
@@ -65,5 +67,24 @@ class invoiceController extends Controller
         return response()->json(['response'=>'success']);
 
     }
+
+
+
+
+    public function sendInvoiceAsEmail(Request $request){
+
+        $invoice = InvoiceMaster::where('id', $request->id)->where('tenant_id', $request->tenant_id)->first();
+        if(!empty($invoice)){
+            $contact = Contact::find($invoice->contact_id);
+            \Mail::to($contact)->send(new SendInvoiceMail($invoice));
+            return response()->json(['response'=>'success']);
+        }else{
+            return response()->json(['response'=>'error']);
+        }
+    }
+
+
+
+
 
 }
