@@ -53,6 +53,7 @@ class billsPaymentController extends Controller
                 if ($updateBill->paid_amount >= $updateBill->bill_amount) {
                     $updateBill->status = 'paid'; //marked as complete
                     $updateBill->posted = 1;
+                    $updateBill->paid = 1;
                     $updateBill->posted_by = $request->issuedby;
                     $updateBill->post_date = now();
                 }
