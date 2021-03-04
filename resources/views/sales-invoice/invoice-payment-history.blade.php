@@ -58,14 +58,16 @@ Invoice Summary
                 </thead>
                 <tbody>
                     @php
-					$n = 1;
+                    $n = 1;
+                    $totaly = 0;
                     @endphp
                     @foreach ($invoices->where('trash', '!=',1) as $invo)
                         <tr>
                             <td>{{$n++}}</td>
                             <td>{{number_format(($invoice->total),2)}}</td>
-                            <td>{{number_format($invo->payment * $invoice->exchange_rate ?? 1,2)}}</td>
-                            <td>{{number_format(($invoice->total)  - ($invo->payment * $invoice->exchange_rate ?? 1),2)}}</td>
+                            <td>{{number_format($invo->payment * $invoice->exchange_rate  ?? 1,2)}}</td>
+                            <input type="hidden" name="hide" value="{{$totaly += ($invo->payment * $invoice->exchange_rate)}}">
+                            <td>{{number_format($invoice->total - ($totaly)  ,2)}}</td>
                             <td>{{date('d F, Y', strtotime($invoice->due_date))}}</td>
                         </tr>
                         @endforeach

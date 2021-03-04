@@ -26,112 +26,113 @@
 <div>
     <div class="card">
         <form id="invoiceForm">
+            <div id="printArea">
+                <div class="row invoice-contact">
+                    <div class="col-md-8">
+                        <div class="invoice-box row">
+                            <div class="col-sm-6">
+                                <table class="table table-responsive invoice-table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <img src="/assets/images/logo.png" height="33" width="90" class="m-b-10" alt="">
+                                                <p><strong style="font-weight: 700;">Company Name: </strong>{{ Auth::user()->tenant->company_name ?? ''}}</p>
+                                                <p><strong style="font-weight: 700;">Address: </strong>{{ Auth::user()->tenant->address ?? ''}}</p>
+                                                <p><strong style="font-weight: 700;">Email: </strong>{{ Auth::user()->tenant->email ?? ''}}</p>
+                                                <p><strong style="font-weight: 700;">Phone: </strong>{{ Auth::user()->tenant->phone ?? ''}}</p>
+                                                <p><strong style="font-weight: 700;">Website: </strong>{{ Auth::user()->tenant->website ?? ''}}</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-6">
+                                <h5 class="mt-5">Receipt</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div class="row invoive-info">
+                        <div class="col-md-4 col-xs-12 invoice-client-info">
+                            <h6 class="text-uppercase">Client Information :</h6>
+                            <h6 class="m-0">{{$receipt->contact->company_name ?? ''}}</h6>
+                            <p class="m-0 m-t-10">{{$receipt->contact->address ?? ''}}</p>
+                            <p class="m-0">{{$receipt->contact->company_phone ?? ''}}</p>
+                            <p class="m-0">{{$receipt->contact->email ?? ''}}</p>
+                            <p>{{$receipt->contact->website ?? ''}}</p>
+                            <input type="hidden" value="{{$receipt->contact_id}}" name="contact">
+                        </div>
+                        <div class="col-md-4 col-xs-12 ">
 
-            <div class="row invoice-contact">
-                <div class="col-md-8">
-                    <div class="invoice-box row">
-                        <div class="col-sm-6">
-                            <table class="table table-responsive invoice-table table-borderless">
+                            <h6 class="text-uppercase">Order Information :</h6>
+                            <table class="table table-responsive invoice-table invoice-order table-borderless">
                                 <tbody>
-                                    <tr>
+                                    <div class="form-group col-md-8 col-sm-8">
+                                        <p><strong>Issue Date: </strong> {{date('d F, Y', strtotime($receipt->issue_date))}}</p>
+                                    </div>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-4 col-xs-12">
+                            <h6 class="m-b-20 text-uppercase">Ref. Number <span class="text-primary">#{{$receipt->ref_no ?? ''}}</span></h6>
+
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <table class="table  invoice-detail-table">
+                                    <thead>
+                                        <tr class="thead-default">
+                                            <th>Invoice</th>
+                                            <th>Total</th>
+                                            <th>Paid</th>
+                                            <th>Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="products">
+                                        @foreach ($receipts as $item)
+                                                <tr class="item">
+                                                    <td>
+                                                        <p>Receipt issued for invoice # {{$item->getInvoice->invoice_no}}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($item->getInvoice->total/$item->getInvoice->exchange_rate,2)}}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate,2) ?? ''}}</p>
+                                                    </td>
+                                                    <td>
+                                                    <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format(($item->getInvoice->total/$item->getInvoice->exchange_rate) - ($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate),2)}}</p>
+                                                    </td>
+                                                </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-responsive invoice-table invoice-total">
+                                <tbody class="float-right">
+                                    <tr class="text-info">
                                         <td>
-                                            <img src="/assets/images/logo.png" height="33" width="90" class="m-b-10" alt="">
-                                            <p><strong style="font-weight: 700;">Company Name: </strong>{{ Auth::user()->tenant->company_name ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Address: </strong>{{ Auth::user()->tenant->address ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Email: </strong>{{ Auth::user()->tenant->email ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Phone: </strong>{{ Auth::user()->tenant->phone ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Website: </strong>{{ Auth::user()->tenant->website ?? ''}}</p>
+                                            <hr>
+                                            <h6 class="text-primary">Amount Paid :</h6>
+                                        </td>
+                                        <td>
+                                            <hr>
+                                            <h6 class="text-primary"><span class="total">{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($receipts->sum('payment'),2)}}</span></h6>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-sm-6">
-                            <h5 class="mt-5">Receipt</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                </div>
-            </div>
-            <div class="card-block">
-                <div class="row invoive-info">
-                    <div class="col-md-4 col-xs-12 invoice-client-info">
-                        <h6 class="text-uppercase">Client Information :</h6>
-                        <h6 class="m-0">{{$receipt->contact->company_name ?? ''}}</h6>
-                        <p class="m-0 m-t-10">{{$receipt->contact->address ?? ''}}</p>
-                        <p class="m-0">{{$receipt->contact->company_phone ?? ''}}</p>
-                        <p class="m-0">{{$receipt->contact->email ?? ''}}</p>
-                        <p>{{$receipt->contact->website ?? ''}}</p>
-                        <input type="hidden" value="{{$receipt->contact_id}}" name="contact">
-                    </div>
-                    <div class="col-md-4 col-xs-12 ">
-
-                        <h6 class="text-uppercase">Order Information :</h6>
-                        <table class="table table-responsive invoice-table invoice-order table-borderless">
-                            <tbody>
-                                <div class="form-group col-md-8 col-sm-8">
-                                    <p><strong>Issue Date: </strong> {{date('d F, Y', strtotime($receipt->issue_date))}}</p>
-                                </div>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-4 col-xs-12">
-                        <h6 class="m-b-20 text-uppercase">Ref. Number <span class="text-primary">#{{$receipt->ref_no ?? ''}}</span></h6>
-
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="table-responsive">
-                            <table class="table  invoice-detail-table">
-                                <thead>
-                                    <tr class="thead-default">
-                                        <th>Invoice</th>
-                                        <th>Total</th>
-                                        <th>Paid</th>
-                                        <th>Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="products">
-                                    @foreach ($receipts as $item)
-                                            <tr class="item">
-                                                <td>
-                                                    <p>Receipt issued for invoice # {{$item->getInvoice->invoice_no}}</p>
-                                                </td>
-                                                <td>
-                                                    <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($item->getInvoice->total/$item->getInvoice->exchange_rate,2)}}</p>
-                                                </td>
-                                                <td>
-                                                    <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate,2) ?? ''}}</p>
-                                                </td>
-                                                <td>
-                                                <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format(($item->getInvoice->total/$item->getInvoice->exchange_rate) - ($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate),2)}}</p>
-                                                </td>
-                                            </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table class="table table-responsive invoice-table invoice-total">
-                            <tbody class="float-right">
-                                <tr class="text-info">
-                                    <td>
-                                        <hr>
-                                        <h6 class="text-primary">Amount Paid :</h6>
-                                    </td>
-                                    <td>
-                                        <hr>
-                                        <h6 class="text-primary"><span class="total">{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($receipts->sum('payment'),2)}}</span></h6>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -139,7 +140,7 @@
                 <div class="col-sm-12 invoice-btn-group text-center">
                     <div class="btn-group d-flex justify-content-center">
                         <a href="{{url()->previous()}}" class="btn btn-secondary btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Cancel</a>
-                        <button type="submit" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light"><i class="ti-printer mr-2"></i> Print</button>
+                        <button type="button" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light printThis"><i class="ti-printer mr-2"></i> Print</button>
                     </div>
                 </div>
             </div>
@@ -153,6 +154,7 @@
 <script type="text/javascript" src="\assets\js\jquery.slimscroll.min.js"></script>
 <script src="/assets/js/datatable.min.js"></script>
 <script src="/assets/js/select2.min.js"></script>
+<script src="/assets/js/printThis.js"></script>
 <script>
     $(document).ready(function(){
         $('.js-example-basic-single').select2({
@@ -208,6 +210,14 @@
         $(this).closest('tr').remove();
         setTotal();
     });
+
+     $(document).on('click', '.printThis', function(event){
+            $('#printArea').printThis({
+                header:"<p></p>",
+                footer:"<p></p>",
+            });
+        });
+
     invoiceForm.onsubmit = async (e) => {
                 e.preventDefault();
                 axios.post('/contact/invoice',new FormData(invoiceForm))

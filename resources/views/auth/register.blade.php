@@ -115,7 +115,7 @@
                                         <span class="form-bar"></span>
                                         <label class="float-label">Re-type Password</label>
                                     </div>
-                                    <input type="hidden" name="amount" value="180000">
+                                    <input type="hidden" name="amount" value="550000">
                                     <input type="hidden" name="currency" value="NGN">
                                     <input type="hidden" name="metadata[]" id="metadata" >
                                     <input type="hidden" name="reference" value="{{ Paystack::genTranxRef() }}">
@@ -124,7 +124,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12 text-center">
-                                        <p><strong style="font-weight: 900">Price:</strong> #1,800</p>
+                                        <p><strong style="font-weight: 900">Price:</strong> ₦5,500</p>
                                     </div>
                                 </div>
                                 <hr>
