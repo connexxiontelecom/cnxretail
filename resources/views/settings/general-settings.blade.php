@@ -115,6 +115,56 @@ General Settings
                 </div>
             </div>
         </form>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="card-header mb-4">
+                    <h5>Paystack Payment Integration</h5>
+                </div>
+                <p>To start receiving online payment, you'll have to first of all setup your <a href="https://www.paystack.com" target="_blank">Paystack</a> keys. Visit <a href="https://www.paystack.com" target="_blank">Paystack</a> to signup for FREE.</p>
+                <p>Follow these steps to get your <code>live keys</code></p>
+                <ul>
+                    <li>Please don't forget to change account mode to <code>Live mode</code> to receive actual payment. You may have to complete some section to have your account verified.</li>
+                    <li>After you've logged in, navigate to settings.</li>
+                    <li>Then look out for <code>API Keys & Webhooks</code></li>
+                    <li>Copy <code>Live Public Key</code> and <code>Live Secret Key</code> and paste it in the fields provided below accordingly.</li>
+                    <li>Use <a href="javascript:void(0);">http://app.cnxretail.com/process/payment</a> as Live Webhook URL</li>
+
+                </ul>
+                @if (session()->has('success'))
+                    <div class="alert alert-success mt-2">{!! session()->get('success') !!}</div>
+                @endif
+                <form action="{{route('api-settings')}}" method="post">
+                    @csrf
+                    <div class="form-group col-md-6">
+                        <label for="">Live Public Key</label>
+                        <input name="live_public_key" value="{{Auth::user()->tenant->public_key ?? ''}}" type="text" placeholder="Live Public Key" class="form-control">
+                        @error('live_public_key')
+                            <i class="text-danger">{{$message}}</i>
+                        @enderror
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="">Live Secret Key</label>
+                        <input name="live_secret_key" value="{{Auth::user()->tenant->secret_key ?? ''}}" type="text" placeholder="Live Secret Key" class="form-control">
+                        @error('live_secret_key')
+                            <i class="text-danger">{{$message}}</i>
+                        @enderror
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="">Live Webhook URL (<small>Use: <i class="text-danger">http://app.cnxretail.com/process/payment</i></small>)</label>
+                        <input name="live_webhook_url" value="http://app.cnxretail.com/process/payment" disabled type="text" placeholder="Live Webhook URL" class="form-control">
+                        @error('live_webhook_url')
+                            <i class="text-danger">{{$message}}</i>
+                        @enderror
+
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-center">
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

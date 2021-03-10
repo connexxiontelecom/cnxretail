@@ -22,7 +22,7 @@ Pay Online
 @section('content')
 <div>
     <div class="card">
-        <form id="receiptForm" class="form-material">
+        <form id="receivePaymentForm" class="form-material" >
 
             <div class="row invoice-contact">
                 <div class="col-md-8">
@@ -33,11 +33,11 @@ Pay Online
                                     <tr>
                                         <td>
                                             <img src="/assets/images/logo.png" height="33" width="90" class="m-b-10" alt="">
-                                            <p><strong style="font-weight: 700;">Company Name: </strong>{{ Auth::user()->tenant->company_name ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Address: </strong>{{ Auth::user()->tenant->address ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Email: </strong>{{ Auth::user()->tenant->email ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Phone: </strong>{{ Auth::user()->tenant->phone ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Website: </strong>{{ Auth::user()->tenant->website ?? ''}}</p>
+                                            <p><strong style="font-weight: 700;">Company Name: </strong>{{ $tenant->company_name ?? ''}}</p>
+                                            <p><strong style="font-weight: 700;">Address: </strong>{{ $tenant->address ?? ''}}</p>
+                                            <p><strong style="font-weight: 700;">Email: </strong>{{ $tenant->email ?? ''}}</p>
+                                            <p><strong style="font-weight: 700;">Phone: </strong>{{ $tenant->phone ?? ''}}</p>
+                                            <p><strong style="font-weight: 700;">Website: </strong>{{ $tenant->website ?? ''}}</p>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -278,7 +278,7 @@ function payWithPaystack(){
       },
       callback: function(response){
           $('#transaction').val(response.trans);
-                 axios.post('/bulksms/transaction',new FormData(buyUnitForm))
+                 axios.post('/online-invoice-payment',new FormData(buyUnitForm))
                 .then(response=>{
                     Toastify({
                         text: "Success! Account credited.",

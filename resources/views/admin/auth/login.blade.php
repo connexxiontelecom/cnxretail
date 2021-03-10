@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{config('app.name')}}</title>
+    <title>{{config('app.name')}} Admin Login</title>
     <!-- HTML5 Shim and Respond.js IE10 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 10]>
@@ -34,12 +34,12 @@
                 <div class="col-sm-12">
                     <!-- Authentication card start -->
 
-                        <form class="md-float-material form-material" action="{{route('login')}}" method="post">
-                             @if (session()->has('success'))
-                                <div class="alert alert-success background-success">{!! session()->get('success') !!}</div>
-                            @endif
+                        <form class="md-float-material form-material" action="{{route('admin.login')}}" method="post">
                              @if (session()->has('error'))
                                 <div class="alert alert-warning background-warning">{!! session()->get('error') !!}</div>
+                            @endif
+                             @if (session()->has('success'))
+                                <div class="alert alert-success background-success">{!! session()->get('success') !!}</div>
                             @endif
                             @csrf
                             <div class="text-center">
@@ -49,7 +49,7 @@
                                 <div class="card-block">
                                     <div class="row m-b-20">
                                         <div class="col-md-12">
-                                            <h3 class="text-center text-uppercase">Login</h3>
+                                            <h3 class="text-center text-uppercase">Admin Login</h3>
                                         </div>
                                     </div>
                                     <div class="form-group form-primary">

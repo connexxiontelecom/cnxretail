@@ -47,6 +47,8 @@ class CreateTenantsTable extends Migration
             $table->text('slug')->nullable();
             $table->text('invoice_terms')->nullable();
             $table->text('receipt_terms')->nullable();
+            $table->string('secret_key')->nullable();
+            $table->string('public_key')->nullable();
             $table->timestamps();
         });
     }

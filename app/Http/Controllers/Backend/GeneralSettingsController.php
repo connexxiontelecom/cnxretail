@@ -49,7 +49,7 @@ class GeneralSettingsController extends Controller
             }
 
 
-            $settings = new Tenant;
+            $settings = Tenant::where('tenant_id', Auth::user()->tenant_id)->first();
             $settings->company_name = $request->business_name;
             $settings->tenant_id = Auth::user()->tenant_id;
             $settings->email = $request->email_address;
@@ -66,5 +66,18 @@ class GeneralSettingsController extends Controller
 
     public function emailSettings(){
         return view('settings.email-settings');
+    }
+
+    public function storeAPISettings(Request $request){
+        $this->validate($request,[
+            'live_public_key'=>'required',
+            'live_secret_key'=>'required'
+        ]);
+        $api = Tenant::where('tenant_id', Auth::user()->tenant_id)->first();
+        $api->secret_key = $request->live_secret_key ?? '';
+        $api->public_key = $request->live_public_key ?? '';
+        $api->save();
+        session()->flash("success", "<strong>Success! </strong> API settings saved.");
+        return back();
     }
 }

@@ -144,6 +144,7 @@ class RegisterController extends Controller
         $member->status = 1; //active;
         $member->start_date = $current;
         $member->end_date = $current->addDays(30);
+        $member->amount = 5500;
         $member->save();
         session()->flash("success", "<strong>Success!</strong> Registration done. Proceed to login.");
         return redirect()->route('login');
@@ -154,7 +155,8 @@ class RegisterController extends Controller
         $total = 0;
         $invoice = InvoiceMaster::where('slug', $slug)->first();
         if(!empty($invoice)){
-            return view('sales-invoice.pay-invoice-online',['invoice'=>$invoice, 'total'=>$total]);
+            $tenant = Tenant::where('tenant_id', $invoice->tenant_id)->first();
+            return view('sales-invoice.pay-invoice-online',['invoice'=>$invoice, 'total'=>$total, 'tenant'=>$tenant]);
         }
     }
 }
