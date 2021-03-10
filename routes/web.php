@@ -17,6 +17,8 @@ Route::get('/','HomeController@index');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 Auth::routes();
 Route::get('/process/payment', 'Auth\RegisterController@processPayment')->name('process-payment');
+Route::get('/start-trial', 'Auth\RegisterController@showStartTrialForm')->name('start-trial');
+Route::post('/start-trial', 'Auth\RegisterController@startTrial');
 Auth::routes(['register' => false]);
 #Dashboard routes
 Route::get('/dashboard', [App\Http\Controllers\Backend\DashboardController::class, 'dashboard'])->name('dashboard');
