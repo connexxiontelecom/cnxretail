@@ -65,6 +65,7 @@ Route::get('/decline-invoice/{slug}', 'Backend\SalesInvoiceController@declineInv
 Route::get('/receive-payment/{slug}', 'Backend\SalesInvoiceController@receivePayment')->name('receive-payment');
 Route::post('/invoice/receive-payment', 'Backend\SalesInvoiceController@storeNewReceipt');
 Route::post('/online-invoice-payment', 'Controller@storeNewReceipt');
+Route::get('/online-invoice-payment/confirmation', 'Controller@paymentConfirmation')->name('online-payment-confirmation');
 Route::get('/receipts', 'Backend\SalesInvoiceController@receipts')->name('receipts');
 Route::get('/view-receipt/{slug}', 'Backend\SalesInvoiceController@viewReceipt')->name('view-receipt');
 Route::get('/new-invoice', 'Backend\SalesInvoiceController@newInvoice')->name('new-invoice');

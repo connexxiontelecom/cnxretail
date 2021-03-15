@@ -103,54 +103,59 @@ class RegisterController extends Controller
 
 
     public function processPayment(Request $request){
-        $tenant_id = null;
-        $current = Carbon::now();
-        $latestTenant = Tenant::orderBy('id', 'DESC')->first();
-        if(!empty($latestTenant)){
-            $tenant_id = $latestTenant->tenant_id + 1;
-        }else{
-            $tenant_id = rand(10,999);
-        }
-        $paymentDetails = Paystack::getPaymentData();
-        $metadata = json_decode($paymentDetails['data'] ['metadata'][0], true);
-        #Register new tenant
-        $tenant = new Tenant;
-        $tenant->tenant_id = $tenant_id;
-        $tenant->company_name = $metadata['company_name'];
-        $tenant->email = $metadata['email'];
-        $tenant->phone = $metadata['phone_no'];
-        $tenant->address = $metadata['address'];
-        $tenant->nature_of_business = $metadata['nature_of_business'];
-        $tenant->start = $current;
-        $tenant->end = $current->addDays(30);
-        $tenant->slug = substr(time(),30,40);
-        $tenant->save();
 
-        #user
-        $user = new User;
-        $user->full_name = $metadata['full_name'];
-        $user->password = bcrypt($metadata['password']);
-        $user->email = $metadata['email'];
-        $user->tenant_id = $tenant_id;
-        $user->slug = substr(time(),29,40);
-        $user->address = $metadata['address'] ?? '';
-        $user->account_status = 1;
-        $user->mobile_no = $metadata['phone_no'];
-        $user->gender = 1;
-        $user->save();
-        #Register subscription
-        $key = "key_".substr(sha1(time()),21,40 );
-         $member = new Membership;
-        $member->tenant_id = $tenant_id;
-        $member->plan_id = 1;//$metadata['plan'];
-        $member->sub_key = $key;
-        $member->status = 1; //active;
-        $member->start_date = $current;
-        $member->end_date = $current->addDays(30);
-        $member->amount = 5500;
-        $member->save();
-        session()->flash("success", "<strong>Success!</strong> Registration done. Proceed to login.");
-        return redirect()->route('login');
+        if(!Auth::check() ){
+            $tenant_id = null;
+            $current = Carbon::now();
+            $latestTenant = Tenant::orderBy('id', 'DESC')->first();
+            if(!empty($latestTenant)){
+                $tenant_id = $latestTenant->tenant_id + 1;
+            }else{
+                $tenant_id = rand(10,999);
+            }
+            $paymentDetails = Paystack::getPaymentData();
+            $metadata = json_decode($paymentDetails['data'] ['metadata'][0], true);
+            #Register new tenant
+            $tenant = new Tenant;
+            $tenant->tenant_id = $tenant_id;
+            $tenant->company_name = $metadata['company_name'];
+            $tenant->email = $metadata['email'];
+            $tenant->phone = $metadata['phone_no'];
+            $tenant->address = $metadata['address'];
+            $tenant->nature_of_business = $metadata['nature_of_business'];
+            $tenant->start = $current;
+            $tenant->end = $current->addDays(30);
+            $tenant->slug = substr(time(),30,40);
+            $tenant->save();
+
+            #user
+            $user = new User;
+            $user->full_name = $metadata['full_name'];
+            $user->password = bcrypt($metadata['password']);
+            $user->email = $metadata['email'];
+            $user->tenant_id = $tenant_id;
+            $user->slug = substr(time(),29,40);
+            $user->address = $metadata['address'] ?? '';
+            $user->account_status = 1;
+            $user->mobile_no = $metadata['phone_no'];
+            $user->gender = 1;
+            $user->save();
+            #Register subscription
+            $key = "key_".substr(sha1(time()),21,40 );
+             $member = new Membership;
+            $member->tenant_id = $tenant_id;
+            $member->plan_id = 1;//$metadata['plan'];
+            $member->sub_key = $key;
+            $member->status = 1; //active;
+            $member->start_date = $current;
+            $member->end_date = $current->addDays(30);
+            $member->amount = 5500;
+            $member->save();
+            session()->flash("success", "<strong>Success!</strong> Registration done. Proceed to login.");
+            return redirect()->route('login');
+        }else{
+            //
+        }
     }
 
 

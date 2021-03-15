@@ -218,6 +218,7 @@ class SalesInvoiceController extends Controller
 
 
     public function sendInvoiceAsEmail(Request $request){
+
         $invoice = InvoiceMaster::where('id', $request->invoiceId)->where('tenant_id', Auth::user()->tenant_id)->first();
         if(!empty($invoice)){
             $contact = Contact::find($invoice->contact_id);
