@@ -211,41 +211,6 @@ Pay Online
             height: '430px',
         });
         var grand_total = 0;
-    receiptForm.onsubmit = async (e) => {
-                e.preventDefault();
-                axios.post('/invoice/receive-payment',new FormData(receiptForm))
-                .then(response=>{
-                    Toastify({
-                        text: "Success! Receipt issued.",
-                        duration: 3000,
-                        newWindow: true,
-                        close: true,
-                        gravity: "top",
-                        position: 'right',
-                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-                        stopOnFocus: true,
-                        onClick: function(){}
-                    }).showToast();
-                    window.location.replace(response.data.route);
-                })
-                .catch(error=>{
-                        $('#validation-errors').html('');
-                        $.each(error.response.data.errors, function(key, value){
-                            Toastify({
-                            text: value,
-                            duration: 3000,
-                            newWindow: true,
-                            close: true,
-                            gravity: "top",
-                            position: 'right',
-                            backgroundColor: "linear-gradient(to right, #FF0000, #FE0000)",
-                            stopOnFocus: true,
-                            onClick: function(){}
-                        }).showToast();
-                        $('#validation-errors').append("<li><i class='ti-hand-point-right text-danger mr-2'></i><small class='text-danger'>"+value+"</small></li>");
-                    });
-                });
-            };
 
    });
    $(document).on("change", ".total_amount", function() {
@@ -278,7 +243,39 @@ function payWithPaystack(){
       },
       callback: function(response){
           $('#transaction').val(response.trans);
-                 axios.post('/online-invoice-payment',new FormData(buyUnitForm))
+          axios.post('/online-invoice-payment',new FormData(receivePaymentForm))
+                .then(response=>{
+                    Toastify({
+                        text: "Success! Receipt issued.",
+                        duration: 3000,
+                        newWindow: true,
+                        close: true,
+                        gravity: "top",
+                        position: 'right',
+                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        stopOnFocus: true,
+                        onClick: function(){}
+                    }).showToast();
+                     window.location = response.data.redirect;
+                })
+                .catch(error=>{
+                        $('#validation-errors').html('');
+                        $.each(error.response.data.errors, function(key, value){
+                            Toastify({
+                            text: value,
+                            duration: 3000,
+                            newWindow: true,
+                            close: true,
+                            gravity: "top",
+                            position: 'right',
+                            backgroundColor: "linear-gradient(to right, #FF0000, #FE0000)",
+                            stopOnFocus: true,
+                            onClick: function(){}
+                        }).showToast();
+                        $('#validation-errors').append("<li><i class='ti-hand-point-right text-danger mr-2'></i><small class='text-danger'>"+value+"</small></li>");
+                    });
+                });
+                /*  axios.post('/online-invoice-payment',new FormData(buyUnitForm))
                 .then(response=>{
                     Toastify({
                         text: "Success! Account credited.",
@@ -310,7 +307,7 @@ function payWithPaystack(){
                         }).showToast();
                         $('#validation-errors').append("<li><i class='ti-hand-point-right text-danger mr-2'></i><small class='text-danger'>"+value+"</small></li>");
                     });
-                });
+                }); */
             //};
          // }
           //alert('success. transaction ref is ' + response.reference);

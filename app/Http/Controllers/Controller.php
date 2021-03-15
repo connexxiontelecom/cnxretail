@@ -32,23 +32,24 @@ class Controller extends BaseController
         $this->validate($request,[
             'payment'=>'required',
             'payment_date'=>'required|date',
-            'payment_method'=>'required',
+            //'payment_method'=>'required',
             'reference_no'=>'required',
         ]);
         $totalAmount = 0;
         for($i = 0; $i<count($request->payment); $i++){
             $totalAmount += $request->payment[$i];
         }
+        $tenant = Contact::find($request->contact);
         $receipt = new ReceiptMaster;
         $receipt->contact_id = $request->contact;
-        $receipt->tenant_id = Auth::user()->tenant_id;
-        $receipt->issued_by = Auth::user()->id;
+        $receipt->tenant_id = $tenant->tenant_id;
+        $receipt->issued_by = $tenant->added_by;
         $receipt->ref_no = $request->reference_no;
         $receipt->issue_date = $request->payment_date;
         $receipt->amount = $totalAmount * $request->exchange_rate[0];
         $receipt->exchange_rate = $request->exchange_rate[0];
         $receipt->currency_id = $request->currency[0];
-        $receipt->payment_type = $request->payment_method;
+        $receipt->payment_type = 1; //online $request->payment_method;
         $receipt->bank_id = $request->bank;
         $receipt->slug = substr(sha1(time()),34,40);
         $receipt->save();
@@ -57,19 +58,19 @@ class Controller extends BaseController
             $detail = new ReceiptDetail;
             $detail->invoice_id = $request->invoice[$n];
             $detail->receipt_id = $receiptId;
-            $detail->tenant_id = Auth::user()->tenant_id;
+            $detail->tenant_id = $tenant->tenant_id;
             $detail->payment = $request->payment[$n];
             $detail->exchange_rate = $request->exchange_rate[$n];
             $detail->currency_id = $request->currency[$n];
             $detail->save();
             #update invoice
-            $updateInvoice = InvoiceMaster::where('tenant_id', Auth::user()->tenant_id)->where('id', $request->invoice[$n])->first();
+            $updateInvoice = InvoiceMaster::where('tenant_id', $tenant->tenant_id)->where('id', $request->invoice[$n])->first();
             if(!empty($updateInvoice)){
                 $updateInvoice->paid_amount += $request->payment[$n] * $request->exchange_rate[$n];
                 if($updateInvoice->paid_amount >= $updateInvoice->total){
                     $updateInvoice->status = 1; //marked as complete
                     $updateInvoice->posted = 1;
-                    $updateInvoice->posted_by = Auth::user()->id;
+                    $updateInvoice->posted_by = $tenant->added_by;
                     $updateInvoice->post_date = now();
 
                 }
@@ -83,18 +84,22 @@ class Controller extends BaseController
         $history->type = 1;//Receipt
         $history->transaction_date = now();
         $history->narration = $totalAmount * $request->exchange_rate[0]." received with reference no. ".$request->reference_no;
-        $history->tenant_id = Auth::user()->tenant_id;
+        $history->tenant_id = $tenant->tenant_id;
         $history->save();
          #if payment is complete register contact as deal
-         $clientExist = Deal::where('client_id', $request->contact)->where('tenant_id', Auth::user()->tenant_id)->first();
+         $clientExist = Deal::where('client_id', $request->contact)->where('tenant_id', $tenant->tenant_id)->first();
          if(empty($clientExist)){
              $lead = new Deal;
              $lead->client_id = $request->contact;
-             $lead->tenant_id = Auth::user()->tenant_id;
-             $lead->converted_by = Auth::user()->id;
+             $lead->tenant_id = $tenant->tenant_id;
+             $lead->converted_by = $tenant->added_by;
              $lead->save();
          }
-        return redirect()->route('receipts');
+        return ['redirect'=> route('online-payment-confirmation')];
 
+    }
+
+    public function paymentConfirmation(){
+        return view('sales-invoice.pay-invoice-confirmation');
     }
 }
