@@ -11,9 +11,9 @@
             <div class="main-menu-content">
                 <ul>
                     <li class="more-details">
-                        <a href="user-profile.html"><i class="ti-user"></i>View Profile</a>
-                        <a href="#!"><i class="ti-settings"></i>Settings</a>
-                        <a href="auth-normal-sign-in.html"><i class="ti-layout-sidebar-left"></i>Logout</a>
+                        <a href="{{route('my-profile')}}"><i class="ti-user"></i>View Profile</a>
+                        <a href="{{route('edit-profile')}}"><i class="ti-settings"></i>Settings</a>
+                        <a href="{{route('logout')}}"><i class="ti-layout-sidebar-left"></i>Logout</a>
                     </li>
                 </ul>
             </div>
