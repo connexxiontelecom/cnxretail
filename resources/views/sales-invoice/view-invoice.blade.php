@@ -26,159 +26,161 @@
 <div>
     <div class="card">
         <form id="invoiceForm">
+            <div id="printArea">
+                <div class="row invoice-contact">
+                    <div class="col-md-8">
+                        <div class="invoice-box row">
+                            <div class="col-sm-6">
+                                <table class="table table-responsive invoice-table table-borderless">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <img src="/assets/images/logo.png" height="33" width="90" class="m-b-10" alt="">
+                                                <p><strong style="font-weight: 700;">Company Name: </strong>{{ Auth::user()->tenant->company_name ?? ''}}</p>
+                                                <p><strong style="font-weight: 700;">Address: </strong>{{ Auth::user()->tenant->address ?? ''}}</p>
+                                                <p><strong style="font-weight: 700;">Email: </strong>{{ Auth::user()->tenant->email ?? ''}}</p>
+                                                <p><strong style="font-weight: 700;">Phone: </strong>{{ Auth::user()->tenant->phone ?? ''}}</p>
+                                                <p><strong style="font-weight: 700;">Website: </strong>{{ Auth::user()->tenant->website ?? ''}}</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-sm-6">
+                                <h5 class="mt-5">Invoice</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div class="row invoive-info">
+                        <div class="col-md-4 col-xs-12 invoice-client-info">
+                            <h6 class="text-uppercase">Client Information :</h6>
+                            <h6 class="m-0">{{$invoice->contact->company_name ?? ''}}</h6>
+                            <p class="m-0 m-t-10">{{$invoice->contact->address ?? ''}}</p>
+                            <p class="m-0">{{$invoice->contact->company_phone ?? ''}}</p>
+                            <p class="m-0">{{$invoice->contact->email ?? ''}}</p>
+                            <p>{{$invoice->contact->website ?? ''}}</p>
+                            <input type="hidden" value="{{$invoice->contact_id}}" name="contact">
+                            <input type="hidden" value="{{$invoice->id}}" name="invoiceId" id="invoiceId">
+                        </div>
+                        <div class="col-md-4 col-xs-12 ">
 
-            <div class="row invoice-contact">
-                <div class="col-md-8">
-                    <div class="invoice-box row">
-                        <div class="col-sm-6">
-                            <table class="table table-responsive invoice-table table-borderless">
+                            <h6 class="text-uppercase">Order Information :</h6>
+                            <table class="table table-responsive invoice-table invoice-order table-borderless">
                                 <tbody>
+                                    <div class="form-group col-md-8 col-sm-8">
+                                        <p><strong>Issue Date: </strong> {{date('d F, Y', strtotime($invoice->issue_date))}}</p>
+                                    </div>
+                                    <div class="form-group col-md-8 col-sm-8">
+                                        <p><strong>Due Date: </strong> {{date('d F, Y', strtotime($invoice->due_date))}}</p>
+                                    </div>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-4 col-xs-12">
+                            <h6 class="m-b-20 text-uppercase">Invoice Number <span class="text-primary">#{{$invoice->invoice_no ?? ''}}</span></h6>
+                            <input type="hidden" name="invoice_no" value="{{$invoice->invoice_no ?? ''}}">
+                            <h6 class="text-uppercase text-primary">Total Due :
+                                <span class="total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->total/$invoice->exchange_rate - $invoice->paid_amount/$invoice->exchange_rate,2)}}</span>
+                            </h6>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="table-responsive">
+                                <table class="table  invoice-detail-table">
+                                    <thead>
+                                        <tr class="thead-default">
+                                            <th>Product/Service</th>
+                                            <th>Quantity</th>
+                                            <th>Amount({{$invoice->getCurrency->symbol ?? 'N'}})</th>
+                                            <th>Total({{$invoice->getCurrency->symbol ?? 'N'}})</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="products">
+                                        @foreach ($invoices as $item)
+                                                <tr class="item">
+                                                    <td>
+                                                        <p>{{$item->getInvoiceService->service}}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p>{{$item->quantity ?? ''}}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p>{{number_format($item->unit_cost,2) ?? ''}}</p>
+                                                    </td>
+                                                    <td>
+                                                    <p>{{number_format($item->quantity * $item->unit_cost,2)}}</p>
+                                                    </td>
+                                                </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-responsive invoice-table invoice-total">
+                                <tbody class="float-left">
+
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 col-lg-12 d-flex justify-content-center mb-2 error-wrapper">
+                                            <ul id="validation-errors">
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </tbody>
+                                <tbody class="float-right">
+                                    <input type="number" name="mainTotal" hidden id="mainTotal">
                                     <tr>
+                                        <th>VAT(%):</th>
                                         <td>
-                                            <img src="/assets/images/logo.png" height="33" width="90" class="m-b-10" alt="">
-                                            <p><strong style="font-weight: 700;">Company Name: </strong>{{ Auth::user()->tenant->company_name ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Address: </strong>{{ Auth::user()->tenant->address ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Email: </strong>{{ Auth::user()->tenant->email ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Phone: </strong>{{ Auth::user()->tenant->phone ?? ''}}</p>
-                                            <p><strong style="font-weight: 700;">Website: </strong>{{ Auth::user()->tenant->website ?? ''}}</p>
+                                            <p>({{$invoice->vat_rate ?? ''}}%)</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>VAT Amount :</th>
+                                        <td><span class="vat_amount">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->vat_amount/$invoice->exchange_rate,2)}}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Sub Total :</th>
+                                        <td><span class="sub_total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->sub_total/$invoice->exchange_rate,2)}}</span></td>
+                                    </tr>
+                                    <tr class="text-info">
+                                        <td>
+                                            <hr>
+                                            <h5 class="text-primary">Total :</h5>
+                                        </td>
+                                        <td>
+                                            <hr>
+                                            <h5 class="text-primary"><span class="total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->total/$invoice->exchange_rate,2)}}</span></h5>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-sm-6">
-                            <h5 class="mt-5">Invoice</h5>
+                    </div>
+                    {{-- <div class="row">
+                        <div class="col-sm-12">
+                            <h6>Terms And Condition :</h6>
+                            <a href="{{route('invoice-payment-history', $invoice->slug)}}">Invoice Payment History</a>
+                            <p>lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor </p>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
-                <div class="col-md-4">
-                </div>
-            </div>
-            <div class="card-block">
-                <div class="row invoive-info">
-                    <div class="col-md-4 col-xs-12 invoice-client-info">
-                        <h6 class="text-uppercase">Client Information :</h6>
-                        <h6 class="m-0">{{$invoice->contact->company_name ?? ''}}</h6>
-                        <p class="m-0 m-t-10">{{$invoice->contact->address ?? ''}}</p>
-                        <p class="m-0">{{$invoice->contact->company_phone ?? ''}}</p>
-                        <p class="m-0">{{$invoice->contact->email ?? ''}}</p>
-                        <p>{{$invoice->contact->website ?? ''}}</p>
-                        <input type="hidden" value="{{$invoice->contact_id}}" name="contact">
-                        <input type="hidden" value="{{$invoice->id}}" name="invoiceId" id="invoiceId">
-                    </div>
-                    <div class="col-md-4 col-xs-12 ">
 
-                        <h6 class="text-uppercase">Order Information :</h6>
-                        <table class="table table-responsive invoice-table invoice-order table-borderless">
-                            <tbody>
-                                <div class="form-group col-md-8 col-sm-8">
-                                    <p><strong>Issue Date: </strong> {{date('d F, Y', strtotime($invoice->issue_date))}}</p>
-                                </div>
-                                <div class="form-group col-md-8 col-sm-8">
-                                    <p><strong>Due Date: </strong> {{date('d F, Y', strtotime($invoice->due_date))}}</p>
-                                </div>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-4 col-xs-12">
-                        <h6 class="m-b-20 text-uppercase">Invoice Number <span class="text-primary">#{{$invoice->invoice_no ?? ''}}</span></h6>
-                        <input type="hidden" name="invoice_no" value="{{$invoice->invoice_no ?? ''}}">
-                        <h6 class="text-uppercase text-primary">Total Due :
-                            <span class="total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->total/$invoice->exchange_rate - $invoice->paid_amount/$invoice->exchange_rate,2)}}</span>
-                        </h6>
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="table-responsive">
-                            <table class="table  invoice-detail-table">
-                                <thead>
-                                    <tr class="thead-default">
-                                        <th>Product/Service</th>
-                                        <th>Quantity</th>
-                                        <th>Amount({{$invoice->getCurrency->symbol ?? 'N'}})</th>
-                                        <th>Total({{$invoice->getCurrency->symbol ?? 'N'}})</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="products">
-                                    @foreach ($invoices as $item)
-                                            <tr class="item">
-                                                <td>
-                                                    <p>{{$item->getInvoiceService->service}}</p>
-                                                </td>
-                                                <td>
-                                                    <p>{{$item->quantity ?? ''}}</p>
-                                                </td>
-                                                <td>
-                                                    <p>{{number_format($item->unit_cost,2) ?? ''}}</p>
-                                                </td>
-                                                <td>
-                                                <p>{{number_format($item->quantity * $item->unit_cost,2)}}</p>
-                                                </td>
-                                            </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <table class="table table-responsive invoice-table invoice-total">
-                            <tbody class="float-left">
-
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-12 col-lg-12 d-flex justify-content-center mb-2 error-wrapper">
-                                        <ul id="validation-errors">
-                                        </ul>
-                                    </div>
-                                </div>
-                            </tbody>
-                            <tbody class="float-right">
-                                <input type="number" name="mainTotal" hidden id="mainTotal">
-                                <tr>
-                                    <th>VAT(%):</th>
-                                    <td>
-                                        <p>({{$invoice->vat_rate ?? ''}}%)</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>VAT Amount :</th>
-                                    <td><span class="vat_amount">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->vat_amount/$invoice->exchange_rate,2)}}</span></td>
-                                </tr>
-                                <tr>
-                                    <th>Sub Total :</th>
-                                    <td><span class="sub_total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->sub_total/$invoice->exchange_rate,2)}}</span></td>
-                                </tr>
-                                <tr class="text-info">
-                                    <td>
-                                        <hr>
-                                        <h5 class="text-primary">Total :</h5>
-                                    </td>
-                                    <td>
-                                        <hr>
-                                        <h5 class="text-primary"><span class="total">{{$invoice->getCurrency->symbol ?? 'N'}}{{number_format($invoice->total/$invoice->exchange_rate,2)}}</span></h5>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                {{-- <div class="row">
-                    <div class="col-sm-12">
-                        <h6>Terms And Condition :</h6>
-                        <a href="{{route('invoice-payment-history', $invoice->slug)}}">Invoice Payment History</a>
-                        <p>lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor </p>
-                    </div>
-                </div> --}}
             </div>
             <div class="row text-center">
                 <div class="col-sm-12 invoice-btn-group text-center">
                     <div class="btn-group d-flex justify-content-center">
                         <a href="{{url()->previous()}}" class="btn btn-secondary btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Cancel</a>
-                        <button type="submit" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light"><i class="ti-check mr-2"></i> Print</button>
+                        <button type="button" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light printThis"><i class="ti-check mr-2"></i> Print</button>
                         <a href="{{route('decline-invoice', $invoice->slug)}}" class="btn btn-danger btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Decline Invoice</a>
                         <button type="button" class="btn btn-secondary btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20 sendAsEmail"><i class="ti-email mr-2"></i>Email</button>
                     </div>
@@ -194,6 +196,7 @@
 <script type="text/javascript" src="\assets\js\jquery.slimscroll.min.js"></script>
 <script src="/assets/js/datatable.min.js"></script>
 <script src="/assets/js/select2.min.js"></script>
+<script src="/assets/js/printThis.js"></script>
 <script>
     $(document).ready(function(){
         $('.js-example-basic-single').select2({
@@ -242,6 +245,13 @@
             var grandTotal = vat_amount + + total;
             $('.total').text(grandTotal.toLocaleString());
 
+        });
+
+        $(document).on('click', '.printThis', function(event){
+            $('#printArea').printThis({
+                header:"<p></p>",
+                footer:"<p></p>",
+            });
         });
 
         //send invoice as email

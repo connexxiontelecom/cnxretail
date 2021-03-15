@@ -212,7 +212,7 @@ class SalesInvoiceController extends Controller
         if(!empty($invoice)){
             $invoices = ReceiptDetail::where('tenant_id', Auth::user()->tenant_id)->where('invoice_id', $invoice->id)->get();
 
-            return view('sales-invoice.invoice-payment-history', ['invoices'=>$invoices,'invoice'=>$invoice]);
+            return view('sales-invoice.invoice-payment-history', ['invoices'=>$invoices,'invoice'=>$invoice, 'total_paid'=>0]);
         }
     }
 

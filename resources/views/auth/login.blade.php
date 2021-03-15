@@ -38,6 +38,9 @@
                              @if (session()->has('success'))
                                 <div class="alert alert-success background-success">{!! session()->get('success') !!}</div>
                             @endif
+                             @if (session()->has('error'))
+                                <div class="alert alert-warning background-warning">{!! session()->get('error') !!}</div>
+                            @endif
                             @csrf
                             <div class="text-center">
                                 <img src="/assets/images/logo.png" height="33" width="90" alt="logo.png">
@@ -79,7 +82,7 @@
                                                 </label>
                                             </div>
                                             <div class="forgot-phone text-right f-right">
-                                                <a href="auth-reset-password.html" class="text-right f-w-600"> Forgot Password?</a>
+                                                <a href="{{route('password.request')}}" class="text-right f-w-600"> Forgot Password?</a>
                                             </div>
                                         </div>
                                     </div>

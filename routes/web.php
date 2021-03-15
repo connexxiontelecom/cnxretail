@@ -17,6 +17,8 @@ Route::get('/','HomeController@index');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 Auth::routes();
 Route::get('/process/payment', 'Auth\RegisterController@processPayment')->name('process-payment');
+Route::get('/start-trial', 'Auth\RegisterController@showStartTrialForm')->name('start-trial');
+Route::post('/start-trial', 'Auth\RegisterController@startTrial');
 Auth::routes(['register' => false]);
 #Dashboard routes
 Route::get('/dashboard', [App\Http\Controllers\Backend\DashboardController::class, 'dashboard'])->name('dashboard');
@@ -62,6 +64,8 @@ Route::get('/invoice/payment/history/{slug}', 'Backend\SalesInvoiceController@in
 Route::get('/decline-invoice/{slug}', 'Backend\SalesInvoiceController@declineInvoice')->name('decline-invoice');
 Route::get('/receive-payment/{slug}', 'Backend\SalesInvoiceController@receivePayment')->name('receive-payment');
 Route::post('/invoice/receive-payment', 'Backend\SalesInvoiceController@storeNewReceipt');
+Route::post('/online-invoice-payment', 'Controller@storeNewReceipt');
+Route::get('/online-invoice-payment/confirmation', 'Controller@paymentConfirmation')->name('online-payment-confirmation');
 Route::get('/receipts', 'Backend\SalesInvoiceController@receipts')->name('receipts');
 Route::get('/view-receipt/{slug}', 'Backend\SalesInvoiceController@viewReceipt')->name('view-receipt');
 Route::get('/new-invoice', 'Backend\SalesInvoiceController@newInvoice')->name('new-invoice');
@@ -155,4 +159,19 @@ Route::get('/download/{slug}', 'Backend\CNXDriveController@downloadFile')->name(
 #Settings route
 Route::get('/general-settings', 'Backend\GeneralSettingsController@generalSettings')->name('general-settings');
 Route::post('/tenant/general-settings', 'Backend\GeneralSettingsController@storeGeneralSettings');
+Route::post('/tenant/api-settings', 'Backend\GeneralSettingsController@storeAPISettings')->name('api-settings');
 Route::get('/email-settings', 'Backend\GeneralSettingsController@emailSettings')->name('email-settings');
+
+
+
+#CNXRetail Admin routes
+Route::get('/tunnel', 'Backend\Admin\LoginController@showLoginForm')->name('admin.login');
+Route::post('/tunnel', 'Backend\Admin\LoginController@login');
+Route::get('/admin/dashboard', 'Backend\Admin\AdminController@dashboard')->name('admin.dashboard');
+Route::get('/admin/tenants', 'Backend\Admin\AdminController@getAllTenants')->name('admin.tenants');
+Route::get('/admin/tenant/view/{slug}', 'Backend\Admin\AdminController@getTenant')->name('admin.view.tenant');
+Route::post('/message/tenant', 'Backend\Admin\AdminController@messageTenant')->name('admin.message.tenant');
+Route::get('/admin/user/new', 'Backend\Admin\AdminController@addNewAdminUser')->name('admin.add.new.admin.user');
+Route::post('/admin/user/new', 'Backend\Admin\AdminController@storeAdminUser');
+Route::get('/admin/user/all', 'Backend\Admin\AdminController@getAllAdminUsers')->name('admin.all.admin.users');
+Route::get('/admin/activity-log', 'Backend\Admin\AdminController@getActivityLogs')->name('admin.activity.log');

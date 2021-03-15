@@ -31,10 +31,11 @@
     <section class="login-block">
         <div class="container">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-8 offset-md-2">
                     <div class="card">
                         <div class="card-header">
                             <h5>New Business Registration</h5>
+                            <p>Start your <strong>FREE</strong> trial today.</p>
                         </div>
                         <div class="card-block">
                             <div class="text-center mb-4">
@@ -46,7 +47,7 @@
                             @if (session()->has('error'))
                                 <div class="alert alert-success background-success">{!! session()->get('error') !!}</div>
                             @endif
-                            <form class="form-material" action="{{route('register')}}" method="post">
+                            <form class="form-material" action="{{route('start-trial')}}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6">
@@ -115,17 +116,7 @@
                                         <span class="form-bar"></span>
                                         <label class="float-label">Re-type Password</label>
                                     </div>
-                                    <input type="hidden" name="amount" value="550000">
-                                    <input type="hidden" name="currency" value="NGN">
-                                    <input type="hidden" name="metadata[]" id="metadata" >
-                                    <input type="hidden" name="reference" value="{{ Paystack::genTranxRef() }}">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12 text-center">
-                                        <p><strong style="font-weight: 900">Price:</strong> ₦5,500</p>
-                                    </div>
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -139,8 +130,6 @@
                                 </form>
                         </div>
                     </div>
-
-
                 </div>
             </div>
             <!-- end of row -->
@@ -199,31 +188,7 @@
 <script src="assets/pages/waves/js/waves.min.js"></script>
 <script type="text/javascript" src="/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
 <script type="text/javascript" src="/assets/js/common-pages.js"></script>
-<script>
-		$(document).ready(function(){
-			$(document).on('click', '#proceedToPay', function(){
-				var metadata = $('#metadata').val();
-				var company_name = $('#company_name').val();
-				var nature_of_business = $('#nature_of_business').val();
-				var phone_no = $('#phone_no').val();
-				var email = $('#email').val();
-				var password = $('#password').val();
-				var full_name = $('#full_name').val();
-				var address = $('#address').val();
-				var fid = {
-                    'company_name':company_name,
-                    'nature_of_business':nature_of_business,
-                    'phone_no': phone_no,
-					'nature_of_business':nature_of_business,
-					'email':email, 'password':password,
-					'full_name':full_name,
-                    'address':address
-				};
-				$('#metadata').val(JSON.stringify(fid));
-                console.log($('#metadata').val());
-			});
-		});
-	</script>
+
 </body>
 
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>{{config('app.name')}}</title>
+    <title>{{config('app.name')}} Admin Login</title>
     <!-- HTML5 Shim and Respond.js IE10 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 10]>
@@ -34,12 +34,12 @@
                 <div class="col-sm-12">
                     <!-- Authentication card start -->
 
-                        <form class="md-float-material form-material" action="{{ route('password.email') }}" method="post">
-                             @if (session()->has('success'))
-                                <div class="alert alert-success background-success">{!! session()->get('success') !!}</div>
-                            @endif
+                        <form class="md-float-material form-material" action="{{route('admin.login')}}" method="post">
                              @if (session()->has('error'))
                                 <div class="alert alert-warning background-warning">{!! session()->get('error') !!}</div>
+                            @endif
+                             @if (session()->has('success'))
+                                <div class="alert alert-success background-success">{!! session()->get('success') !!}</div>
                             @endif
                             @csrf
                             <div class="text-center">
@@ -49,7 +49,7 @@
                                 <div class="card-block">
                                     <div class="row m-b-20">
                                         <div class="col-md-12">
-                                            <h5 class="text-center text-uppercase">Reset Password</h5>
+                                            <h3 class="text-center text-uppercase">Admin Login</h3>
                                         </div>
                                     </div>
                                     <div class="form-group form-primary">
@@ -62,16 +62,33 @@
                                             <i class="text-danger">{{$message}}</i>
                                         </div>
                                     @enderror
+                                    <div class="form-group form-primary">
+                                        <input type="password" name="password" class="form-control">
+                                        <span class="form-bar"></span>
+                                        <label class="float-label">Password</label>
+                                    </div>
+                                    @error('password')
+                                        <div class="d-flex">
+                                            <i class="text-danger">{{$message}}</i>
+                                        </div>
+                                    @enderror
                                     <div class="row m-t-25 text-left">
                                         <div class="col-12">
+                                            <div class="checkbox-fade fade-in-primary d-">
+                                                <label>
+                                                    <input type="checkbox" value="">
+                                                    <span class="cr"><i class="cr-icon icofont icofont-ui-check txt-primary"></i></span>
+                                                    <span class="text-inverse">Remember me</span>
+                                                </label>
+                                            </div>
                                             <div class="forgot-phone text-right f-right">
-                                                <a href="{{route('login')}}" class="text-right f-w-600"> Login</a>
+                                                <a href="auth-reset-password.html" class="text-right f-w-600"> Forgot Password?</a>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row m-t-30">
                                         <div class="col-md-12">
-                                            <button type="submit" class="btn btn-mini btn-primary btn-md btn-block waves-effect waves-light text-center m-b-20">Send Password Reset Link</button>
+                                            <button type="submit" class="btn btn-primary btn-md btn-block waves-effect waves-light text-center m-b-20">Login</button>
                                         </div>
                                     </div>
                                     <hr/>

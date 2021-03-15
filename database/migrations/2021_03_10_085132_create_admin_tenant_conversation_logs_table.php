@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMembershipsTable extends Migration
+class CreateAdminTenantConversationLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,12 @@ class CreateMembershipsTable extends Migration
      */
     public function up()
     {
-        Schema::create('memberships', function (Blueprint $table) {
+        Schema::create('admin_tenant_conversation_logs', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('admin_user');
             $table->unsignedBigInteger('tenant_id');
-            $table->unsignedBigInteger('plan_id');
-            $table->string('sub_key')->nullable();
-            $table->dateTime('start_date');
-            $table->dateTime('end_date');
-            $table->tinyInteger('status')->default(1); //1=active; 0=inactive
-            $table->double('amount')->default(0);
+            $table->string('subject');
+            $table->text('message');
             $table->timestamps();
         });
     }
@@ -33,6 +30,6 @@ class CreateMembershipsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('memberships');
+        Schema::dropIfExists('admin_tenant_conversation_logs');
     }
 }
