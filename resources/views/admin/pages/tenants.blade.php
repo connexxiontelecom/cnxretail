@@ -39,6 +39,7 @@ All Tenants
                     <th>Phone No.</th>
                     <th>Start Date</th>
                     <th>End Date</th>
+                    <th>Date</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -50,6 +51,7 @@ All Tenants
                             <td> {{$contact->phone ?? ''}}</td>
                             <td>{{!is_null($contact->start) ? date('d F, Y', strtotime($contact->start)) : ''}}</td>
                             <td>{{!is_null($contact->end) ? date('d F, Y', strtotime($contact->end)) : ''}}</td>
+                            <td>{{!is_null($contact->created_at) ? date('d F, Y', strtotime($contact->created_at)) : ''}}</td>
                             <td>
                                 <a href="{{route('admin.view.tenant', $contact->slug)}}" class="btn btn-warning btn-mini">View</a>
                             </td>
