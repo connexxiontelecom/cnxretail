@@ -123,7 +123,7 @@ class RegisterController extends Controller
             $tenant->phone = $metadata['phone_no'];
             $tenant->address = $metadata['address'];
             $tenant->nature_of_business = $metadata['nature_of_business'];
-            $tenant->start = $current;
+            $tenant->start = now();
             $tenant->end = $current->addDays(30);
             $tenant->slug = substr(time(),30,40);
             $tenant->save();
@@ -185,7 +185,7 @@ class RegisterController extends Controller
         $tenant->phone = $request->phone_no;
         $tenant->address = $request->address;
         $tenant->nature_of_business = $request->nature_of_business;
-        $tenant->start = $current;
+        $tenant->start = now();
         $tenant->end = $current->addDays(30);
         $tenant->slug = substr(time(),30,40);
         $tenant->save();
