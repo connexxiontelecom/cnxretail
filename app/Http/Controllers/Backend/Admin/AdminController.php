@@ -38,6 +38,7 @@ class AdminController extends Controller
 
     public function getAllTenants(){
         $tenants = Tenant::orderBy('id', 'DESC')->get();
+        
         return view('admin.pages.tenants', ['tenants'=>$tenants]);
     }
 
