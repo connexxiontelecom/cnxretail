@@ -44,7 +44,7 @@
                                 <div class="alert alert-success background-success">{!! session()->get('success') !!}</div>
                             @endif
                             @if (session()->has('error'))
-                                <div class="alert alert-success background-success">{!! session()->get('error') !!}</div>
+                                <div class="alert alert-success background-warning">{!! session()->get('error') !!}</div>
                             @endif
                             <form class="form-material" action="{{route('register')}}" method="post">
                                 @csrf
@@ -164,51 +164,6 @@
         </div>
         <!-- end of container-fluid -->
     </section>
-    <!-- Warning Section Starts -->
-    <!-- Older IE warning message -->
-    <!--[if lt IE 10]>
-<div class="ie-warning">
-    <h1>Warning!!</h1>
-    <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
-    <div class="iew-container">
-        <ul class="iew-download">
-            <li>
-                <a href="http://www.google.com/chrome/">
-                    <img src="assets/images/browser/chrome.png" alt="Chrome">
-                    <div>Chrome</div>
-                </a>
-            </li>
-            <li>
-                <a href="https://www.mozilla.org/en-US/firefox/new/">
-                    <img src="assets/images/browser/firefox.png" alt="Firefox">
-                    <div>Firefox</div>
-                </a>
-            </li>
-            <li>
-                <a href="http://www.opera.com">
-                    <img src="assets/images/browser/opera.png" alt="Opera">
-                    <div>Opera</div>
-                </a>
-            </li>
-            <li>
-                <a href="https://www.apple.com/safari/">
-                    <img src="assets/images/browser/safari.png" alt="Safari">
-                    <div>Safari</div>
-                </a>
-            </li>
-            <li>
-                <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
-                    <img src="assets/images/browser/ie.png" alt="">
-                    <div>IE (9 & above)</div>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <p>Sorry for the inconvenience!</p>
-</div>
-<![endif]-->
-<!-- Warning Section Ends -->
-<!-- Required Jquery -->
 <script type="text/javascript" src="/assets/js/jquery/jquery.min.js "></script>
 <script type="text/javascript" src="/assets/js/jquery-ui/jquery-ui.min.js "></script>
 <script type="text/javascript" src="/assets/js/popper.js/popper.min.js"></script>
@@ -217,13 +172,12 @@
 <script type="text/javascript" src="/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
 <script type="text/javascript" src="/assets/js/common-pages.js"></script>
 <script>
-    var amount = 0;
 		$(document).ready(function(){
 
             $(document).on('change', '#plan', function(e){
                 e.preventDefault();
                 var selection = $(this).val();
-                if(selection == 1){
+                 if(selection == 1){
                     $('#amount').val(7500);
                     $('#amount_holder').text(parseFloat(7500).toLocaleString());
                 }else if(selection == 2){
@@ -251,7 +205,7 @@
 					'nature_of_business':nature_of_business,
 					'email':email, 'password':password,
 					'full_name':full_name,
-                    'address':address
+                    'address':address,
                     'plan':plan
 				};
 				$('#metadata').val(JSON.stringify(fid));
