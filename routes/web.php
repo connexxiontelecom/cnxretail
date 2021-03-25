@@ -161,6 +161,8 @@ Route::get('/general-settings', 'Backend\GeneralSettingsController@generalSettin
 Route::post('/tenant/general-settings', 'Backend\GeneralSettingsController@storeGeneralSettings');
 Route::post('/tenant/api-settings', 'Backend\GeneralSettingsController@storeAPISettings')->name('api-settings');
 Route::get('/email-settings', 'Backend\GeneralSettingsController@emailSettings')->name('email-settings');
+Route::get('/renew-subscription', 'Backend\GeneralSettingsController@renewSubscription')->name('renew-subscription');
+Route::post('/renew-subscription', 'Backend\GeneralSettingsController@updateSubscription');
 
 
 

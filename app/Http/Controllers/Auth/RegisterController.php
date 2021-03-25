@@ -92,6 +92,7 @@ class RegisterController extends Controller
             'nature_of_business'=>'required',
             'plan'=>'required'
         ]);
+
         try{
             return Paystack::getAuthorizationUrl()->redirectNow();
         }catch(\Exception $e) {
@@ -157,7 +158,7 @@ class RegisterController extends Controller
             $member->plan_id = $metadata['plan'];
             $member->sub_key = $key;
             $member->status = 1; //active;
-            $member->start_date = $current;
+            $member->start_date = now();
             if($metadata['plan'] == 1){
                 $member->end_date = $current->addDays(30);
             }else if($metadata['plan'] == 2){
@@ -202,8 +203,9 @@ class RegisterController extends Controller
         $tenant->address = $request->address;
         $tenant->nature_of_business = $request->nature_of_business;
         $tenant->start = now();
-        $tenant->end = $current->addDays(30);
+        $tenant->end = $current->addDays(14);
         $tenant->slug = substr(time(),30,40);
+        $tenant->plan_id = 1; //free
         $tenant->save();
 
         #user
@@ -226,8 +228,8 @@ class RegisterController extends Controller
         $member->sub_key = $key;
         $member->status = 1; //active;
         $member->start_date = $current;
-        $member->end_date = $current->addDays(30);
-        $member->amount = 5500;
+        $member->end_date = $current->addDays(14);
+        $member->amount = 0;
         $member->save();
         session()->flash("success", "<strong>Success!</strong> Registration done. Proceed to login.");
         return redirect()->route('login');

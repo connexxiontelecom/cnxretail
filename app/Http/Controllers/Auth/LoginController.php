@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\ActivityLog;
+use Carbon\Carbon;
 class LoginController extends Controller
 {
     /*
@@ -49,7 +50,15 @@ class LoginController extends Controller
         ]);
         $user = User::where('email', $request->email)->first();
         if(!empty($user)){
-            if(Auth::attempt(['email'=>$request->email, 'password'=>$request->password, 'account_status'=>1], $request->remember)){
+            if(Auth::attempt(['email'=>$request->email, 'password'=>$request->password], $request->remember)){
+                if(\Carbon\Carbon::now() > Auth::user()->tenant->end){
+                    $users = User::where('tenant_id', Auth::user()->tenant_id)->get();
+                    foreach($users as $use){
+                        $use->account_status = 0; //inactive
+                        $use->save();
+                    }
+                    return redirect()->route('renew-subscription');
+                }
                 //check if profile is not updated
                 $log = new ActivityLog;
                 $log->subject = "Login success";

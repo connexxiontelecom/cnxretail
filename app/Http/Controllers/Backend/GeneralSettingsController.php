@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Tenant;
+use App\Models\User;
+use App\Models\Membership;
+use Carbon\Carbon;
+use Paystack;
 use Auth;
 
 class GeneralSettingsController extends Controller
@@ -79,5 +83,60 @@ class GeneralSettingsController extends Controller
         $api->save();
         session()->flash("success", "<strong>Success! </strong> API settings saved.");
         return back();
+    }
+
+
+    public function renewSubscription(){
+        return view('settings.renew-subscription');
+    }
+
+    public function updateSubscription(Request $request){
+        $this->validate($request,[
+            'tenant'=>'required',
+            'plan'=>'required'
+        ]);
+        $current = Carbon::now();
+        $key = "key_".substr(sha1(time()),21,40 );
+        #Register new tenant
+        $tenant = Tenant::where('tenant_id', $request->tenant)->first();
+        $tenant->active_sub_key = $key;
+        $tenant->plan_id = $request->plan;
+        $tenant->start = now();
+        if($request->plan == 2){
+            $tenant->end = $current->addDays(30);
+        }else if($request->plan == 3){
+            $tenant->end = $current->addDays(30*6);
+        }else if($request->plan == 4){
+            $tenant->end = $current->addDays(365);
+        }
+        $tenant->save();
+        #Register subscription
+        $subscriptions = Membership::where('tenant_id', $request->tenant)->get();
+        foreach($subscriptions as $sub){
+            $sub->status = 0; //inactive
+            $sub->save();
+        }
+        $member = new Membership;
+        $member->tenant_id = $request->tenant;
+        $member->plan_id = $request->plan;
+        $member->sub_key = $key;
+        $member->status = 1; //active;
+        $member->start_date = now();
+        if($request->plan == 2){
+            $member->end_date = $current->addDays(30);
+        }else if($request->plan == 3){
+            $member->end_date = $current->addDays(30*6);
+        }else if($request->plan == 4){
+            $member->end_date = $current->addDays(365);
+        }
+        $member->amount = $request->amount ?? 0;
+        $member->save();
+        #Update users table
+        $users = User::where('tenant_id', $request->tenant)->get();
+        foreach($users as $use){
+            $use->account_status = 1; //active;
+            $use->save();
+        }
+        return response()->json(['message'=>'Success! Subscription renewed!']);
     }
 }
