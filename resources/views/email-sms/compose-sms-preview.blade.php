@@ -84,8 +84,10 @@ SMS Preview
                         <p><strong style="font-weight: 700;" class="text-danger">Ooops!</strong> Insufficient balance.</p>
                     @endif
                     <div class="btn-group d-flex justify-content-center">
-                        <a href="" class="btn btn-danger btn-mini"> <i class="ti-close mr-2"></i> Cancel</a>
-                        <button  type="submit"  class="btn btn-primary btn-mini save-contact"> <i class="ti-check mr-2"></i> Proceed to Send</button>
+                        <a href="{{url()->previous()}}" class="btn btn-danger btn-mini"> <i class="ti-close mr-2"></i> Cancel</a>
+                        @if (($account->sum('debit') - $account->sum('credit')) > 0)
+                            <button  type="submit"  class="btn btn-primary btn-mini save-contact"> <i class="ti-check mr-2"></i> Proceed to Send</button>
+                        @endif
                     </div>
                 </div>
             </div>
