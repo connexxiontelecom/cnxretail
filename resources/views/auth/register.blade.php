@@ -31,7 +31,7 @@
     <section class="login-block">
         <div class="container">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-10 offset-md-1">
                     <div class="card">
                         <div class="card-header">
                             <h5>New Business Registration</h5>
@@ -82,6 +82,22 @@
                                             <i class="text-danger mr-2">{{$message}}</i>
                                         @enderror
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="">Plan</label>
+                                                <select name="plan" id="plan" class="form-control">
+                                                    <option selected disabled>--Select plan--</option>
+                                                    <option value="1">Monthly @ ₦7,500/month</option>
+                                                    <option value="2">Bi-annual @ ₦6,500/month</option>
+                                                    <option value="3">Annual @ ₦5,500/month</option>
+                                                </select>
+                                                @error('plan')
+                                                    <i class="text-danger mr-2">{{$message}}</i>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                     <div class="col-md-6">
@@ -115,7 +131,8 @@
                                         <span class="form-bar"></span>
                                         <label class="float-label">Re-type Password</label>
                                     </div>
-                                    <input type="hidden" name="amount" value="550000">
+
+                                    <input type="hidden" name="amount" id="amount" value="550000">
                                     <input type="hidden" name="currency" value="NGN">
                                     <input type="hidden" name="metadata[]" id="metadata" >
                                     <input type="hidden" name="reference" value="{{ Paystack::genTranxRef() }}">
@@ -124,7 +141,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12 text-center">
-                                        <p><strong style="font-weight: 900">Price:</strong> ₦5,500</p>
+                                        <p><strong style="font-weight: 900">Price:</strong> ₦<span for="" id="amount_holder"></span></p>
                                     </div>
                                 </div>
                                 <hr>
@@ -200,7 +217,23 @@
 <script type="text/javascript" src="/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
 <script type="text/javascript" src="/assets/js/common-pages.js"></script>
 <script>
+    var amount = 0;
 		$(document).ready(function(){
+
+            $(document).on('change', '#plan', function(e){
+                e.preventDefault();
+                var selection = $(this).val();
+                if(selection == 1){
+                    $('#amount').val(7500);
+                    $('#amount_holder').text(parseFloat(7500).toLocaleString());
+                }else if(selection == 2){
+                    $('#amount').val(6500*6);
+                    $('#amount_holder').text(parseFloat(6500*6).toLocaleString());
+                }else if(selection == 3){
+                    $('#amount').val(5500*12);
+                    $('#amount_holder').text(parseFloat(5500*12).toLocaleString());
+                }
+            });
 			$(document).on('click', '#proceedToPay', function(){
 				var metadata = $('#metadata').val();
 				var company_name = $('#company_name').val();
@@ -210,6 +243,7 @@
 				var password = $('#password').val();
 				var full_name = $('#full_name').val();
 				var address = $('#address').val();
+				var plan = $('#plan').val();
 				var fid = {
                     'company_name':company_name,
                     'nature_of_business':nature_of_business,
@@ -218,6 +252,7 @@
 					'email':email, 'password':password,
 					'full_name':full_name,
                     'address':address
+                    'plan':plan
 				};
 				$('#metadata').val(JSON.stringify(fid));
                 console.log($('#metadata').val());

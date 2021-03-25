@@ -14,6 +14,7 @@ use App\Models\Membership;
 use App\Models\InvoiceMaster;
 use Carbon\Carbon;
 use Paystack;
+use Auth;
 
 class RegisterController extends Controller
 {
@@ -88,7 +89,8 @@ class RegisterController extends Controller
             'phone_no'=>'required',
             'address'=>'required',
             'full_name'=>'required',
-            'nature_of_business'=>'required'
+            'nature_of_business'=>'required',
+            'plan'=>'required'
         ]);
         try{
             return Paystack::getAuthorizationUrl()->redirectNow();
@@ -123,8 +125,16 @@ class RegisterController extends Controller
             $tenant->phone = $metadata['phone_no'];
             $tenant->address = $metadata['address'];
             $tenant->nature_of_business = $metadata['nature_of_business'];
+            $tenant->plan_id = $metadata['plan'];
             $tenant->start = now();
-            $tenant->end = $current->addDays(30);
+            //$tenant->end = $current->addDays(30);
+            if($metadata['plan'] == 1){
+                $tenant->end = $current->addDays(30);
+            }else if($metadata['plan'] == 2){
+                $tenant->end = $current->addDays(30*6);
+            }else if($metadata['plan'] == 3){
+                $tenant->end = $current->addDays(365);
+            }
             $tenant->slug = substr(time(),30,40);
             $tenant->save();
 
@@ -144,11 +154,17 @@ class RegisterController extends Controller
             $key = "key_".substr(sha1(time()),21,40 );
              $member = new Membership;
             $member->tenant_id = $tenant_id;
-            $member->plan_id = 1;//$metadata['plan'];
+            $member->plan_id = $metadata['plan'];
             $member->sub_key = $key;
             $member->status = 1; //active;
             $member->start_date = $current;
-            $member->end_date = $current->addDays(30);
+            if($metadata['plan'] == 1){
+                $member->end_date = $current->addDays(30);
+            }else if($metadata['plan'] == 2){
+                $member->end_date = $current->addDays(30*6);
+            }else if($metadata['plan'] == 3){
+                $member->end_date = $current->addDays(365);
+            }
             $member->amount = 5500;
             $member->save();
             session()->flash("success", "<strong>Success!</strong> Registration done. Proceed to login.");
