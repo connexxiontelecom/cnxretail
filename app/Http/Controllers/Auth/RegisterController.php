@@ -95,7 +95,7 @@ class RegisterController extends Controller
         try{
             return Paystack::getAuthorizationUrl()->redirectNow();
         }catch(\Exception $e) {
-            session()->flash("error", "<strong>Ooops!</strong> The paystack token has expired. Please refresh the page and try again." );
+            session()->flash("error", "<strong>Ooops!</strong> The token has expired. Please refresh the page and try again." );
             return back();
         }
     }
