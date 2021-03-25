@@ -209,7 +209,6 @@
                     'plan':plan
 				};
 				$('#metadata').val(JSON.stringify(fid));
-                console.log($('#metadata').val());
 			});
 		});
 	</script>
