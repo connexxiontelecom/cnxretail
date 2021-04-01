@@ -178,13 +178,13 @@
                 e.preventDefault();
                 var selection = $(this).val();
                  if(selection == 1){
-                    $('#amount').val(7500);
+                    $('#amount').val(7500*100);
                     $('#amount_holder').text(parseFloat(7500).toLocaleString());
                 }else if(selection == 2){
-                    $('#amount').val(6500*6);
+                    $('#amount').val(6500*6*100);
                     $('#amount_holder').text(parseFloat(6500*6).toLocaleString());
                 }else if(selection == 3){
-                    $('#amount').val(5500*12);
+                    $('#amount').val(5500*12*100);
                     $('#amount_holder').text(parseFloat(5500*12).toLocaleString());
                 }
             });
