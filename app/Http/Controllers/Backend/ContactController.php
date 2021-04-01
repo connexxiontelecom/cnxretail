@@ -58,6 +58,7 @@ class ContactController extends Controller
         $contact->contact_position = $request->position;
         $contact->communication_channel = $request->communication_channel;
         $contact->preferred_time = $request->preferred_time;
+        $contact->whatsapp_contact = $request->whatsapp_contact;
         $contact->slug = substr(sha1(time()),30,40);
         $contact->tenant_id = Auth::user()->tenant_id;
         $contact->save();
