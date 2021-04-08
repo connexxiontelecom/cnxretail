@@ -173,7 +173,8 @@
 <script type="text/javascript" src="/assets/js/common-pages.js"></script>
 <script>
 		$(document).ready(function(){
-
+            sessionStorage.setItem('link', "{{$link}}" );
+            var link =  sessionStorage.getItem('link');
             $(document).on('change', '#plan', function(e){
                 e.preventDefault();
                 var selection = $(this).val();
@@ -206,7 +207,8 @@
 					'email':email, 'password':password,
 					'full_name':full_name,
                     'address':address,
-                    'plan':plan
+                    'plan':plan,
+                    'link':link
 				};
 				$('#metadata').val(JSON.stringify(fid));
 			});

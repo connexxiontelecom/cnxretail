@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Models\Tenant;
 use App\Models\Membership;
@@ -81,6 +82,10 @@ class RegisterController extends Controller
         ]);
     } */
 
+    public function showRegistrationForm($ref_link = null){
+        return view('auth.register', ['link'=>$ref_link]);
+    }
+
     public function register(Request $request){
         $this->validate($request,[
             'company_name' => ['required', 'string', 'max:255'],
@@ -110,6 +115,7 @@ class RegisterController extends Controller
         if(!Auth::check() ){
             $tenant_id = null;
             $current = Carbon::now();
+            $amount = 0;
             $latestTenant = Tenant::orderBy('id', 'DESC')->first();
             if(!empty($latestTenant)){
                 $tenant_id = $latestTenant->tenant_id + 1;
@@ -131,10 +137,13 @@ class RegisterController extends Controller
             //$tenant->end = $current->addDays(30);
             if($metadata['plan'] == 1){
                 $tenant->end = $current->addDays(30);
+                $amount = 7500;
             }else if($metadata['plan'] == 2){
                 $tenant->end = $current->addDays(30*6);
+                $amount = 6500*6;
             }else if($metadata['plan'] == 3){
                 $tenant->end = $current->addDays(365);
+                $amount = 5500*12;
             }
             $tenant->slug = substr(time(),30,40);
             $tenant->save();
@@ -166,8 +175,23 @@ class RegisterController extends Controller
             }else if($metadata['plan'] == 3){
                 $member->end_date = $current->addDays(365);
             }
-            $member->amount = 5500;
+            $member->amount = $amount;
             $member->save();
+            #API call to AMP
+            if(!empty($metadata['link'])){
+                    $data = [
+                        'product_id'=>7,
+                        'referral_code' => $metadata['link'], //referral ID
+                        'amount'=> $amount,
+                        'company_name'=> $metadata['company_name'],
+                        'contact_email'=> $metadata['email'],
+                        'month'=> date('m'),
+                        'year'=> date('Y')
+                    ];
+                    $url = "https://amp-api.connexxiontelecom.com/public/new_product_sale";
+                    $response = Http::post($url, $data);
+
+            }
             session()->flash("success", "<strong>Success!</strong> Registration done. Proceed to login.");
             return redirect()->route('login');
         }else{
