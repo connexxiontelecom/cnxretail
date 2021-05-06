@@ -35,7 +35,7 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <img src="/assets/images/logo.png" height="33" width="90" class="m-b-10" alt="">
+                                                <img src="/assets/uploads/cnxdrive/{{Auth::user()->tenant->logo ?? 'logo.png'}}" height="33" width="90" class="m-b-10" alt="">
                                                 <p><strong style="font-weight: 700;">Company Name: </strong>{{ Auth::user()->tenant->company_name ?? ''}}</p>
                                                 <p><strong style="font-weight: 700;">Address: </strong>{{ Auth::user()->tenant->address ?? ''}}</p>
                                                 <p><strong style="font-weight: 700;">Email: </strong>{{ Auth::user()->tenant->email ?? ''}}</p>
@@ -98,7 +98,7 @@
                                         @foreach ($receipts as $item)
                                                 <tr class="item">
                                                     <td>
-                                                        <p>Receipt issued for invoice # {{$item->getInvoice->invoice_no}}</p>
+                                                        <p>Receipt issued for invoice # {{$item->getInvoice->invoice_no ?? ''}}</p>
                                                     </td>
                                                     <td>
                                                         <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($item->getInvoice->total/$item->getInvoice->exchange_rate,2)}}</p>

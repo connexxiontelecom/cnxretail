@@ -15,9 +15,16 @@
                     </div>
                 </div>
             </div>
-            <a href="index.html">
+            @if(!Auth::check())
+            <a href="{{route('dashboard')}}">
                 <img class="img-fluid" src="/assets/images/logo.png" alt="Theme-Logo" height="33" width="90" />
             </a>
+            @endif
+            @if(Auth::check())
+                <a href="{{route('dashboard')}}">
+                    <img class="img-fluid" src="/assets/uploads/cnxdrive/{{Auth::user()->tenant->logo ?? 'logo.png'}}" alt="Theme-Logo" height="33" width="90" />
+                </a>
+            @endif
             <a class="mobile-options waves-effect waves-light">
                 <i class="ti-more"></i>
             </a>

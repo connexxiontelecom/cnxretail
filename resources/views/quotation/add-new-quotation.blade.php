@@ -6,6 +6,11 @@
 @section('extra-styles')
 <link rel="stylesheet" type="text/css" href="/assets/css/datatable.min.css">
 <link rel="stylesheet" type="text/css" href="/assets/css/select2.min.css">
+<style>
+    .select2-container {
+        width: 100% !important;
+    }
+</style>
 @endsection
 @section('page-name')
 Add New Quotation
@@ -35,7 +40,7 @@ Add New Quotation
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <img src="/assets/images/logo.png" height="33" width="90" class="m-b-10" alt="">
+                                            <img src="/assets/uploads/cnxdrive/{{Auth::user()->tenant->logo ?? 'logo.png'}}" height="33" width="90" class="m-b-10" alt="">
                                             <p><strong style="font-weight: 700;">Company Name: </strong>{{ Auth::user()->tenant->company_name ?? ''}}</p>
                                             <p><strong style="font-weight: 700;">Address: </strong>{{ Auth::user()->tenant->address ?? ''}}</p>
                                             <p><strong style="font-weight: 700;">Email: </strong>{{ Auth::user()->tenant->email ?? ''}}</p>
@@ -54,14 +59,9 @@ Add New Quotation
             <div class="card-block">
                 <div class="row invoive-info">
                     <div class="col-md-4 col-xs-12 invoice-client-info">
-                        <h6 class="text-uppercase">Client Information :</h6>
+                        <h6 class="text-uppercase">Client/Customer Name :</h6>
                        <div class="form-group">
-                        <select name="contact" id="contact" value="{{old('contact')}}" class="js-example-basic-single select-product">
-                            <option selected disabled>Select contact</option>
-                            @foreach($contacts as $contact)
-                                <option value="{{$contact->id}}" >{{$contact->company_name  ?? ''}}</option>
-                            @endforeach
-                        </select>
+                           <input type="text" name="client_name" class="form-control" placeholder="Client/Customer Name ">
                        </div>
                     </div>
                     <div class="col-md-4 col-xs-12 ">
@@ -115,6 +115,8 @@ Add New Quotation
                                                 @error('service')
                                                     <i class="text-danger mt-2">{{$message}}</i>
                                                 @enderror
+                                                <label for="" class="label label-danger float-right mt-1" data-toggle="modal" data-target="#serviceModal" style="cursor: pointer;">
+                                                    <i class="ti-plus"></i></label>
                                             </div>
                                         </td>
                                         <td>
@@ -144,9 +146,6 @@ Add New Quotation
                     <div class="col-md-12 col-sm-12 col-lg-12">
                         <button class="btn btn-mini btn-primary add-line"> <i class="ti-plus mr-2"></i> Add Line</button>
                     </div>
-                </div>
-                <div class="col-sm-12">
-                    <label for="" class="label label-primary" data-toggle="modal" data-target="#serviceModal" style="cursor: pointer;"><i class="ti-plus mr-2"></i> Add New Service</label>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -226,7 +225,7 @@ Add New Quotation
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h6 class="modal-title" id="exampleModalLabel">Add New Service</h6>
+          <h6 class="modal-title" id="exampleModalLabel">Add New Product/Service</h6>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -237,7 +236,12 @@ Add New Quotation
                 <div class="form-group form-primary form-static-label">
                     <input type="text" name="service_product_name" id="service_product_name" class="form-control">
                     <span class="form-bar"></span>
-                    <label class="float-label">Service Name</label>
+                    <label class="float-label">Product/Service Name</label>
+                </div>
+              <div class="form-group form-primary form-static-label">
+                    <input type="number" step="0.01" name="amount" id="amount" class="form-control">
+                    <span class="form-bar"></span>
+                    <label class="float-label">Amount</label>
                 </div>
             <div class="row">
                 <div class="col-md-12 col-sm-12">
