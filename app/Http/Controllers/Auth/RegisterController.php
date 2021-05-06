@@ -180,7 +180,7 @@ class RegisterController extends Controller
             #API call to AMP
             if(!empty($metadata['link'])){
                     $data = [
-                        'product_id'=>7,
+                        'product_id'=>16,
                         'referral_code' => $metadata['link'], //referral ID
                         'amount'=> $amount,
                         'company_name'=> $metadata['company_name'],

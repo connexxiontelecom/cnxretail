@@ -27,9 +27,11 @@ class GeneralSettingsController extends Controller
             'business_name'=>'required',
             'phone_no'=>'required',
             'office_address'=>'required'
-        ]);
+            ]);
+
+
         $settings = Tenant::Where('tenant_id', Auth::user()->tenant_id)->first();
-        if(empty($settings)){
+        if(!empty($settings)){
 
             if(!empty($request->file('logo'))){
                 $extension = $request->file('logo');
@@ -51,20 +53,19 @@ class GeneralSettingsController extends Controller
             }else{
                 $siteicon = '';
             }
-
-
             $settings = Tenant::where('tenant_id', Auth::user()->tenant_id)->first();
             $settings->company_name = $request->business_name;
             $settings->tenant_id = Auth::user()->tenant_id;
             $settings->email = $request->email_address;
-            $settings->phone_no = $request->phone_no;
+            $settings->phone = $request->phone_no;
             $settings->start = $request->opening_hour ?? '';
             $settings->end = $request->closing_hour ?? '';
             $settings->logo = $logo;
             $settings->favicon = $siteicon;
             $settings->website = '';
             $settings->save();
-            return response()->json(['message'=>'Success! Changes saved.']);
+            session()->flash("success", "Great! Changes saved.");
+            return back();
         }
     }
 
