@@ -159,7 +159,7 @@ Route::get('/download/{slug}', 'Backend\CNXDriveController@downloadFile')->name(
 
 #Settings route
 Route::get('/general-settings', 'Backend\GeneralSettingsController@generalSettings')->name('general-settings');
-Route::post('/tenant/general-settings', 'Backend\GeneralSettingsController@storeGeneralSettings');
+Route::post('/tenant/general-settings', 'Backend\GeneralSettingsController@storeGeneralSettings')->name('tenant-general-settings');
 Route::post('/tenant/api-settings', 'Backend\GeneralSettingsController@storeAPISettings')->name('api-settings');
 Route::get('/email-settings', 'Backend\GeneralSettingsController@emailSettings')->name('email-settings');
 Route::get('/renew-subscription', 'Backend\GeneralSettingsController@renewSubscription')->name('renew-subscription');

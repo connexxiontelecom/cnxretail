@@ -23,12 +23,18 @@ General Settings
 <div class="row">
     <div class="col-md-12 col-sm-12">
 
-        <form class="form-material" id="generalSettingsForm">
+        <form class="form-material" id="generalSettingsForm" action="{{route('tenant-general-settings')}}" method="post">
             @csrf
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 d-flex justify-content-center mb-2 error-wrapper">
                     <ul id="validation-errors">
                     </ul>
+                    @if (session()->has('success'))
+                        <div class="alert alert-success">
+                            {!! session()->get('success') !!}
+                        </div>
+
+                    @endif
                 </div>
             </div>
             <div class="row">
@@ -40,6 +46,9 @@ General Settings
                         <input type="text" name="business_name" id="business_name" value="{{old('business_name', Auth::user()->tenant->company_name)}}" class="form-control">
                         <span class="form-bar"></span>
                         <label class="float-label">Business Name</label>
+                         @error('business_name')
+                            <i class="text-danger">{{$message}}</i>
+                        @enderror
                     </div>
                     <div class="form-group form-primary form-static-label">
                         <input type="text" name="email_address" id="email_address" value="{{Auth::user()->tenant->email}}" readonly class="form-control">
@@ -50,6 +59,9 @@ General Settings
                         <input type="text" name="phone_no" id="phone_no" value="{{old('phone_no', Auth::user()->tenant->phone)}}" class="form-control">
                         <span class="form-bar"></span>
                         <label class="float-label">Phone No.</label>
+                         @error('phone_no')
+                            <i class="text-danger">{{$message}}</i>
+                        @enderror
                     </div>
                     <div class="form-group form-primary form-static-label">
                     <input type="text" name="website" id="website" value="{{old('website', Auth::user()->tenant->website)}}" class="form-control">
@@ -60,6 +72,9 @@ General Settings
                         <input type="text" name="office_address" id="office_address" value="{{old('office_address', Auth::user()->tenant->address)}}" class="form-control">
                         <span class="form-bar"></span>
                         <label class="float-label">Office Address</label>
+                        @error('office_address')
+                            <i class="text-danger">{{$message}}</i>
+                        @enderror
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-6 col-lg-6">
@@ -173,7 +188,7 @@ General Settings
     <script>
         $(document).ready(function(){
             $('.error-wrapper').hide();
-            generalSettingsForm.onsubmit = async (e) => {
+            /* generalSettingsForm.onsubmit = async (e) => {
                 e.preventDefault();
                 axios.post('/tenant/general-settings',new FormData(generalSettingsForm))
                 .then(response=>{
@@ -209,7 +224,7 @@ General Settings
                 });
                 //let result = await response.json();
                 //alert(result.message);
-            };
+            }; */
             $(document).on('click', '.close-errors', function(e){
                 e.preventDefault();
                 $('.error-wrapper').hide();
