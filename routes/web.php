@@ -58,6 +58,7 @@ Route::get('/activity-log', 'Backend\UserController@activityLog')->name('activit
 #Service route
 Route::get('/services', 'Backend\ServiceController@services')->name('services');
 Route::post('/add-new-service', 'Backend\ServiceController@addNewService');
+Route::post('/edit-service', 'Backend\ServiceController@editService')->name('edit-service');
 
 #Sales-invoice route
 Route::get('/view-invoice/{slug}', 'Backend\SalesInvoiceController@viewInvoice')->name('view-invoice');
@@ -164,6 +165,9 @@ Route::post('/tenant/api-settings', 'Backend\GeneralSettingsController@storeAPIS
 Route::get('/email-settings', 'Backend\GeneralSettingsController@emailSettings')->name('email-settings');
 Route::get('/renew-subscription', 'Backend\GeneralSettingsController@renewSubscription')->name('renew-subscription');
 Route::post('/renew-subscription', 'Backend\GeneralSettingsController@updateSubscription');
+Route::get('/general-settings/banks', 'Backend\GeneralSettingsController@showBanks')->name('tenant-banks');
+Route::post('/general-settings/banks', 'Backend\GeneralSettingsController@storeNewBank');
+Route::post('/general-settings/edit-bank', 'Backend\GeneralSettingsController@editBank')->name('edit-tenant-bank');
 
 
 

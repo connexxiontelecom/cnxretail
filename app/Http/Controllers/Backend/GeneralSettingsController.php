@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bank;
 use Illuminate\Http\Request;
 use App\Models\Tenant;
 use App\Models\User;
@@ -15,6 +16,7 @@ class GeneralSettingsController extends Controller
 {
     public function __construct(){
         $this->middleware('auth');
+        $this->bank = new Bank();
     }
 
 
@@ -29,7 +31,7 @@ class GeneralSettingsController extends Controller
             'office_address'=>'required'
             ]);
 
-
+        //return dd($request->all());
         $settings = Tenant::Where('tenant_id', Auth::user()->tenant_id)->first();
         if(!empty($settings)){
 
@@ -53,16 +55,20 @@ class GeneralSettingsController extends Controller
             }else{
                 $siteicon = '';
             }
+            //return dd($logo);
+
             $settings = Tenant::where('tenant_id', Auth::user()->tenant_id)->first();
             $settings->company_name = $request->business_name;
             $settings->tenant_id = Auth::user()->tenant_id;
             $settings->email = $request->email_address;
             $settings->phone = $request->phone_no;
-            $settings->start = $request->opening_hour ?? '';
-            $settings->end = $request->closing_hour ?? '';
-            $settings->logo = $logo;
-            $settings->favicon = $siteicon;
-            $settings->website = '';
+            $settings->opening_time = $request->opening_hour ?? '';
+            $settings->closing_time = $request->closing_hour ?? '';
+            $settings->logo = $logo ?? 'logo.png';
+            $settings->favicon = $siteicon ?? 'favicon.png';
+            $settings->website = $request->website ?? '';
+            $settings->tagline = $request->tagline ?? '';
+            $settings->address = $request->office_address ?? '';
             $settings->save();
             session()->flash("success", "Great! Changes saved.");
             return back();
@@ -139,5 +145,32 @@ class GeneralSettingsController extends Controller
             $use->save();
         }
         return response()->json(['message'=>'Success! Subscription renewed!']);
+    }
+
+
+    public function showBanks(){
+        return view('settings.bank-setup');
+    }
+
+    public function storeNewBank(Request $request){
+        $this->validate($request,[
+            'bank_name'=>'required',
+            'account_name'=>'required',
+            'account_no'=>'required'
+        ]);
+        $this->bank->setNewBank($request);
+        session()->flash("success", "New bank saved.");
+        return back();
+    }
+    public function editBank(Request $request){
+        $this->validate($request,[
+            'bank'=>'required',
+            'account_name'=>'required',
+            'account_no'=>'required'
+        ]);
+        return dd($request->all());
+        $this->bank->updateBank($request);
+        session()->flash("success", "Changes saved.");
+        return back();
     }
 }

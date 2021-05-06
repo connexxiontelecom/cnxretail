@@ -23,7 +23,7 @@ General Settings
 <div class="row">
     <div class="col-md-12 col-sm-12">
 
-        <form class="form-material" id="generalSettingsForm" action="{{route('tenant-general-settings')}}" method="post">
+        <form class="form-material" id="generalSettingsForm" enctype="multipart/form-data" action="{{route('tenant-general-settings')}}" method="post">
             @csrf
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12 d-flex justify-content-center mb-2 error-wrapper">
@@ -82,21 +82,21 @@ General Settings
                         <h5>Business Detail</h5>
                     </div>
                     <div class="form-group form-primary form-static-label">
-                        <input type="text" name="tagline" id="tagline" class="form-control">
+                        <input type="text" name="tagline" id="tagline" value="{{old('tagline', Auth::user()->tenant->tagline)}}" class="form-control">
                         <span class="form-bar"></span>
                         <label class="float-label">Tagline</label>
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-sm-6">
                             <div class="form-group form-primary form-static-label">
-                                <input type="time" name="opening_hour" id="opening_hour" class="form-control">
+                                <input type="time" name="opening_hour" value="{{old('opening_hour', Auth::user()->tenant->opening_time)}}" id="opening_hour" class="form-control">
                                 <span class="form-bar"></span>
                                 <label class="float-label">Opening Hour</label>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group form-primary form-static-label">
-                                <input type="time" name="closing_hour" id="Closing Hour" class="form-control">
+                                <input type="time" name="closing_hour" value="{{old('closing_hour', Auth::user()->tenant->closing_time)}}" id="Closing Hour" class="form-control">
                                 <span class="form-bar"></span>
                                 <label class="float-label">Closing Hour</label>
                             </div>

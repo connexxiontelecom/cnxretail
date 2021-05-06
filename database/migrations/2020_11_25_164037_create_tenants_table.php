@@ -30,8 +30,10 @@ class CreateTenantsTable extends Migration
             $table->double('team_size')->nullable();
             $table->string('logo')->nullable();
             $table->string('favicon')->nullable();
-            $table->time('start')->nullable();
-            $table->time('end')->nullable();
+            $table->dateTime('start')->nullable();
+            $table->dateTime('end')->nullable();
+            $table->time('opening_time')->nullable();
+            $table->time('closing_time')->nullable();
             $table->tinyInteger('account_status')->default(1); //0=expired; 1=active
             $table->text('company_policy')->nullable();
             $table->string('downloadable_policy')->nullable();

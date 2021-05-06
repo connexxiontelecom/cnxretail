@@ -43,7 +43,8 @@ class QuotationController extends Controller
         $this->validate($request,[
             'issue_date'=>'required|date|',
             'due_date'=>'required|date|after_or_equal:issue_date',
-            'currency'=>'required'
+            'currency'=>'required',
+            'contact'=>'required'
         ]);
         $totalAmount = 0;
         for($i = 0; $i<count($request->total); $i++){
