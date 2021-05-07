@@ -113,7 +113,7 @@
                 </a>
             </li>
         </ul>
-        <div class="pcoded-navigation-label">Email Marketing</div>
+        <div class="pcoded-navigation-label"> Marketing</div>
         <ul class="pcoded-item pcoded-left-item">
             <li class="pcoded-hasmenu">
                 <a href="javascript:void(0)" class="waves-effect waves-dark">
@@ -346,16 +346,6 @@
             </li>
         </ul>
 
-        <ul class="pcoded-item pcoded-left-item" item-border="true" item-border-style="none" subitem-border="true">
-            <li class="">
-                <a href="{{route('cnxdrive')}}" class="waves-effect waves-dark">
-                    <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
-                    <span class="pcoded-mtext">CNXDrive</span>
-                    <span class="pcoded-mcaret"></span>
-                </a>
-            </li>
-        </ul>
-        <div class="pcoded-navigation-label">Extras</div>
         <ul class="pcoded-item pcoded-left-item">
             <li class="pcoded-hasmenu">
                 <a href="javascript:void(0)" class="waves-effect waves-dark">
@@ -371,13 +361,13 @@
                             <span class="pcoded-mcaret"></span>
                         </a>
                     </li>
-                    {{-- <li class=" ">
-                        <a href="breadcrumb.html" class="waves-effect waves-dark">
-                            <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
-                            <span class="pcoded-mtext">Appointments</span>
+                    <li class="">
+                        <a href="{{route('cnxdrive')}}" class="waves-effect waves-dark">
+                            <span class="pcoded-micon"><i class="ti-layers"></i><b>FC</b></span>
+                            <span class="pcoded-mtext">CNXDrive</span>
                             <span class="pcoded-mcaret"></span>
                         </a>
-                    </li> --}}
+                    </li>
                 </ul>
             </li>
         </ul>
