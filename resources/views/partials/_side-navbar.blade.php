@@ -146,7 +146,6 @@
                 </ul>
             </li>
         </ul>
-        <div class="pcoded-navigation-label">Bulk SMS</div>
         <ul class="pcoded-item pcoded-left-item">
             <li class="pcoded-hasmenu">
                 <a href="javascript:void(0)" class="waves-effect waves-dark">
