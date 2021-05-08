@@ -177,7 +177,7 @@ class ContactController extends Controller
     }
 
     public function invoices(){
-        $invoices = InvoiceMaster::where('tenant_id', Auth::user()->tenant_id)->orderBy('id', 'DESC')->get();
+        $invoices = InvoiceMaster::where('tenant_id', Auth::user()->tenant_id)->where('trash',0)->orderBy('id', 'DESC')->get();
         if(count($invoices) > 0){
             return view('sales-invoice.invoices', ['invoices'=>$invoices]);
         }else{
