@@ -94,6 +94,9 @@
                                             <th>Balance</th>
                                         </tr>
                                     </thead>
+                                    @php
+                                        $paid = 0;
+                                    @endphp
                                     <tbody id="products">
                                         @foreach ($receipts as $item)
                                                 <tr class="item">
@@ -105,6 +108,8 @@
                                                     </td>
                                                     <td>
                                                         <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate,2) ?? ''}}</p>
+
+                                                        <p style="display: none;">{{$paid += $item->getInvoice->paid_amount/$item->getInvoice->exchange_rate }}</p>
                                                     </td>
                                                     <td>
                                                     <p>{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format(($item->getInvoice->total/$item->getInvoice->exchange_rate) - ($item->getInvoice->paid_amount/$item->getInvoice->exchange_rate),2)}}</p>
@@ -127,7 +132,7 @@
                                         </td>
                                         <td>
                                             <hr>
-                                            <h6 class="text-primary"><span class="total">{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($receipts->sum('payment'),2)}}</span></h6>
+                                            <h6 class="text-primary"><span class="total">{{$receipt->getCurrency->symbol ?? 'N'}}{{number_format($paid,2)}}</span></h6>
                                         </td>
                                     </tr>
                                 </tbody>

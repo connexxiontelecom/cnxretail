@@ -140,7 +140,7 @@ Receive payment
                                                 </td>
                                                 <td>
                                                     <div class="form-group form-primary form-static-label">
-                                                        <input type="number" step="0.01" name="payment[]" class="form-control total_amount">
+                                                        <input type="number" step="0.01" name="payment[]" data-balance="{{$item->total/$item->exchange_rate - $item->paid_amount/$item->exchange_rate}}" class="form-control total_amount">
                                                         <span class="form-bar"></span>
                                                         <label class="float-label">Payment</label>
                                                     </div>
@@ -168,11 +168,11 @@ Receive payment
                                 <tr class="text-info">
                                     <td>
                                         <hr>
-                                        <strong class="text-primary">Total Due:</strong>
+                                        <strong class="text-primary">Total Due: </strong>
                                     </td>
                                     <td>
                                         <hr>
-                                        <strong class="text-primary">{{$item->getCurrency->symbol ?? 'N'}}<span class="totalDue"></span></strong>
+                                        <strong class="text-primary">{{$item->getCurrency->symbol ?? 'N'}}<span class="">{{$invoices->sum('total')/$invoice->exchange_rate - $invoices->sum('paid_amount')/$invoice->exchange_rate}}</span></strong>
                                     </td>
                                 </tr>
                                 <tr class="text-info">
@@ -194,7 +194,7 @@ Receive payment
                 <div class="col-sm-12 invoice-btn-group text-center">
                     <div class="btn-group d-flex justify-content-center">
                         <a href="{{url()->previous()}}" class="btn btn-secondary btn-print-invoice m-b-10 btn-mini waves-effect waves-light m-r-20"><i class="ti-close mr-2"></i>Cancel</a>
-                        <button type="submit" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light"><i class="ti-check mr-2"></i> Submit</button>
+                        <button type="submit" id="submitReceiptBtn" class="btn btn-primary btn-mini waves-effect m-b-10 waves-light"><i class="ti-check mr-2"></i> Submit</button>
                     </div>
                 </div>
             </div>
@@ -256,7 +256,25 @@ Receive payment
 
    });
    $(document).on("change", ".total_amount", function() {
-        setTotal();
+       if($(this).val() > $(this).data('balance') ){
+           Toastify({
+               text: 'Payment amount cannot be more than balance.',
+               duration: 3000,
+               newWindow: true,
+               close: true,
+               gravity: "top",
+               position: 'right',
+               backgroundColor: "linear-gradient(to right, #FF0000, #FE0000)",
+               stopOnFocus: true,
+               onClick: function(){}
+           }).showToast();
+           $('#submitReceiptBtn').attr('disabled', true);
+           $(this).val(0);
+           return false;
+       }else{
+           $('#submitReceiptBtn').attr('disabled', false);
+           setTotal();
+       }
     });
    function setTotal(){
         var sum = 0;
