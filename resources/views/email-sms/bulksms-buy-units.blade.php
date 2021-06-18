@@ -40,15 +40,21 @@ Buy Units
                 <h5 class="sub-title">Calculate Cost</h5>
                 <form class="form-material" id="buyUnitForm">
                     <div class="form-group form-primary form-static-label">
-                        <input type="number" placeholder="SMS Quantity" name="sms_quantity" id="sms_quantity" class="form-control">
+                        <input type="number" placeholder="SMS Quantity" value="50" name="sms_quantity" id="sms_quantity" class="form-control">
                         <span class="form-bar"></span>
                         <label class="float-label">SMS Quantity</label>
                     </div>
                     <div class="form-group">
-                        <label for=""><strong style="font-weight: 700;">Bundle Name: </strong><span class="bundleName"></span></label>
+                        <label for="">Bundle Name:</label>
+                        <select name="plan_name" id="plan_name" class="form-control">
+                            <option selected disabled>--- Select plan ---</option>
+                            @foreach($plans as $plan)
+                                <option value="{{$plan->id}}" data-cost="{{$plan->unit_cost ?? 0}}">{{$plan->plan_name ?? ''}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for=""><strong style="font-weight: 700;">Unit Cost: </strong> <span class="unitCost"></span></label>
+                        <label for=""><strong style="font-weight: 700;">Total: </strong> <span class="unitCost"></span></label>
                         <input type="text" hidden step="0.01" name="totalAmount" id="totalAmount">
                         <input type="hidden"   id="transaction" name="transaction" value="">
                     </div>
@@ -69,28 +75,14 @@ Buy Units
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Business Premium</td>
-                                <td>50,000</td>
-                                <td>1.85</td>
-                            </tr>
-                            <tr>
-                                <td>Business Professional</td>
-                                <td>10,000</td>
-                                <td>2.00</td>
-                            </tr>
-                            <tr>
-                                <td>Business Standard</td>
-                                <td>1,000</td>
-                                <td>2.20</td>
-                            </tr>
-                            <tr>
-                                <td>Teams & Groups</td>
-                                <td>50</td>
-                                <td>3.50</td>
-                            </tr>
-
-                        </tfoot>
+                            @foreach($plans as $plan)
+                                <tr>
+                                    <td>{{$plan->plan_name ?? ''}}</td>
+                                    <td>{{number_format($plan->min_quantity ?? 0)}}</td>
+                                    <td>{{$plan->unit_cost ?? 0}}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -128,38 +120,33 @@ Buy Units
         var cost = 0;
         var unit_cost = 0;
         var bundle = null;
-        $(document).on('change', '#sms_quantity', function(e){
+        var quantity = 1;
+        $(document).on('change', '#plan_name', function(e){
+            e.preventDefault();
+            var price = $(this).find(':selected').data('cost');
+            var val = $('#sms_quantity').val() ?? 1;
+            var tt = val * price;
+            $('#totalAmount').val(val * price);
+            $('.unitCost').text(tt.toFixed(2));
+
+
+        });
+        $(document).on('blur', '#sms_quantity', function(e){
                 e.preventDefault();
                 //$('.characters').text("Characters: "+charCount);
-                if($(this).val() <= 50 ){
-                   //$('.sub-total').text(parseFloat($(this).val()) * 3.5);
-                   $('#totalAmount').val(+$(this).val() * 3.5);
-                   $('.bundleName').text('Teams & Groups');
-                   $('.unitCost').text('3.5');
-                } else if($(this).val() >= 51 && $(this).val() <= 1000){
-                    $('#totalAmount').val(+$(this).val() * 2.2);
-                    $('.bundleName').text('Business Standard');
-                    $('.unitCost').text('2.20');
-                }else if($(this).val() >= 1001 && $(this).val() <= 10000){
-                    $('#totalAmount').val(+$(this).val() * 2);
-                    $('.bundleName').text('Business Professional');
-                    $('.unitCost').text('2');
-                }else if($(this).val() >= 10001 && $(this).val() >= 50000){
-                    $('#totalAmount').val(+$(this).val() * 1.85);
-                    $('.bundleName').text('Business Premium');
-                    $('.unitCost').text('2');
-                }
-
+                var amt = +$(this).val() * $('#plan_name').find(':selected').data('cost');
+                $('#totalAmount').val(+$(this).val() * $('#plan_name').find(':selected').data('cost'));
+                $('.unitCost').text(amt.toFixed(2));
 
             });
         $(document).on('click', '.balance', function(e){
             e.preventDefault();
             axios.post('/sms/balance')
             .then(response=>{
-                console.log(response.data);
+               // console.log(response.data);
             })
             .catch(error=>{
-                console.log(error.response.errors);
+                //console.log(error.response.errors);
             });
         });
     });

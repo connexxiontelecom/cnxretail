@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\BulkSmsPricing;
 use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Models\EmailCampaign;
@@ -18,6 +19,7 @@ class EmailSMSController extends Controller
 {
     public function __construct(){
         $this->middleware('auth');
+        $this->bulksmspricing = new BulkSmsPricing();
     }
 
     public function mailbox(){
@@ -89,37 +91,57 @@ class EmailSMSController extends Controller
 
     public function storeSMS(Request $request){
 
-       /*  $this->validate($request,[
-            'recipient'=>'required',
+        $this->validate($request,[
+            'sender_id'=>'required',
             'compose_sms'=>'required'
-        ]); */
+        ]);
 
-         $account = BulkSmsAccount::where('tenant_id', Auth::user()->tenant_id)->get();
+        if(empty($request->selectedContacts) && empty($request->phone_groups)){
+            session()->flash("error", "<strong>Whoops!</strong> Either select contact or phone group to send SMS.");
+            return back();
+        }
+           if(strlen($request->compose_sms) > 466){
+            session()->flash("error", "<strong>Whoops!</strong> You've exceeded the number of characters allowed for SMS.");
+            return back();
+        }
+
+        $account = BulkSmsAccount::where('tenant_id', Auth::user()->tenant_id)->get();
          $contacts = null;
+         $recipients = [];
         $new_numbers = null;
+        $pg_count = 0;
         if(!empty($request->phone_groups)){
             for($c = 0; $c<count($request->phone_groups); $c++){
                 $number = PhoneGroup::where('id', $request->phone_groups[$c])->where('tenant_id', Auth::user()->tenant_id)->first();
                 $contacts .= $number->phone_numbers;
+                $pg_count = explode(",", $contacts);
             }
         }
-        $unique = array_unique($request->selectedContacts);
-        $phone_numbers = implode(",",$unique);
-        $recipients = explode(',', $contacts.''.$phone_numbers);
+
+        if(!empty($request->selectedContacts)){
+            $unique = array_unique($request->selectedContacts);
+            $phone_numbers = implode(",",$unique);
+            $recipients = explode(',', $contacts.''.$phone_numbers);
+        }
         $cost = 0;
+          $merge = $contacts.''.implode(",", $recipients);
+//return dd(count(explode(",", $merge)));
         if(strlen($request->compose_sms) <= 160 ){
-            $cost = 1 * count($recipients);
+            $cost = 1 * count(explode(",", $merge));
          }else if(strlen($request->compose_sms) <= 313){
-            $cost = 2 * count($recipients);
+            $cost = 2 * count(explode(",", $merge));
          }else if(strlen($request->compose_sms) <= 466){
-            $cost = 3 * count($recipients);
+            $cost = 3 * count(explode(",", $merge));
          }
+        //return dd($cost." ".strlen($request->compose_sms)." ".count(explode(",",$merge)));
          return view('email-sms.compose-sms-preview',
          ['cost'=>$cost,
          'senderId'=>$request->sender_id,
          'message'=>$request->compose_sms,
          'account'=>$account,
-         'phone_numbers'=>$recipients
+         'phone_numbers'=>$recipients,
+             'counter'=>count(explode(",",$merge)),
+             'merged_contacts'=>$merge
          ]);
 
 
@@ -149,24 +171,49 @@ class EmailSMSController extends Controller
             $recipient->save();
         }
 
-        #bulk SMS
-        $mobile = implode(",", $recipients);
-        $name = "Joseph";
-        $message = $request->textMessage;
-        $createdURL = "";
-        $ozSURL = "http://www.bbnsms.com/bulksms/bulksms.php";
-        $ozUser = "talktojoegee@gmail.com";
-        $ozMessageType = $request->sender_id ?? 'CNX Retail';
-        $ozPassw = "password123";
-        $ozMessageType = $request->senderId ?? 'CNX Retail';
-        $ozRecipient = $mobile;
-        $ozMessageData = $message;
-        $createdURL = $ozSURL."?username=".trim($ozUser)."&password=".trim($ozPassw)."&sender=".trim($ozMessageType)."&mobile=".trim($ozRecipient)."&message=".$ozMessageData;
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $createdURL);
-        session()->flash("success", "<strong>Success! </strong> Text message sent.");
-        return redirect()->route('bulksms');
+        try{
+            #bulk SMS
+            $mobile = implode(",", $recipients);
+            $name = "Joseph";
+            $message = $request->textMessage;
+            $messageLength = strlen($request->textMessage);
+            $contactCount = explode(", ", $mobile);
+            $createdURL = "";
+            $ozSURL = "http://www.bbnsms.com/bulksms/bulksms.php";
+            $ozUser = "talktojoegee@gmail.com";
+            $ozMessageType = $request->sender_id ?? 'CNX Retail';
+            $ozPassw = "password123";
+            $ozMessageType = $request->senderId ?? 'CNX Retail';
+            $ozRecipient = $mobile;
+            $ozMessageData = $message;
+            $createdURL = $ozSURL."?username=".trim($ozUser)."&password=".trim($ozPassw)."&sender=".trim($ozMessageType)."&mobile=".trim($ozRecipient)."&message=".$ozMessageData;
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('GET', $createdURL);
+            #Make deduction
+            /*$account = BulkSmsAccount::where('tenant_id', Auth::user()->tenant_id)->first();
+            $account->amount = $this->smsBiller($request->textMessage, $contactCount);
+            //$account->debit = $*/
 
+            session()->flash("success", "<strong>Success! </strong> Text message sent.");
+            return redirect()->route('bulksms');
+
+        }catch (\Exception $ex){
+            session()->flash("error", "<strong>Whoops!</strong> Could not send SMS. Try again.");
+            return back();
+        }
+
+
+    }
+
+    public function smsBiller($message, $contact){
+        if(strlen($message) <= 160 ){
+            $cost = 1 * count(explode(",", $contact));
+        }else if(strlen($message) <= 313){
+            $cost = 2 * count(explode(",", $contact));
+        }else if(strlen($message) <= 466){
+            $cost = 3 * count(explode(",", $contact));
+        }
+        return $cost;
     }
 
     public function readSMS($slug){
@@ -233,7 +280,7 @@ class EmailSMSController extends Controller
     }
     public function buyUnits(){
 
-        return view('email-sms.bulksms-buy-units');
+        return view('email-sms.bulksms-buy-units', ['plans'=>$this->bulksmspricing->getBulkSmsPricing()]);
     }
 
     public function buyUnitsTransaction(Request $request){
