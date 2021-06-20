@@ -17,6 +17,8 @@ use App\Mail\EmailMarketing;
 use Auth;
 class EmailSMSController extends Controller
 {
+    private $API_KEY = "TLfrtWYbF5uWb0GLWjwDigrMb722yJgAp2B3jDoYYRzYOSjIU3PHwRIpGSZlga";
+
     public function __construct(){
         $this->middleware('auth');
         $this->bulksmspricing = new BulkSmsPricing();
@@ -125,7 +127,6 @@ class EmailSMSController extends Controller
         }
         $cost = 0;
           $merge = $contacts.''.implode(",", $recipients);
-//return dd(count(explode(",", $merge)));
         if(strlen($request->compose_sms) <= 160 ){
             $cost = 1 * count(explode(",", $merge));
          }else if(strlen($request->compose_sms) <= 313){
@@ -148,8 +149,6 @@ class EmailSMSController extends Controller
     }
 
     public function sendSMS(Request $request){
-        //return dd($request->all());
-
         $sms = new BulkSms;
         $sms->message = $request->textMessage;
         $sms->tenant_id = Auth::user()->tenant_id;
@@ -193,7 +192,38 @@ class EmailSMSController extends Controller
             /*$account = BulkSmsAccount::where('tenant_id', Auth::user()->tenant_id)->first();
             $account->amount = $this->smsBiller($request->textMessage, $contactCount);
             //$account->debit = $*/
-
+            ////"'.$mobile.'",
+            $phone = $request->phone;
+               $phone = substr($phone, 1); //strip the first zero
+               $phone = '234'. $phone;
+               //$otp = $this->FourRandomDigits();
+               $curl = curl_init();
+               $channel = 'generic';
+               $sender = $request->senderId ?? 'CNX Retail';
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://termii.com/api/sms/send',
+                CURLOPT_RETURNTRANSFER => true,
+                //CURLOPT_SSL_VERIFYPEER => 0,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS =>' {
+                  "to": "2348032404359",
+                   "from": "'.$sender.'",
+                   "sms":  "'.$message.'",
+                   "type": "plain",
+                   "channel": "'.$channel.'",
+                   "api_key": "'.$this->API_KEY.'"
+               }',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            ));
+            $res = curl_exec($curl);
+            curl_close($curl);
             session()->flash("success", "<strong>Success! </strong> Text message sent.");
             return redirect()->route('bulksms');
 
@@ -293,7 +323,7 @@ class EmailSMSController extends Controller
         $unit = new BulkSmsAccount;
         $unit->ref_no = $request->transaction;
         $unit->credit = $request->sms_quantity;
-        $unit->ref_no = $request->transaction;
+        //$unit->ref_no = $request->transaction;
         $unit->narration = "Account credited with ".$request->sms_quantity." units.";
         $unit->tenant_id = Auth::user()->tenant_id;
         $unit->amount = $request->totalAmount;

@@ -41,28 +41,6 @@
                 </li>
             </ul>
             <ul class="nav-right">
-                <li class="header-notification">
-                    <a href="#!" class="waves-effect waves-light">
-                        <i class="ti-bell"></i>
-                        <span class="badge bg-c-red"></span>
-                    </a>
-                    <ul class="show-notification">
-                        <li>
-                            <h6>Notifications</h6>
-                            <label class="label label-danger">New</label>
-                        </li>
-                        <li class="waves-effect waves-light">
-                            <div class="media">
-                                <img class="d-flex align-self-center img-radius" src="/assets/images/avatars/thumbnails/{{Auth::user()->avatar ?? 'joseph.jpeg'}}" alt="Generic placeholder image">
-                                <div class="media-body">
-                                    <h5 class="notification-user">{{Auth::check() ? Auth::user()->full_name : '-'}}</h5>
-                                    <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
-                                    <span class="notification-time">30 minutes ago</span>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
                 <li class="user-profile header-notification">
                     <a href="#!" class="waves-effect waves-light">
                         <img src="/assets/images/avatars/thumbnails/{{Auth::user()->avatar ?? 'joseph.jpeg'}}" class="img-radius" alt="User-Profile-Image">

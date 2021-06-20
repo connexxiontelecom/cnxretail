@@ -183,7 +183,7 @@ Buy Units
                         onClick: function(){}
                     }).showToast();
                     //window.location.replace(response.data.route);
-                    window.location = response.data.route;
+                    //window.location.href = response.data.route;
                 })
                 .catch(error=>{
                         $('#validation-errors').html('');
