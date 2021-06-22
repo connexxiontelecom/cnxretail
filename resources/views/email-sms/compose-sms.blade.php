@@ -43,7 +43,7 @@ Compose SMS
                         <h5>Compose SMS</h5>
                     </div>
                     <div class="form-group form-primary form-static-label col-md-6 col-sm-6">
-                        <input type="text" name="sender_id" class="form-control" value="{{old('sender_id')}}">
+                        <input type="text" name="sender_id" class="form-control" readonly value="{{Auth::user()->tenant->sender_id ?? '' }}">
                         <span class="form-bar"></span>
                         <label class="float-label">Sender ID</label>
                         @error('sender_id')

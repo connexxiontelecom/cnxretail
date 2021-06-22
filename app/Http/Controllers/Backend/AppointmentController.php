@@ -12,15 +12,12 @@ class AppointmentController extends Controller
 {
    public function __construct(){
        $this->middleware('auth');
+       $this->activitylog = new ActivityLog();
    }
 
    public function appointments(){
        $appointments = Appointment::where('tenant_id', Auth::user()->tenant_id)->orderBy('id', 'DESC')->get();
-       $log = new ActivityLog;
-        $log->subject = "Appointment view";
-        $log->tenant_id = Auth::user()->tenant_id;
-        $log->log = Auth::user()->full_name." visited appointement view";
-        $log->save();
+       $this->activitylog->setNewActivityLog('Appointments', 'Viewed appointments');
        return view('appointments.index', ['appointments'=>$appointments]);
    }
 

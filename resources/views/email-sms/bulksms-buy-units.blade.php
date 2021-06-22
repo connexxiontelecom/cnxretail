@@ -42,7 +42,7 @@ Buy Units
                     <div class="form-group form-primary form-static-label">
                         <input type="number" placeholder="SMS Quantity" value="50" name="sms_quantity" id="sms_quantity" class="form-control">
                         <span class="form-bar"></span>
-                        <label class="float-label">SMS Quantity</label>
+                        <label class="float-label">SMS Quantity <small>(Units)</small></label>
                     </div>
                     <div class="form-group">
                         <label for="">Bundle Name:</label>

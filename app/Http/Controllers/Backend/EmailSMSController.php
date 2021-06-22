@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\BulkSmsPricing;
 use Illuminate\Http\Request;
 use App\Models\Contact;
@@ -22,16 +23,19 @@ class EmailSMSController extends Controller
     public function __construct(){
         $this->middleware('auth');
         $this->bulksmspricing = new BulkSmsPricing();
+        $this->activitylog = new ActivityLog();
     }
 
     public function mailbox(){
         $emails = EmailCampaign::where('tenant_id', Auth::user()->tenant_id)->orderBy('id', 'DESC')->get();
+        $this->activitylog->setNewActivityLog('Access Mail box', 'Viewed mailbox');
         return view('email-sms.mailbox', ['mails'=>$emails]);
     }
 
     public function composeEmail(){
         $templates = EmailTemplate::orderBy('template_name', 'ASC')->get();
         $contacts = Contact::where('tenant_id', Auth::user()->tenant_id)->get();
+        $this->activitylog->setNewActivityLog('Compose Email', 'Opened compose email');
         return view('email-sms.compose-email', ['contacts'=>$contacts, 'templates'=>$templates]);
     }
 
@@ -62,7 +66,7 @@ class EmailSMSController extends Controller
             $contact = Contact::where('tenant_id', Auth::user()->tenant_id)->where('id', $request->selectedContacts[$i])->first();
             \Mail::to($contact)->send(new EmailMarketing($contact, $email));
         }
-
+        $this->activitylog->setNewActivityLog('Email', 'Sent an email.');
         return response()->json(['route'=>'mailbox'],201);
 
     }
@@ -70,6 +74,7 @@ class EmailSMSController extends Controller
     public function readMail($slug){
         $mail = EmailCampaign::where('tenant_id', Auth::user()->tenant_id)->where('slug', $slug)->first();
         if(!empty($mail)){
+            $this->activitylog->setNewActivityLog('Read mail', 'Opened a mail with the subject '.$mail->subject ?? '');
             return view('email-sms.read-mail',['mail'=>$mail]);
         }else{
             session()->flash("error", "<strong>Ooops!</strong> No record found.");
@@ -80,14 +85,23 @@ class EmailSMSController extends Controller
     public function bulksms(){
         $bulksms = BulkSms::where('tenant_id', Auth::user()->tenant_id)
                             ->orderBy('id', 'DESC')->get();
+        $this->activitylog->setNewActivityLog('Bulk SMS', 'Opened bulk SMS');
         return view('email-sms.bulksms', ['bulksms'=>$bulksms]);
     }
 
 
     public function composeSms(){
-        $contacts = Contact::where('tenant_id', Auth::user()->tenant_id)->get();
-        $phonegroups = PhoneGroup::where('tenant_id', Auth::user()->tenant_id)->get();
-        return view('email-sms.compose-sms', ['contacts'=>$contacts, 'phonegroups'=>$phonegroups]);
+        $account = BulkSmsAccount::all();
+        $balance = $account->sum('credit') - $account->sum('debit');
+        if(!empty(Auth::user()->tenant->sender_id) && $balance >= 3){ //1 unit/page
+            $contacts = Contact::where('tenant_id', Auth::user()->tenant_id)->get();
+            $phonegroups = PhoneGroup::where('tenant_id', Auth::user()->tenant_id)->get();
+            $this->activitylog->setNewActivityLog('Bulk SMS', 'Opened compose SMS ');
+            return view('email-sms.compose-sms', ['contacts'=>$contacts, 'phonegroups'=>$phonegroups]);
+        }else{
+            session()->flash("error", "<strong>Whoops!</strong>  Insufficient balance or missing Sender ID. Check settings for Sender ID.");
+            return back();
+        }
     }
 
 
@@ -199,7 +213,7 @@ class EmailSMSController extends Controller
                //$otp = $this->FourRandomDigits();
                $curl = curl_init();
                $channel = 'generic';
-               $sender = $request->senderId ?? 'CNX Retail';
+               $sender = 'wemoove'; //$request->senderId ?? 'CNX Retail';
             curl_setopt_array($curl, array(
                 CURLOPT_URL => 'https://termii.com/api/sms/send',
                 CURLOPT_RETURNTRANSFER => true,
@@ -224,6 +238,15 @@ class EmailSMSController extends Controller
             ));
             $res = curl_exec($curl);
             curl_close($curl);
+            #update tenant SMS account balance
+            $balance = new BulkSmsAccount();
+            $balance->tenant_id = Auth::user()->tenant_id;
+            $balance->debit = $this->smsBiller($message, $mobile);
+            $balance->narration = "Billed for sending SMS.";
+            $balance->amount =  $this->smsBiller($message, $mobile);
+            $balance->ref_no = substr(sha1(time()),32,40);
+            $balance->save();
+            $this->activitylog->setNewActivityLog('SMS sent', 'Sent bulk SMS.');
             session()->flash("success", "<strong>Success! </strong> Text message sent.");
             return redirect()->route('bulksms');
 
@@ -237,11 +260,21 @@ class EmailSMSController extends Controller
 
     public function smsBiller($message, $contact){
         if(strlen($message) <= 160 ){
-            $cost = 1 * count(explode(",", $contact));
+            $cost = 3 * count(explode(",", $contact)) * 1;
         }else if(strlen($message) <= 313){
-            $cost = 2 * count(explode(",", $contact));
+            $cost = 3 * count(explode(",", $contact)) * 2;
         }else if(strlen($message) <= 466){
-            $cost = 3 * count(explode(",", $contact));
+            $cost = 3 * count(explode(",", $contact)) * 3;
+        }
+        return $cost;
+    }
+    public function smsCostEvaluator($message){
+        if(strlen($message) <= 160 ){
+            $cost = 3 * 1;
+        }else if(strlen($message) <= 313){
+            $cost = 3 * 2;
+        }else if(strlen($message) <= 466){
+            $cost = 3 * 3;
         }
         return $cost;
     }
@@ -277,6 +310,7 @@ class EmailSMSController extends Controller
         $group->added_by = Auth::user()->id;
         $group->slug = substr(sha1(time()), 12,40);
         $group->save();
+        $this->activitylog->setNewActivityLog('Phone group', 'Created a new phonegroup. ('.$group->group_name.')');
         session()->flash("success", "<strong>Success!</strong> Phone group created.");
         return redirect()->route('phonegroup');
     }
@@ -299,6 +333,7 @@ class EmailSMSController extends Controller
         $group->tenant_id = Auth::user()->tenant_id;
         $group->added_by = Auth::user()->id;
         $group->save();
+        $this->activitylog->setNewActivityLog('Update phone group', 'Made changes to phone group.');
         session()->flash("success", "<strong>Success!</strong> Changes saved.");
         return redirect()->route('phonegroup');
     }
@@ -328,6 +363,7 @@ class EmailSMSController extends Controller
         $unit->tenant_id = Auth::user()->tenant_id;
         $unit->amount = $request->totalAmount;
         $unit->save();
+        $this->activitylog->setNewActivityLog('Buy units', 'Bought units');
         return response()->json(['route'=>'bulksms-balance'], 201);
     }
 

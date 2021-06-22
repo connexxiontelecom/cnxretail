@@ -69,6 +69,7 @@ class GeneralSettingsController extends Controller
             $settings->website = $request->website ?? '';
             $settings->tagline = $request->tagline ?? '';
             $settings->address = $request->office_address ?? '';
+            $settings->sender_id = $request->sender_id ?? '';
             $settings->save();
             session()->flash("success", "Great! Changes saved.");
             return back();
