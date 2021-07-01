@@ -18,7 +18,9 @@ use App\Mail\EmailMarketing;
 use Auth;
 class EmailSMSController extends Controller
 {
-    private $API_KEY = "TLfrtWYbF5uWb0GLWjwDigrMb722yJgAp2B3jDoYYRzYOSjIU3PHwRIpGSZlga";
+    private $API_KEY = "TLpMHRqPFlfmSJPxYONy6qCSs94qkaP3oocjtREGoUq7bAneOm6UEo01mzNdJm";
+        //"TLfrtWYbF5uWb0GLWjwDigrMb722yJgAp2B3jDoYYRzYOSjIU3PHwRIpGSZlga";
+                        //TLpMHRqPFlfmSJPxYONy6qCSs94qkaP3oocjtREGoUq7bAneOm6UEo01mzNdJm
 
     public function __construct(){
         $this->middleware('auth');
@@ -213,7 +215,7 @@ class EmailSMSController extends Controller
                //$otp = $this->FourRandomDigits();
                $curl = curl_init();
                $channel = 'generic';
-               $sender = 'wemoove'; //$request->senderId ?? 'CNX Retail';
+               $sender = $request->senderId ?? 'CNX Retail'; //'CNXRetail'; //;
             curl_setopt_array($curl, array(
                 CURLOPT_URL => 'https://termii.com/api/sms/send',
                 CURLOPT_RETURNTRANSFER => true,
@@ -225,7 +227,7 @@ class EmailSMSController extends Controller
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS =>' {
-                  "to": "2348032404359",
+                  "to": "'.$mobile.'",
                    "from": "'.$sender.'",
                    "sms":  "'.$message.'",
                    "type": "plain",
