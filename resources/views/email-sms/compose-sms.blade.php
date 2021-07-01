@@ -24,7 +24,11 @@ Compose SMS
 @section('content')
 <div class="row">
     <div class="col-md-12 col-sm-12">
-
+        @if(session()->has('error'))
+            <div class="alert alert-warning" role="alert">
+                {!! session()->get('error') !!}
+            </div>
+        @endif
         <form class="form-material" id="composeSmsForm" autocomplete="off" action="{{route('compose-sms')}}" method="post">
             @csrf
             <div class="row">
@@ -39,20 +43,23 @@ Compose SMS
                         <h5>Compose SMS</h5>
                     </div>
                     <div class="form-group form-primary form-static-label col-md-6 col-sm-6">
-                        <input type="text" name="sender_id" class="form-control">
+                        <input type="text" name="sender_id" class="form-control" readonly value="{{Auth::user()->tenant->sender_id ?? '' }}">
                         <span class="form-bar"></span>
                         <label class="float-label">Sender ID</label>
+                        @error('sender_id')
+                            <i class="text-danger">{{$message}}</i>
+                        @enderror
                     </div>
                     <div class="form-group form-primary form-static-label">
                         <label class="label label-primary" data-target="#groupModal" data-toggle="modal"><i style="cursor: pointer;" class="ti-plus mr-2"></i>Add Contact(s)</label>
                     </div>
                     <div class="form-group form-primary form-static-label col-md-6 col-sm-6">
-                        <select id="selectedContacts" multiple="multiple" name="selectedContacts[]" class="js-example-basic-multiple form-control form-control-inverse fill">
+                        <select id="selectedContacts" multiple="multiple" name="selectedContacts[]" value="{{old('selectedContacts[]')}}" class="js-example-basic-multiple form-control form-control-inverse fill">
                             <option selected disabled>Selected contacts</option>
                         </select>
                     </div>
                     <div class="form-group form-primary form-static-label col-md-6 col-sm-6">
-                        <select id="phone_groups" multiple="multiple" name="phone_groups[]" class="js-example-basic-multiple form-control form-control-inverse fill">
+                        <select id="phone_groups" multiple="multiple" value="{{old('phone_groups')}}" name="phone_groups[]" class="js-example-basic-multiple form-control form-control-inverse fill">
                             <option selected disabled>Select Phone Group</option>
                             @foreach ($phonegroups as $group)
                                 <option value="{{$group->id}}">{{$group->group_name ?? ''}}</option>
@@ -60,9 +67,12 @@ Compose SMS
                         </select>
                     </div>
                     <div class="form-group form-primary form-static-label col-md-6 col-sm-6">
-                        <textarea maxlength="480" name="compose_sms" id="compose_sms" style="height: 100px;" class="form-control content"></textarea>
+                        <textarea maxlength="480" name="compose_sms" id="compose_sms" style="height: 100px;" class="form-control content">{{old('compose_sms')}}</textarea>
                         <span class="form-bar"></span>
                         <label class="float-label">Type message here...</label>
+                        @error('compose_sms')
+                            <i class="text-danger">{{$message}}</i>
+                        @enderror
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-sm-6 float-right d-flex justify-content-end">

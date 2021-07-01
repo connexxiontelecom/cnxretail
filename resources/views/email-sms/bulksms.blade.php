@@ -38,7 +38,7 @@ BulkSMS
         <div class="row mb-3">
             <div class="col-md-12 col-sm-12 ">
                 <a  href="{{route('compose-sms')}}" class="btn btn-mini btn-primary"><i class="ti-plus mr-2"></i>Compose SMS</a>
-                <button  type="button" class="btn btn-mini btn-primary balance"><i class="ti-plus mr-2"></i>Balance</button>
+                <a  href="{{route('bulksms-balance')}}" class="btn btn-mini btn-primary"><i class="ti-plus mr-2"></i>Balance</a>
             </div>
         </div>
         <div class="dt-responsive table-responsive">
