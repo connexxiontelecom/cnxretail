@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\Imports\ContactImport;
 use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Models\Conversation;
@@ -16,6 +17,8 @@ use App\Models\Reminder;
 use App\Models\PaymentHistory;
 use Auth;
 use DB;
+//use Maatwebsite\Excel\Excel;
+use Excel;
 
 class ContactController extends Controller
 {
@@ -42,6 +45,17 @@ class ContactController extends Controller
         ],[
             'attachment.required'=>'Kindly select file to upload'
         ]);
+        if ($request->hasFile('attachment')) {
+                $extension = $request->attachment->getClientOriginalExtension();
+                $filename =  uniqid(). '.' . $extension;
+                //return dd($filename);
+            Excel::import(new ContactImport(), $request->attachment);
+            session()->flash("success", "<strong>Success!</strong> Contacts imported successfully");
+            return back();
+        }else{
+            session()->flash("error", "<strong>Whoops!</strong> Select an attachment (xlsx format) to upload.");
+            return back();
+        }
     }
 
     public function storeNewContact(Request $request){

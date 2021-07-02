@@ -22,8 +22,12 @@
 @section('content')
     <div class="row">
         <div class="col-md-12 col-sm-12">
-
-            <form class="form-material" action="{{route('import-contacts')}}" method="post">
+            @if(session()->has('success'))
+            <div class="alert alert-success">
+                {!! session()->get('success') !!}
+            </div>
+            @endif
+            <form class="form-material" action="{{route('import-contacts')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12 d-flex justify-content-center mb-2 error-wrapper">
