@@ -32,6 +32,18 @@ class ContactController extends Controller
         return view('contact.add-new-contact');
     }
 
+    public function showImportContactsView(){
+        return view('contact.import-contacts');
+    }
+
+    public function importContacts(Request $request){
+        $this->validate($request,[
+            'attachment'=>'required'
+        ],[
+            'attachment.required'=>'Kindly select file to upload'
+        ]);
+    }
+
     public function storeNewContact(Request $request){
         $this->validate($request,[
             'company_name'=>'required',
