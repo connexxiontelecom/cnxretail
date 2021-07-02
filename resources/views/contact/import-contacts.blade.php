@@ -26,6 +26,10 @@
             <div class="alert alert-success">
                 {!! session()->get('success') !!}
             </div>
+                @if(session()->has('error'))
+            <div class="alert alert-warning">
+                {!! session()->get('error') !!}
+            </div>
             @endif
             <form class="form-material" action="{{route('import-contacts')}}" method="post" enctype="multipart/form-data">
                 @csrf
