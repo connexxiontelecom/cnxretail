@@ -100,6 +100,7 @@ function payWithPaystack(amt,plan,tenant){
 
     var handler = PaystackPop.setup({
       key: 'pk_test_ec726436a72f60a31b99b173478a569bddd105bc',
+      //key: 'pk_live_332cc57cf506f06057b6a579406c492d12965bdb',
       email: '{{Auth::user()->email}}',
       amount: parseFloat(amt) * 100,
       currency: "NGN",

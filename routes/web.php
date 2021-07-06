@@ -27,6 +27,8 @@ Route::get('/dashboard', [App\Http\Controllers\Backend\DashboardController::clas
 #Contact routes
 Route::get('/add-new-contact', 'Backend\ContactController@showAddNewContactForm')->name('add-new-contact');
 Route::post('/add-new-contact', 'Backend\ContactController@storeNewContact');
+Route::get('/import-contacts', 'Backend\ContactController@showImportContactsView')->name('import-contacts');
+Route::post('/import-contacts', 'Backend\ContactController@importContacts');
 Route::get('/all-contacts', 'Backend\ContactController@allContacts')->name('all-contacts');
 Route::get('/view-contact/{slug}', 'Backend\ContactController@viewContact')->name('view-contact');
 Route::post('/contact/conversation', 'Backend\ContactController@storeConversation');
