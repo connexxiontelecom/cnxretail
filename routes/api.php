@@ -77,6 +77,9 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
 
     Route::get('verify', 'API\smsController@verifyTransactionReference');
 
+    Route::get('banks', 'API\imprestController@fetchBanks');
+
+
 
 
     Route::post('addcontact', 'API\contactController@addContact' );
