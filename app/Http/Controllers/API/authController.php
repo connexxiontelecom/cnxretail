@@ -130,7 +130,7 @@ class authController extends Controller
         try
         {
           $token = JWTAuth::refresh(JWTAuth::getToken());
-         JWTAuth::setToken($token)->toUser();
+         //JWTAuth::setToken($token)->toUser();
          return response()->json(compact('token'));
         }catch (JWTException $e){
             return response()->json(['response' => 'Token cannot be refreshed, please Login again'], 400);

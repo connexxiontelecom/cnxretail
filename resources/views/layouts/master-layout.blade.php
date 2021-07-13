@@ -93,7 +93,9 @@
 
             <div class="pcoded-main-container">
                 <div class="pcoded-wrapper">
-                    @include('partials._side-navbar')
+                   @if (Auth::user()->account_status == 1)
+                        @include('partials._side-navbar')
+                   @endif
                     <div class="pcoded-content">
                         <div class="page-header">
                             <div class="page-block">

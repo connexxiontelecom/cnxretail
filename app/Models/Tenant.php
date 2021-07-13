@@ -36,6 +36,11 @@ class Tenant extends Model
         }
 
 
+        public function getBanks(){
+             return $this->hasMany(Bank::class, 'tenant_id', 'tenant_id');
+        }
+
+
         /*  public function getSubscriptions(){
             return $this->hasMany(Membership::class, 'tenant_id', 'tenant_id');
         } */

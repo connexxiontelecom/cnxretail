@@ -19,13 +19,16 @@ Auth::routes();
 Route::get('/process/payment', 'Auth\RegisterController@processPayment')->name('process-payment');
 Route::get('/start-trial', 'Auth\RegisterController@showStartTrialForm')->name('start-trial');
 Route::post('/start-trial', 'Auth\RegisterController@startTrial');
-Auth::routes(['register' => false]);
+Route::get('/register/{ref_link?}', 'Auth\RegisterController@showRegistrationForm')->name('register');
+//Auth::routes(['register' => false]);
 #Dashboard routes
 Route::get('/dashboard', [App\Http\Controllers\Backend\DashboardController::class, 'dashboard'])->name('dashboard');
 
 #Contact routes
 Route::get('/add-new-contact', 'Backend\ContactController@showAddNewContactForm')->name('add-new-contact');
 Route::post('/add-new-contact', 'Backend\ContactController@storeNewContact');
+Route::get('/import-contacts', 'Backend\ContactController@showImportContactsView')->name('import-contacts');
+Route::post('/import-contacts', 'Backend\ContactController@importContacts');
 Route::get('/all-contacts', 'Backend\ContactController@allContacts')->name('all-contacts');
 Route::get('/view-contact/{slug}', 'Backend\ContactController@viewContact')->name('view-contact');
 Route::post('/contact/conversation', 'Backend\ContactController@storeConversation');
@@ -57,6 +60,7 @@ Route::get('/activity-log', 'Backend\UserController@activityLog')->name('activit
 #Service route
 Route::get('/services', 'Backend\ServiceController@services')->name('services');
 Route::post('/add-new-service', 'Backend\ServiceController@addNewService');
+Route::post('/edit-service', 'Backend\ServiceController@editService')->name('edit-service');
 
 #Sales-invoice route
 Route::get('/view-invoice/{slug}', 'Backend\SalesInvoiceController@viewInvoice')->name('view-invoice');
@@ -158,9 +162,14 @@ Route::get('/download/{slug}', 'Backend\CNXDriveController@downloadFile')->name(
 
 #Settings route
 Route::get('/general-settings', 'Backend\GeneralSettingsController@generalSettings')->name('general-settings');
-Route::post('/tenant/general-settings', 'Backend\GeneralSettingsController@storeGeneralSettings');
+Route::post('/tenant/general-settings', 'Backend\GeneralSettingsController@storeGeneralSettings')->name('tenant-general-settings');
 Route::post('/tenant/api-settings', 'Backend\GeneralSettingsController@storeAPISettings')->name('api-settings');
 Route::get('/email-settings', 'Backend\GeneralSettingsController@emailSettings')->name('email-settings');
+Route::get('/renew-subscription', 'Backend\GeneralSettingsController@renewSubscription')->name('renew-subscription');
+Route::post('/renew-subscription', 'Backend\GeneralSettingsController@updateSubscription');
+Route::get('/general-settings/banks', 'Backend\GeneralSettingsController@showBanks')->name('tenant-banks');
+Route::post('/general-settings/banks', 'Backend\GeneralSettingsController@storeNewBank');
+Route::post('/general-settings/edit-bank', 'Backend\GeneralSettingsController@editBank')->name('edit-tenant-bank');
 
 
 

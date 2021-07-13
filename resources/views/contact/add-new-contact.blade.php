@@ -86,22 +86,29 @@ Add New Contact
                         <label class="float-label">Position</label>
                     </div>
                     <div class="row">
-                        <div class="col-sm-6 col-md-6">
+                        <div class="col-sm-4 col-md-4">
                             <div class="form-group form-primary form-static-label">
                                 <input type="time" name="preferred_time" id="preferred_time" class="form-control">
                                 <span class="form-bar"></span>
                                 <label class="float-label">What time of the day will be most convenient to contact you?</label>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6">
+                        <div class="col-md-4 col-sm-4">
                             <div class="form-group form-primary form-static-label">
                                 <select id="communication_channel" name="communication_channel" class="form-control form-control-inverse fill">
-                                    <option selected disabled>Preferred communication channel</option>
+                                    <option selected disabled>communication channel</option>
                                     <option value="opt2">Email</option>
                                     <option value="opt3">SMS</option>
                                     <option value="opt4">Call</option>
                                     <option value="opt5">Others</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                             <div class="form-group form-primary form-static-label">
+                                <input type="text" name="whatsapp_contact" id="whatsapp_contact" class="form-control">
+                                <span class="form-bar"></span>
+                                <label class="float-label">WhatsApp Contact</label>
                             </div>
                         </div>
 

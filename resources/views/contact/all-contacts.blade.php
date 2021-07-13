@@ -32,7 +32,10 @@ All Contacts
         @endif
         <div class="row mb-3">
             <div class="col-md-12 col-sm-12">
-                <a href="{{route('add-new-contact')}}" class="btn btn-primary btn-mini"><i class="ti-plus mr-2"></i>Add New Contact</a>
+                <div class="btn-group">
+                    <a href="{{route('add-new-contact')}}" class="btn btn-primary btn-mini"><i class="ti-plus mr-2"></i>Add New Contact</a>
+                    <a href="{{route('import-contacts')}}" class="btn btn-secondary btn-mini"><i class="ti-import mr-2"></i>Import Contacts</a>
+                </div>
             </div>
         </div>
         <div class="dt-responsive table-responsive">
