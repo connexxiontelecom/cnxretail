@@ -42,15 +42,15 @@ SMS Preview
                         <div class="row">
                             <div class="col-md-4 col-sm-4 text-center">
                                 <h3>N{{number_format($cost,2)}}</h3>
-                                <p>SMS COST</p>
+                                <p>SMS Cost</p>
                             </div>
                             <div class="col-md-4 col-sm-4 text-center">
-                                <h3>{{count($phone_numbers)}}</h3>
-                                <p>RECIPIENTS</p>
+                                <h3>{{$counter}}</h3>
+                                <p>Receipient(s)</p>
                             </div>
                             <div class="col-md-4 col-sm-4 text-center">
                                 <h3>{{strlen($message)/160 < 0 ? '1' : ceil(strlen($message)/160)}}</h3>
-                                <p>PAGE</p>
+                                <p>Page(s)</p>
                             </div>
                         </div>
 
@@ -79,13 +79,15 @@ SMS Preview
             <hr>
             <div class="row">
                 <div class="col-sm-12 col-lg-12 col-md-12">
-                    <p><strong style="font-weight: 700;" class="text-primary">Account Balance: </strong> {{number_format($account->sum('debit') - $account->sum('credit'),2)}}</p>
-                    @if ($account->sum('debit') - $account->sum('credit') < $cost)
-                        <p><strong style="font-weight: 700;" class="text-danger">Ooops!</strong> Insufficient balance.</p>
+                    <p><strong style="font-weight: 700;" class="text-primary">Account Balance: </strong> {{number_format($account->sum('credit') - $account->sum('debit'),2)}}</p>
+                    @if ($account->sum('credit') - $account->sum('debit') < $cost)
+                        <p><strong style="font-weight: 700;" class="text-danger">Note:</strong> Insufficient balance.</p>
                     @endif
                     <div class="btn-group d-flex justify-content-center">
-                        <a href="" class="btn btn-danger btn-mini"> <i class="ti-close mr-2"></i> Cancel</a>
-                        <button  type="submit"  class="btn btn-primary btn-mini save-contact"> <i class="ti-check mr-2"></i> Proceed to Send</button>
+                        <a href="{{url()->previous()}}" class="btn btn-danger btn-mini"> <i class="ti-close mr-2"></i> Cancel</a>
+                        @if (($account->sum('credit') - $account->sum('debit')) > 0)
+                            <button  type="submit"  class="btn btn-primary btn-mini save-contact"> <i class="ti-check mr-2"></i> Proceed to Send</button>
+                        @endif
                     </div>
                 </div>
             </div>

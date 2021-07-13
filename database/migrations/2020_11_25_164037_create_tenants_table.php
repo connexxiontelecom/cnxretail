@@ -32,6 +32,8 @@ class CreateTenantsTable extends Migration
             $table->string('favicon')->nullable();
             $table->dateTime('start')->nullable();
             $table->dateTime('end')->nullable();
+            $table->time('opening_time')->nullable();
+            $table->time('closing_time')->nullable();
             $table->tinyInteger('account_status')->default(1); //0=expired; 1=active
             $table->text('company_policy')->nullable();
             $table->string('downloadable_policy')->nullable();
@@ -47,6 +49,8 @@ class CreateTenantsTable extends Migration
             $table->text('slug')->nullable();
             $table->text('invoice_terms')->nullable();
             $table->text('receipt_terms')->nullable();
+            $table->string('secret_key')->nullable();
+            $table->string('public_key')->nullable();
             $table->timestamps();
         });
     }

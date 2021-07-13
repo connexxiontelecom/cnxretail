@@ -59,6 +59,7 @@ class SalesInvoiceController extends Controller
             $invoices = InvoiceMaster::where('contact_id',$invoice->contact_id)
                                     ->where('tenant_id', Auth::user()->tenant_id)
                                     ->where('status', 0)
+                                    ->where('trash', 0)
                                     ->where('currency_id', $invoice->currency_id)
                                     ->get();
             $banks = Bank::where('tenant_id', Auth::user()->tenant_id)->orderBy('account_name', 'ASC')->get();
@@ -137,7 +138,8 @@ class SalesInvoiceController extends Controller
              $lead->converted_by = Auth::user()->id;
              $lead->save();
          }
-        return redirect()->route('receipts');
+         return response()->json(['route'=>route('receipts')],201);
+
 
     }
 
@@ -212,7 +214,7 @@ class SalesInvoiceController extends Controller
         if(!empty($invoice)){
             $invoices = ReceiptDetail::where('tenant_id', Auth::user()->tenant_id)->where('invoice_id', $invoice->id)->get();
 
-            return view('sales-invoice.invoice-payment-history', ['invoices'=>$invoices,'invoice'=>$invoice]);
+            return view('sales-invoice.invoice-payment-history', ['invoices'=>$invoices,'invoice'=>$invoice, 'total_paid'=>0]);
         }
     }
 

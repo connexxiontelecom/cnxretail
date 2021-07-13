@@ -24,9 +24,10 @@ class CreateContactsTable extends Migration
             $table->string('website')->default('www.cnxretail.com');
             $table->string('contact_full_name');
             $table->string('contact_position');
-            $table->string('contact_email');
-            $table->string('contact_mobile');
-            $table->string('communication_channel');
+            $table->string('contact_email')->nullable();
+            $table->string('contact_mobile')->nullable();
+            $table->string('communication_channel')->nullable();
+            $table->string('whatsapp_contact')->nullable();
             $table->string('hear_about_us')->nullable();
             $table->time('preferred_time')->nullable();
             $table->string('slug');

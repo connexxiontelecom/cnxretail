@@ -21,6 +21,7 @@ class CreateMembershipsTable extends Migration
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->tinyInteger('status')->default(1); //1=active; 0=inactive
+            $table->double('amount')->default(0);
             $table->timestamps();
         });
     }

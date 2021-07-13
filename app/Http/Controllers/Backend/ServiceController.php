@@ -21,13 +21,29 @@ class ServiceController extends Controller
 
     public function addNewService(Request $request){
         $this->validate($request,[
-            'service_product_name'=>'required'
+            'service_product_name'=>'required',
         ]);
         $service = new Service;
         $service->service = $request->service_product_name;
         $service->added_by = Auth::user()->id;
         $service->tenant_id = Auth::user()->tenant_id;
+        $service->amount = $request->amount ?? 0;
         $service->save();
         return response()->json(['message'=>'Success! New service registered.'], 201);
+    }
+
+    public function editService(Request $request){
+        $this->validate($request,[
+            'product_name'=>'required',
+        ]);
+
+        $service =  Service::find($request->key);
+        $service->service = $request->product_name;
+        $service->tenant_id = Auth::user()->tenant_id;
+        $service->amount = $request->amount ?? 0;
+        $service->save();
+        session()->flash("success", "<strong>Success!</strong> Changes saved.");
+        return back();
+
     }
 }

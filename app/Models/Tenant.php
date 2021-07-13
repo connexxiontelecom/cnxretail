@@ -22,4 +22,26 @@ class Tenant extends Model
         public function getUsers(){
             return $this->hasMany(User::class, 'tenant_id');
         }
+
+        public function getContactPerson(){
+            return $this->hasMany(Contact::class, 'tenant_id');
+        }
+
+        public function getTenantConversations(){
+            return $this->hasMany(AdminTenantConversationLog::class, 'tenant_id', 'tenant_id');
+        }
+
+        public function getSender(){
+            return $this->belongsTo(AdminUser::class, 'admin_user');
+        }
+
+
+        public function getBanks(){
+             return $this->hasMany(Bank::class, 'tenant_id', 'tenant_id');
+        }
+
+
+        /*  public function getSubscriptions(){
+            return $this->hasMany(Membership::class, 'tenant_id', 'tenant_id');
+        } */
 }

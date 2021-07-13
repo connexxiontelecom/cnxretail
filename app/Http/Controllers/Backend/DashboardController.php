@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $this->middleware('auth');
     }
     public function dashboard(){
-        $invoices = InvoiceMaster::where('tenant_id', Auth::user()->tenant_id)->get();
+        $invoices = InvoiceMaster::where('trash', 0)->where('tenant_id', Auth::user()->tenant_id)->get();
         $receipts = ReceiptMaster::where('tenant_id', Auth::user()->tenant_id)->get();
         $bills = BillMaster::where('tenant_id', Auth::user()->tenant_id)->get();
         $payments = PayMaster::where('tenant_id', Auth::user()->tenant_id)->get();
