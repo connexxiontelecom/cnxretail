@@ -95,7 +95,6 @@ class dashboardController extends Controller
 
             foreach ($receipts as $receipt) {
                 //$invoice["Service"] =  $invoice->getInvoiceService[0];
-
                 //fetch receipt details
                 $receipt['details'] = ReceiptDetail::leftJoin('invoice_masters', function ($join) {
                     $join->on('receipt_details.invoice_id', '=', 'invoice_masters.id');
