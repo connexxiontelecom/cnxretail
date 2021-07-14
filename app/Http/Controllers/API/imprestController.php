@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Imprest;
 use App\Models\Bank;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class imprestController extends Controller
 {
@@ -19,6 +21,7 @@ class imprestController extends Controller
         $banks = Bank::where('tenant_id', $tenant)->get();
         return response()->json(['data' => $banks], 200);
     }
+
 
     public function myImprest(){
        /* $banks = Bank::where('tenant_id', Auth::user()->tenant_id)->get();
@@ -46,7 +49,7 @@ class imprestController extends Controller
         $imprest->user_id = Auth::user()->id;
         $imprest->tenant_id = Auth::user()->tenant_id;
         $imprest->responsible_officer = $request->responsible_officer;
-        $imprest->bank_id = $request->bank ?? '';
+        $imprest->bank_id = !(is_null($request->bank)) ? $request->bank : null;
         $imprest->save();
         return response()->json(['data' => $imprest], 200);
     }
