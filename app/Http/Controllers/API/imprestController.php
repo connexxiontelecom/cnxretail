@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Imprest;
 use App\Models\Bank;
+use App\Models\PayMaster;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -79,7 +80,7 @@ class imprestController extends Controller
             #update imprest
             $imprest->status = 1;
             $imprest->save();
-            return response()->json(['message' => 'success'], 200);
+            return response()->json(['response' => 'success'], 200);
         }
 
     }
