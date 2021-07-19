@@ -78,8 +78,12 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
     Route::get('verify', 'API\smsController@verifyTransactionReference');
 
     Route::get('banks', 'API\imprestController@fetchBanks');
-
-
+    
+    Route::get('myimprest','API\imprestController@myImprest');
+    
+    Route::get('allimprest','API\imprestController@allImprest');
+    
+    
 
 
     Route::post('addcontact', 'API\contactController@addContact' );
@@ -113,11 +117,15 @@ Route::group(['middleware' => ['jwt.verify'], 'prefix'=>'auth' ], function() {
     Route::post('removecontact', 'API\smsController@removePhoneContact');
 
     Route::post('sendemail', 'API\smsController@sendEmail');
-
-
+    
     Route::post('savetransaction', 'API\smsController@saveTransaction');
 
     Route::post('mailinvoice', 'API\invoiceController@sendInvoiceAsEmail');
+
+    Route::post('createimprest','API\imprestController@postImprest');
+
+    Route::post('approveimprest','API\imprestController@approveImprest');
+
 
 
 
