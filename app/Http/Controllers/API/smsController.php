@@ -14,10 +14,12 @@ use App\Models\Contact;
 use App\Models\EmailTemplate;
 use App\Mail\EmailMarketing;
 use App\Models\BulkSmsAccount;
+use Illuminate\Support\Facades\Auth;
 
 class smsController extends Controller
 {
 
+    private $API_KEY = "TLpMHRqPFlfmSJPxYONy6qCSs94qkaP3oocjtREGoUq7bAneOm6UEo01mzNdJm";
     public function fetchPhoneGroups(Request $request)
     {
         $phonegroups = PhoneGroup::where('tenant_id', $request->tenant_id)->orderBy('id', 'DESC')->get();
@@ -97,9 +99,9 @@ class smsController extends Controller
 
         $sms = new BulkSms;
         $sms->message = $request->textMessage;
-        $sms->tenant_id = $request->tenant_id;
-        $sms->sent_by = $request->id;
-        $sms->sender_id = $request->senderId ?? 'CNX Retail';
+        $sms->tenant_id = Auth::user()->tenant_id;//$request->tenant_id;
+        $sms->sent_by = Auth::user()->id;    //$request->id;
+        $sms->sender_id =  Auth::user()->tenant->sender_id;  //$request->senderId;
         $sms->slug = substr(sha1(time()),23,40);
         $sms->save();
         $smsId = $sms->id;
@@ -108,17 +110,22 @@ class smsController extends Controller
         $unique = array_unique(explode(',',$request->phoneNumbers));
         $phone_numbers = implode(",",$unique);
         $recipients = explode(',',$phone_numbers);
-        //$recipients = explode(',', $contacts.''.$phone_numbers);
+        $this->sendMsg($recipients, $request->textMessage);
+        return response()->json(['response'=>'success'], 201);
+
+
+
+       /* //$recipients = explode(',', $contacts.''.$phone_numbers);
         for($i = 0; $i<count($recipients); $i++){
             $recipient = new BulkSmsRecipient;
             $recipient->sms_id = $smsId;
             $recipient->contact_id = $recipients[$i];
             $recipient->save();
-        }
+        }*/
 
 
 
-        #bulk SMS
+       /* #bulk SMS
         $mobile = implode(",", $recipients);
         $name = "Joseph";
         $message = $request->textMessage;
@@ -131,11 +138,93 @@ class smsController extends Controller
         $ozMessageData = $message;
         $createdURL = $ozSURL."?username=".trim($ozUser)."&password=".trim($ozPassw)."&sender=".trim($ozMessageType)."&mobile=".trim($ozRecipient)."&message=".$ozMessageData;
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $createdURL);
-        return response()->json(['response'=>'success'], 201);
-
-
+        $response = $client->request('GET', $createdURL);*/
     }
+
+
+    function strip($phonenumbers){
+        $new_phonenumbers = array();
+        $i = 0;
+        foreach($phonenumbers as $phonenumber):
+            $split = str_split($phonenumber);
+            if(($split[0] == "0") || ($split[0] == "+") ):
+                if($split[0] == "+"):
+                    unset($split[0]);
+                    $split =  array_values($split);
+                    $new_p = (implode($split));
+                    $new_phonenumbers[$i] = $new_p;
+                endif;
+
+                if($split[0] == "0"):
+                    unset($split[0]);
+                    $split = array_values($split);
+                    while(count($split) > 10):
+                        unset($split[0]);
+                        $split = array_values($split);
+                    endwhile;
+                    $new_p = (implode($split));
+                    $new_phonenumbers[$i] = '234'.$new_p;
+                endif;
+
+            else:
+                $new_p = (implode($split));
+                $new_phonenumbers[$i] = $new_p;
+            endif;
+            $i++;
+        endforeach;
+        return $new_phonenumbers;
+    }
+
+    public function sendMsg($numbers, $message)
+    {
+        /*for($i = 0; $i<count($numbers); $i++){
+            $phone =  $numbers[$i];
+            $phone = substr($phone, 1); //strip the first zero
+            $phone = '234'. $phone;
+            $numbers[$i] = $phone;
+        }*/
+
+        $numbers = $this->strip($numbers);
+
+        if(Auth::user()->tenant->sender_id !=null && Auth::user()->tenant->sender_id_verified == 1)
+        {
+            $curl = curl_init();
+            $channel = 'generic';
+            $sender = Auth::user()->tenant->sender_id;
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://termii.com/api/sms/send',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => 0,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS =>' {
+                  "to": "'.$numbers.'",
+                   "from": "'.$sender.'",
+                   "sms":  "'.$message.'",
+                   "type": "plain",
+                   "channel": "'.$channel.'",
+                   "api_key": "'.$this->API_KEY.'"
+               }',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            ));
+            $response = curl_exec($curl);
+            curl_close($curl);
+            //return response()->json(compact("response"));
+            //return response()->json(compact('otp', "response"));
+        }
+        else{
+            return;
+        }
+    }
+
+
+
 
 
     public function getmails(Request $request){
@@ -185,7 +274,6 @@ class smsController extends Controller
             $contact = Contact::where('tenant_id', $request->tenant)->where('id', $request->selectedContacts[$i]['id'])->first();
             \Mail::to($contact)->send(new EmailMarketing($contact, $email));
         }
-
         return response()->json(['response'=>'success'], 201);
 
     }
