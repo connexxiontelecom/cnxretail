@@ -110,7 +110,7 @@ class smsController extends Controller
         $unique = array_unique(explode(',',$request->phoneNumbers));
         $phone_numbers = implode(",",$unique);
         $recipients = explode(',',$phone_numbers);
-        $this->sendMsg($recipients, $request->textMessage);
+        $this->sendMsg($recipients, $request->textMessage, $smsId);
         return response()->json(['response'=>'success'], 201);
 
 
@@ -175,7 +175,7 @@ class smsController extends Controller
         return $new_phonenumbers;
     }
 
-    public function sendMsg($numbers, $message)
+    public function sendMsg($numbers, $message, $smsId)
     {
         /*for($i = 0; $i<count($numbers); $i++){
             $phone =  $numbers[$i];
@@ -185,6 +185,13 @@ class smsController extends Controller
         }*/
 
         $numbers = $this->strip($numbers);
+
+        for($i = 0; $i<count($numbers); $i++){
+            $recipient = new BulkSmsRecipient;
+            $recipient->sms_id = $smsId;
+            $recipient->contact_id = $numbers[$i];
+            $recipient->save();
+        }
 
         if(Auth::user()->tenant->sender_id !=null && Auth::user()->tenant->sender_id_verified == 1)
         {
@@ -213,10 +220,19 @@ class smsController extends Controller
                     'Content-Type: application/json'
                 ),
             ));
-            $response = curl_exec($curl);
+           //$response = curl_exec($curl);
             curl_close($curl);
             //return response()->json(compact("response"));
             //return response()->json(compact('otp', "response"));
+
+            //debit the account holder
+            $balance = new BulkSmsAccount();
+            $balance->tenant_id = Auth::user()->tenant_id;
+            $balance->debit = $this->smsBiller($message, $numbers);
+            $balance->narration = "Billed for sending SMS.";
+            $balance->amount =  $this->smsBiller($message, $numbers);
+            $balance->ref_no = substr(sha1(time()),32,40);
+            $balance->save();
         }
         else{
             return;
@@ -224,6 +240,16 @@ class smsController extends Controller
     }
 
 
+    public function smsBiller($message, $contact){
+        if(strlen($message) <= 160 ){
+            $cost = 3 * count(explode(",", $contact)) * 1;
+        }else if(strlen($message) <= 313){
+            $cost = 3 * count(explode(",", $contact)) * 2;
+        }else if(strlen($message) <= 466){
+            $cost = 3 * count(explode(",", $contact)) * 3;
+        }
+        return $cost;
+    }
 
 
 
@@ -232,14 +258,12 @@ class smsController extends Controller
         $emails = EmailCampaign::where('tenant_id', $request->tenant_id)->orderBy('id', 'DESC')->get();
 
         foreach($emails as $mail){
-
             $recipients =  EmailRecipient::leftJoin('contacts', function ($join) {
             $join->on('email_recipients.contact_id', '=', 'contacts.id');
             })->where('email_recipients.email_id', $mail['id'])->get();
             $mail['sender'] = User::find($mail["sent_by"])["full_name"];
             $mail['recipients'] =  $recipients ;
         }
-
         return response()->json(['data'=>$emails], 201);
     }
 
@@ -302,6 +326,10 @@ class smsController extends Controller
         $unit->save();
         return response()->json(['response'=>'success'], 201);
     }
+
+
+
+
 
 
     public function verifyTransactionReference(Request $request){
