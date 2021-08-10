@@ -126,7 +126,7 @@
                                 <td>
                                     <h6>WhatsApp Contact:</h6>
                                 </td>
-                                <td><a class="btn btn-mini btn-primary" href="https://api.whatsapp.com/send?phone={{$contact->whatsapp_contact}}">{{ !empty($contact->whatsapp_contact) ? 'Send message' : 'No Contact'}}</a></td>
+                                <td><a class="btn btn-mini btn-primary" target="_blank" href="https://api.whatsapp.com/send?phone={{$contact->whatsapp_contact}}">{{ !empty($contact->whatsapp_contact) ? 'Send message' : 'No Contact'}}</a></td>
                             </tr>
                         </table>
                     </div>

@@ -189,9 +189,10 @@ class EmailSMSController extends Controller
         try{
             #bulk SMS
             $mobile = implode(",", $recipients);
-            $name = "Joseph";
+            //return dd($mobile);
+            //$name = "Joseph";
             $message = $request->textMessage;
-            $messageLength = strlen($request->textMessage);
+       /*     $messageLength = strlen($request->textMessage);
             $contactCount = explode(", ", $mobile);
             $createdURL = "";
             $ozSURL = "http://www.bbnsms.com/bulksms/bulksms.php";
@@ -203,19 +204,19 @@ class EmailSMSController extends Controller
             $ozMessageData = $message;
             $createdURL = $ozSURL."?username=".trim($ozUser)."&password=".trim($ozPassw)."&sender=".trim($ozMessageType)."&mobile=".trim($ozRecipient)."&message=".$ozMessageData;
             $client = new \GuzzleHttp\Client();
-            $response = $client->request('GET', $createdURL);
+            $response = $client->request('GET', $createdURL);*/
             #Make deduction
             /*$account = BulkSmsAccount::where('tenant_id', Auth::user()->tenant_id)->first();
             $account->amount = $this->smsBiller($request->textMessage, $contactCount);
             //$account->debit = $*/
             ////"'.$mobile.'",
-            $phone = $request->phone;
-               $phone = substr($phone, 1); //strip the first zero
-               $phone = '234'. $phone;
+            //$phone = $request->phone;
+             //  $phone = substr($phone, 1); //strip the first zero
+             //  $phone = '234'. $phone;
                //$otp = $this->FourRandomDigits();
                $curl = curl_init();
                $channel = 'generic';
-               $sender = $request->senderId ?? 'CNX Retail'; //'CNXRetail'; //;
+               $sender = $request->senderId ?? 'CNXRetail'; //'CNXRetail'; //;
             curl_setopt_array($curl, array(
                 CURLOPT_URL => 'https://termii.com/api/sms/send',
                 CURLOPT_RETURNTRANSFER => true,
@@ -227,7 +228,7 @@ class EmailSMSController extends Controller
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS =>' {
-                  "to": "'.$mobile.'",
+                  "to": "'.$recipients.'",
                    "from": "'.$sender.'",
                    "sms":  "'.$message.'",
                    "type": "plain",
