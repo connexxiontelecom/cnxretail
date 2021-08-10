@@ -44,4 +44,17 @@ class Tenant extends Model
         /*  public function getSubscriptions(){
             return $this->hasMany(Membership::class, 'tenant_id', 'tenant_id');
         } */
+    
+    
+    public function setNewOnlineTenant(){
+        /*$tenant = new Tenant;
+        $tenant->tenant_id = $tenant_id;
+        $tenant->company_name = $metadata['company_name'];
+        $tenant->email = $metadata['email'];
+        $tenant->phone = $metadata['phone_no'];
+        $tenant->address = $metadata['address'];
+        $tenant->nature_of_business = $metadata['nature_of_business'];
+        $tenant->plan_id = $metadata['plan'];
+        $tenant->start = now();*/
+    }
 }

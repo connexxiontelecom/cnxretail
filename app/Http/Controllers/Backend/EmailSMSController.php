@@ -189,6 +189,7 @@ class EmailSMSController extends Controller
         try{
             #bulk SMS
             $mobile = implode(",", $recipients);
+            //return dd($mobile);
             //$name = "Joseph";
             $message = $request->textMessage;
        /*     $messageLength = strlen($request->textMessage);
@@ -227,7 +228,7 @@ class EmailSMSController extends Controller
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS =>' {
-                  "to": "'.$mobile.'",
+                  "to": "'.$recipients.'",
                    "from": "'.$sender.'",
                    "sms":  "'.$message.'",
                    "type": "plain",
