@@ -234,7 +234,7 @@ class RegisterController extends Controller
                 $member->save();
             }
 
-            return redirect()->route('thank-you');
+            return Redirect::to('https://cnxretail.com/confirmation');
         }else{
             //
         }
