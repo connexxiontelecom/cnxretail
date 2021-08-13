@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
+use Spatie\Newsletter\NewsletterFacade as Newsletter;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
@@ -179,6 +179,10 @@ class RegisterController extends Controller
                 }
                 $member->amount = $amount;
                 $member->save();
+                #Send mail
+                if ( ! Newsletter::isSubscribed($metadata['email']) ) {
+                    Newsletter::subscribe($metadata['email']);
+                }
                 #API call to AMP
                 if(!empty($metadata['link'])){
                     $data = [
