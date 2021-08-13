@@ -181,7 +181,7 @@ class RegisterController extends Controller
                 $member->save();
                 #Send mail
                 if ( ! Newsletter::isSubscribed($metadata['email']) ) {
-                    Newsletter::subscribe($metadata['email']);
+                    Newsletter::subscribe($metadata['email'], ['FNAME'=>$metadata['full_name']]);
                 }
                 #API call to AMP
                 if(!empty($metadata['link'])){
