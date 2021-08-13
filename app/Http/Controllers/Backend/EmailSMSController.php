@@ -249,7 +249,7 @@ class EmailSMSController extends Controller
             $balance->save();
             $this->activitylog->setNewActivityLog('SMS sent', 'Sent bulk SMS.');
             session()->flash("success", "<strong>Success! </strong> Text message sent.");
-            return redirect()->route('bulksms'); //Audience Key: 2ab453b173 | API Key: 97a76eaf731de64c5c3a86f03d86fb44-us6
+            return redirect()->route('bulksms'); 
 
         }catch (\Exception $ex){
             session()->flash("error", "<strong>Whoops!</strong> Could not send SMS. Try again.");
