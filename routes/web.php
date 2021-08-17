@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,11 +14,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+/*Route::get('/newsletter',function(){
+
+})->name('newsletter');*/
+
 Route::get('/','HomeController@index');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 Auth::routes();
 Route::get('/process/payment', 'Auth\RegisterController@processPayment')->name('process-payment');
 Route::get('/start-trial', 'Auth\RegisterController@showStartTrialForm')->name('start-trial');
+Route::get('/training', 'Auth\RegisterController@showTrainingForm')->name('show-training-form');
+Route::post('/training', 'Auth\RegisterController@validateTrainingRegistration')->name('validate-training');
+Route::get('/thank-you', 'Auth\RegisterController@thankYou')->name('thank-you');
 Route::post('/start-trial', 'Auth\RegisterController@startTrial');
 Route::get('/register/{ref_link?}', 'Auth\RegisterController@showRegistrationForm')->name('register');
 //Auth::routes(['register' => false]);

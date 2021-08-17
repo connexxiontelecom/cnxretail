@@ -235,6 +235,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
+        'Newsletter' => 'Spatie\Newsletter\NewsletterFacade',
+
     ],
 
 ];

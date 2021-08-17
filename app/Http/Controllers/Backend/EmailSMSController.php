@@ -178,6 +178,7 @@ class EmailSMSController extends Controller
         $unique = array_unique(explode(',',$request->phoneNumbers));
         $phone_numbers = implode(",",$unique);
         $recipients = explode(',',$phone_numbers);
+        $numbers = $this->strip($recipients);
         //$recipients = explode(',', $contacts.''.$phone_numbers);
         for($i = 0; $i<count($recipients); $i++){
             $recipient = new BulkSmsRecipient;
@@ -189,9 +190,11 @@ class EmailSMSController extends Controller
         try{
             #bulk SMS
             $mobile = implode(",", $recipients);
-            $name = "Joseph";
+
+
+            //$name = "Joseph";
             $message = $request->textMessage;
-            $messageLength = strlen($request->textMessage);
+       /*     $messageLength = strlen($request->textMessage);
             $contactCount = explode(", ", $mobile);
             $createdURL = "";
             $ozSURL = "http://www.bbnsms.com/bulksms/bulksms.php";
@@ -203,20 +206,23 @@ class EmailSMSController extends Controller
             $ozMessageData = $message;
             $createdURL = $ozSURL."?username=".trim($ozUser)."&password=".trim($ozPassw)."&sender=".trim($ozMessageType)."&mobile=".trim($ozRecipient)."&message=".$ozMessageData;
             $client = new \GuzzleHttp\Client();
-            $response = $client->request('GET', $createdURL);
+            $response = $client->request('GET', $createdURL);*/
             #Make deduction
             /*$account = BulkSmsAccount::where('tenant_id', Auth::user()->tenant_id)->first();
             $account->amount = $this->smsBiller($request->textMessage, $contactCount);
             //$account->debit = $*/
             ////"'.$mobile.'",
-            $phone = $request->phone;
-               $phone = substr($phone, 1); //strip the first zero
-               $phone = '234'. $phone;
+            //$phone = $request->phone;
+             //  $phone = substr($phone, 1); //strip the first zero
+             //  $phone = '234'. $phone;
                //$otp = $this->FourRandomDigits();
+
                $curl = curl_init();
                $channel = 'generic';
-               $sender = $request->senderId ?? 'CNX Retail'; //'CNXRetail'; //;
-            curl_setopt_array($curl, array(
+               $sender = $request->senderId ?? 'CNXRetail'; //'CNXRetail'; //;
+                $data = array("to" => $numbers, "from" => $sender, "sms"=>$message, "type"=>"plain", "channel"=>$channel, "api_key"=>$this->API_KEY );
+                $post_data = json_encode($data);
+                curl_setopt_array($curl, array(
                 CURLOPT_URL => 'https://termii.com/api/sms/send',
                 CURLOPT_RETURNTRANSFER => true,
                 //CURLOPT_SSL_VERIFYPEER => 0,
@@ -226,14 +232,7 @@ class EmailSMSController extends Controller
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS =>' {
-                  "to": "'.$mobile.'",
-                   "from": "'.$sender.'",
-                   "sms":  "'.$message.'",
-                   "type": "plain",
-                   "channel": "'.$channel.'",
-                   "api_key": "'.$this->API_KEY.'"
-               }',
+                CURLOPT_POSTFIELDS =>$post_data,
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json'
                 ),
@@ -250,7 +249,7 @@ class EmailSMSController extends Controller
             $balance->save();
             $this->activitylog->setNewActivityLog('SMS sent', 'Sent bulk SMS.');
             session()->flash("success", "<strong>Success! </strong> Text message sent.");
-            return redirect()->route('bulksms');
+            return redirect()->route('bulksms'); 
 
         }catch (\Exception $ex){
             session()->flash("error", "<strong>Whoops!</strong> Could not send SMS. Try again.");
@@ -259,6 +258,42 @@ class EmailSMSController extends Controller
 
 
     }
+
+
+
+    function strip($phonenumbers){
+        $new_phonenumbers = array();
+        $i = 0;
+        foreach($phonenumbers as $phonenumber):
+            $split = str_split($phonenumber);
+            if(($split[0] == "0") || ($split[0] == "+") ):
+                if($split[0] == "+"):
+                    unset($split[0]);
+                    $split =  array_values($split);
+                    $new_p = (implode($split));
+                    $new_phonenumbers[$i] = $new_p;
+                endif;
+
+                if($split[0] == "0"):
+                    unset($split[0]);
+                    $split = array_values($split);
+                    while(count($split) > 10):
+                        unset($split[0]);
+                        $split = array_values($split);
+                    endwhile;
+                    $new_p = (implode($split));
+                    $new_phonenumbers[$i] = '234'.$new_p;
+                endif;
+
+            else:
+                $new_p = (implode($split));
+                $new_phonenumbers[$i] = $new_p;
+            endif;
+            $i++;
+        endforeach;
+        return $new_phonenumbers;
+    }
+
 
     public function smsBiller($message, $contact){
         if(strlen($message) <= 160 ){
