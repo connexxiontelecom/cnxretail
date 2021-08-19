@@ -19,6 +19,7 @@ use App\Models\Reminder;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Prospecting;
 
 class dashboardController extends Controller
 {
@@ -247,22 +248,20 @@ class dashboardController extends Controller
 
 
     public function fetchLeads(Request $request){
-
         $tenant_id = $request->tenant_id;
         if (is_null($tenant_id)) {
             return response()->json(['data' => "Request Error"], 200);
         } else {
-
             $leads = Lead::where('tenant_id', $tenant_id)->orderBy('id', 'DESC')->get();
 
             foreach($leads as $lead){
-
                $contact = Contact::find($lead['contact_id']);
                $contact->getConversations;
                $lead['contact'] = $contact;
-                $lead['convertedby'] = User::find($lead['converted_by']);
-            }
+               $lead['convertedby'] = User::find($lead['converted_by']);
+               $lead['prospecting'] = Prospecting::where("contact_id", $lead['contact_id'])->first();
 
+            }
             return response()->json(['data' => $leads], 200);
         }
 

@@ -71,12 +71,9 @@ class authController extends Controller
     public function getTenant(Request $request)
     {
         $tenant =  Tenant::where("tenant_id",  $request->tenant_id)->first();
-
+        $tenant->logo = url("/assets/uploads/cnxdrive/" . $tenant->logo);
         return response()->json(compact('tenant'));
-
     }
-
-
 
 
 
