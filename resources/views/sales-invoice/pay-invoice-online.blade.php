@@ -228,7 +228,7 @@ Pay Online
 function payWithPaystack(){
     var handler = PaystackPop.setup({
       key: 'pk_test_ec726436a72f60a31b99b173478a569bddd105bc',
-      email: 'hello@gmail.com',
+      email: "{{$invoice->contact->email ?? 'hello@gmail.com'}}",
       amount: $('#totalAmount').val() * 100,
       currency: "NGN",
       ref: ''+Math.floor((Math.random() * 1000000000) + 1),
