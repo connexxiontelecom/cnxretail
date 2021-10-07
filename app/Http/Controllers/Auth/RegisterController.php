@@ -346,7 +346,7 @@ class RegisterController extends Controller
         ];
 
         $arr[0] = json_encode($metadata);
-        $request->request->add(['metadata'=>$arr, 'amount'=>1500000]);
+        $request->request->add(['metadata'=>$arr, 'amount'=>300000]);
         try{
             return Paystack::getAuthorizationUrl()->redirectNow();
         }catch(\Exception $e) {

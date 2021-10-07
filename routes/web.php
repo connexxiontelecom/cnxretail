@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 
 /*
@@ -15,9 +16,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-/*Route::get('/newsletter',function(){
-
-})->name('newsletter');*/
+Route::get('/newsletter',function(){
+    #Send mail
+    if ( ! Newsletter::isSubscribed('talktojoegee@gmail.com') ) {
+        Newsletter::subscribe('talktojoegee@gmail.com', ['FNAME'=>'Joseph']);
+    }
+})->name('newsletter');
 
 Route::get('/','HomeController@index');
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
