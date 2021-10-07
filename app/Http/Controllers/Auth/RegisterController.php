@@ -97,6 +97,14 @@ class RegisterController extends Controller
             'nature_of_business'=>'required',
             'plan'=>'required'
         ]);
+        #Send mail
+        try {
+            if ( ! Newsletter::isSubscribed($request->email) ) {
+                Newsletter::subscribe($request->email, ['FNAME'=>$request->company_name]);
+            }
+        }catch (\Exception $ex){
+        }
+
 
         try{
             return Paystack::getAuthorizationUrl()->redirectNow();
@@ -179,10 +187,10 @@ class RegisterController extends Controller
                 }
                 $member->amount = $amount;
                 $member->save();
-                #Send mail
+                /*#Send mail
                 if ( ! Newsletter::isSubscribed($metadata['email']) ) {
                     Newsletter::subscribe($metadata['email'], ['FNAME'=>$metadata['full_name']]);
-                }
+                }*/
                 #API call to AMP
                 if(!empty($metadata['link'])){
                     $data = [
