@@ -100,7 +100,7 @@
                                         <label class="float-label">Re-type Password</label>
                                     </div>
 
-                                    <input type="hidden" name="amount" id="amount" value="150000">
+                                    <input type="hidden" name="amount" id="amount" value="300000">
                                     <input type="hidden" name="currency" value="NGN">
                                     <input type="hidden" name="metadata[]" id="metadata" >
                                     <input type="hidden" name="reference" value="{{ Paystack::genTranxRef() }}">
