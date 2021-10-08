@@ -97,16 +97,14 @@ class RegisterController extends Controller
             'nature_of_business'=>'required',
             'plan'=>'required'
         ]);
-        #Send mail
-        try {
-            if ( ! Newsletter::isSubscribed($request->email) ) {
-                Newsletter::subscribe($request->email, ['FNAME'=>$request->company_name]);
-            }
-        }catch (\Exception $ex){
-        }
+
 
 
         try{
+            #Send mail
+            if ( ! Newsletter::isSubscribed($request->email) ) {
+                Newsletter::subscribe($request->email, ['FNAME'=>$request->company_name]);
+            }
             return Paystack::getAuthorizationUrl()->redirectNow();
         }catch(\Exception $e) {
             session()->flash("error", "<strong>Ooops!</strong> The token has expired. Please refresh the page and try again." );
