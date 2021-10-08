@@ -354,9 +354,13 @@ class RegisterController extends Controller
         $arr[0] = json_encode($metadata);
         $request->request->add(['metadata'=>$arr, 'amount'=>300000]);
         try{
+            #Send mail
+            if ( ! Newsletter::isSubscribed($request->email) ) {
+                Newsletter::subscribe($request->email, ['FNAME'=>$request->business_name]);
+            }
             return Paystack::getAuthorizationUrl()->redirectNow();
         }catch(\Exception $e) {
-            return dd($e);
+            //return dd($e);
             session()->flash("error", "<strong>Whoops!</strong> Token expired. Refresh the page and try again.");
             return back();
         }
