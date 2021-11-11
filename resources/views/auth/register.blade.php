@@ -179,8 +179,8 @@
                 e.preventDefault();
                 var selection = $(this).val();
                  if(selection == 1){
-                    $('#amount').val(7500*100);
-                    $('#amount_holder').text(parseFloat(7500).toLocaleString());
+                    $('#amount').val(3500*100);
+                    $('#amount_holder').text(parseFloat(3500).toLocaleString());
                 }else if(selection == 2){
                     $('#amount').val(6500*6*100);
                     $('#amount_holder').text(parseFloat(6500*6).toLocaleString());
