@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+use Spatie\Newsletter\NewsletterFacade;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
@@ -16,6 +17,8 @@ use App\Models\InvoiceMaster;
 use Carbon\Carbon;
 use Paystack;
 use Auth;
+use Spatie\Newsletter\NewsletterServiceProvider;
+
 
 class RegisterController extends Controller
 {
@@ -73,14 +76,14 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-/*     protected function create(array $data)
-    {
-        return User::create([
-            'company_name' => $data['company_name'],
-            'email_address' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-    } */
+    /*     protected function create(array $data)
+        {
+            return User::create([
+                'company_name' => $data['company_name'],
+                'email_address' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+        } */
 
     public function showRegistrationForm($ref_link = null){
         return view('auth.register', ['link'=>$ref_link]);
@@ -233,6 +236,7 @@ class RegisterController extends Controller
                 $user->save();
                 #Register subscription
                 $key = "key_".substr(sha1(time()),21,40 );
+
                 $member = new Membership;
                 $member->tenant_id = $tenant_id;
                 $member->plan_id = 1; //$metadata['plan'];
@@ -301,7 +305,7 @@ class RegisterController extends Controller
         $user->save();
         #Register subscription
         $key = "key_".substr(sha1(time()),21,40 );
-         $member = new Membership;
+        $member = new Membership;
         $member->tenant_id = $tenant_id;
         $member->plan_id = 1;//$metadata['plan'];
         $member->sub_key = $key;
@@ -330,7 +334,7 @@ class RegisterController extends Controller
 
 
     public function validateTrainingRegistration(Request $request){
-
+        //return dd($request->all());
         $this->validate($request,[
             'business_name'=>'required',
             'full_name'=>'required',
@@ -353,14 +357,19 @@ class RegisterController extends Controller
 
         $arr[0] = json_encode($metadata);
         $request->request->add(['metadata'=>$arr, 'amount'=>300000]);
+
         try{
             #Send mail
             if ( ! Newsletter::isSubscribed($request->email) ) {
                 Newsletter::subscribe($request->email, ['FNAME'=>$request->business_name]);
             }
+        }catch(\Exception $e) {
+
+        }
+
+        try{
             return Paystack::getAuthorizationUrl()->redirectNow();
         }catch(\Exception $e) {
-            //return dd($e);
             session()->flash("error", "<strong>Whoops!</strong> Token expired. Refresh the page and try again.");
             return back();
         }
