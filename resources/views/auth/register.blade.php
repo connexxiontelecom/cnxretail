@@ -88,7 +88,7 @@
                                                 <label for="">Plan</label>
                                                 <select name="plan" id="plan" class="form-control">
                                                     <option selected disabled>--Select plan--</option>
-                                                    <option value="1">Monthly @ ₦7,500/month</option>
+                                                    <option value="1">Monthly @ ₦3,500/month</option>
                                                     <option value="2">Bi-annual @ ₦6,500/month</option>
                                                     <option value="3">Annual @ ₦5,500/month</option>
                                                 </select>

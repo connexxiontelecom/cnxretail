@@ -236,6 +236,7 @@ class RegisterController extends Controller
                 $user->save();
                 #Register subscription
                 $key = "key_".substr(sha1(time()),21,40 );
+
                 $member = new Membership;
                 $member->tenant_id = $tenant_id;
                 $member->plan_id = 1; //$metadata['plan'];

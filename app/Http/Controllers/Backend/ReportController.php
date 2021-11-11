@@ -25,8 +25,8 @@ class ReportController extends Controller
 
     public function salesReport(){
         $receipts = ReceiptMaster::where('tenant_id', Auth::user()->tenant_id)->get();
-        $payments = PayMaster::where('tenant_id', Auth::user()->tenant_id)->get();
         $invoices = InvoiceMaster::where('trash',0)->where('tenant_id', Auth::user()->tenant_id)->get();
+        $payments = PayMaster::where('tenant_id', Auth::user()->tenant_id)->get();
         $bills = BillMaster::where('tenant_id', Auth::user()->tenant_id)->get();
         return view('reports.sales-report', [
             'receipts'=>$receipts,
